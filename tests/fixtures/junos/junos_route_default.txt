@@ -1,0 +1,5 @@
+mgmt_junos.inet.0: 3 destinations, 3 routes (3 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+0.0.0.0/0          *[Static/5] 00:13:38
+                    >  to 192.168.122.1 via fxp0.0

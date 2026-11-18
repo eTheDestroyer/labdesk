@@ -1,0 +1,2 @@
+0.0.0.0/0
+  nexthop 192.168.255.1 GigabitEthernet0/1

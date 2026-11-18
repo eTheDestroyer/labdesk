@@ -1,0 +1,86 @@
+#!/bin/bash
+# labdesk-cloud up: create / repair the simulated Internet cloud.  Idempotent; safe to run any time
+# (systemd ExecStart, the libvirt 'default' network hook on 'started', the 10 s check).
+#
+#   netns $NS:  lo      8.8.8.8/32 1.1.1.1/32 ... (ANSWER_IPS)      ICMP echo on, forwarding off
+#               cloud0  100.64.0.1/24  ---veth---  $NS-br (host)  --> enslaved to virbr0
+#               routes  RETURN_PREFIXES via EDGE_GW (+ per-prefix ROUTE lines)  [proto 77]
+#   host:       100.64.0.1/32 dev virbr0 (health check only); nothing else changes on the host.
+. /usr/local/libexec/labdesk-cloud/common.sh
+load_config
+
+# 1. wait for the libvirt bridge (libvirtd autostarts the 'default' network asynchronously)
+for _ in $(seq 1 90); do
+    [ -d "/sys/class/net/$BRIDGE/bridge" ] && break
+    sleep 1
+done
+[ -d "/sys/class/net/$BRIDGE/bridge" ] || die "bridge $BRIDGE did not appear within 90 s"
+
+# 2. namespace + its sysctls (endpoint, not a router)
+ns_exists || ip netns add "$NS" || die "cannot create netns $NS"
+ip netns exec "$NS" sysctl -q -w net.ipv4.ip_forward=0 net.ipv4.icmp_echo_ignore_all=0 \
+    net.ipv4.icmp_echo_ignore_broadcasts=1 net.ipv6.conf.all.disable_ipv6=1 \
+    net.ipv6.conf.default.disable_ipv6=1 >/dev/null
+ip -n "$NS" link set lo up
+for a in $ANSWER_IPS; do
+    ip -n "$NS" addr replace "$a/32" dev lo
+done
+# drop answer addresses that were removed from the config
+ip -n "$NS" -4 -o addr show dev lo | awk '{print $4}' | while read -r cidr; do
+    case "$cidr" in 127.*) continue ;; esac
+    keep=0
+    for a in $ANSWER_IPS; do [ "$cidr" = "$a/32" ] && keep=1; done
+    [ $keep = 1 ] || ip -n "$NS" addr del "$cidr" dev lo
+done
+
+# 3. veth pair (a pair whose namespace end vanished is recreated)
+if ip link show "$VETH_HOST" >/dev/null 2>&1 && ! ip -n "$NS" link show "$VETH_NS" >/dev/null 2>&1; then
+    ip link del "$VETH_HOST"
+fi
+if ! ip link show "$VETH_HOST" >/dev/null 2>&1; then
+    ip link add "$VETH_HOST" type veth peer name "$VETH_NS" netns "$NS" || die "cannot create veth"
+fi
+# a FIXED MAC on the cloud address: routers cache ARP for hours (IOS: 4 h), so a restart of the service
+# must not change the gateway's MAC
+ip -n "$NS" link set "$VETH_NS" address "$CLOUD_MAC" 2>/dev/null || true
+[ -e "/proc/sys/net/ipv6/conf/$VETH_HOST/disable_ipv6" ] && echo 1 > "/proc/sys/net/ipv6/conf/$VETH_HOST/disable_ipv6"
+ip link set "$VETH_HOST" master "$BRIDGE"
+ip link set "$VETH_HOST" up
+ip -n "$NS" link set "$VETH_NS" up
+ip -n "$NS" addr replace "$CLOUD_ADDR" dev "$VETH_NS"
+
+# 4. the host may health-check the cloud address (and only that address)
+SRC=$(bridge_src)
+if [ "$HOST_ROUTE" = yes ] && [ -n "$SRC" ]; then
+    ip route replace "$CLOUD_IP/32" dev "$BRIDGE" src "$SRC"
+    ip neigh flush to "$CLOUD_IP" dev "$BRIDGE" 2>/dev/null || true
+    ip -n "$NS" route replace "$SRC/32" dev "$VETH_NS"
+fi
+
+# wait (<= 10 s) until the bridge port forwards: virbr0 runs STP, a new port listens + learns first
+for _ in $(seq 1 40); do
+    [ "$(cat "/sys/class/net/$VETH_HOST/brport/state" 2>/dev/null)" = 3 ] && break
+    sleep 0.25
+done
+
+# 5. return routes for lab LANs behind the edge router(s)
+apply_routes
+
+# announce the (fixed) MAC: an ARP request from the cloud address refreshes every router's ARP cache
+for gw in $(ip -n "$NS" -4 route show proto $RT_PROTO | sed -nE 's/.* via ([0-9.]+) .*/\1/p' | sort -u); do
+    ip netns exec "$NS" ping -n -q -c1 -W1 "$gw" >/dev/null 2>&1 &
+done
+command -v arping >/dev/null && ip netns exec "$NS" arping -q -U -c1 -I "$VETH_NS" "$CLOUD_IP" >/dev/null 2>&1 &
+wait
+
+# 6. state directory for LabDesk's user-writable routes file
+if [ -n "$STATE_OWNER" ] && id "$STATE_OWNER" >/dev/null 2>&1; then
+    install -d -m 0755 -o "$STATE_OWNER" -g "$(id -gn "$STATE_OWNER")" "$STATE_DIR"
+else
+    install -d -m 0755 "$STATE_DIR"
+fi
+
+mkdir -p "$RUN_DIR"
+touch "$ACTIVE"
+[ "${1:-}" = "--quiet" ] || log "up: $NS on $BRIDGE, $CLOUD_ADDR, answers $ANSWER_IPS"
+exit 0

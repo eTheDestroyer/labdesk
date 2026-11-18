@@ -1,0 +1,5 @@
+PySide6>=6.7
+pexpect>=4.9
+PyYAML>=6.0
+websocket-client>=1.7
+pytest>=8

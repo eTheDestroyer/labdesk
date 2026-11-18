@@ -1,0 +1,8 @@
+Flags:  S - Device is sending Slow hello.  C - Device is in Consistent state.
+        A - Device is in Auto mode.        P - Device learns on physical port.
+
+Channel group 2 neighbors
+          Partner              Partner	        Partner		Partner	Group
+Port      Name                 Device ID	Port       Age	Flags	Cap.
+Gi1/0     SW2                  5254.0087.8000	Gi1/0       16s SAC	20001 
+Gi1/1     SW2                  5254.0087.8000	Gi1/1        9s SAC	20001 

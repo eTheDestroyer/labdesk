@@ -1,0 +1,85 @@
+hostname SW2
+no ip domain lookup
+username admin privilege 15 secret cisco
+enable secret cisco
+vtp mode transparent
+spanning-tree mode rapid-pvst
+vlan 10
+ name USERS
+vlan 20
+ name SERVERS
+port-channel load-balance src-dst-ip
+interface Port-channel1
+ description LACP bundle to SW1 Po1 (Gi0/1+Gi0/2)
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+interface Port-channel2
+ description PAgP bundle to SW1 Po2 (Gi1/0+Gi1/1)
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+interface GigabitEthernet0/0
+ description PC2 (VLAN 20 SERVERS)
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast edge
+ no shutdown
+interface GigabitEthernet0/1
+ description Po1 LACP member to SW1 Gi0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode passive
+ no shutdown
+interface GigabitEthernet0/2
+ description Po1 LACP member to SW1 Gi0/2
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode passive
+ no shutdown
+interface GigabitEthernet0/3
+ description unused
+ shutdown
+interface GigabitEthernet1/0
+ description Po2 PAgP member to SW1 Gi1/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 2 mode auto
+ no shutdown
+interface GigabitEthernet1/1
+ description Po2 PAgP member to SW1 Gi1/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 2 mode auto
+ no shutdown
+interface Vlan10
+ description management SVI
+ ip address 192.168.10.3 255.255.255.0
+ no shutdown
+ip default-gateway 192.168.10.1
+event manager applet LABDESK-SVI-KICK
+ event timer countdown time 60
+ action 1.0 cli command "enable"
+ action 2.0 cli command "configure terminal"
+ action 3.0 cli command "interface Vlan10"
+ action 4.0 cli command "shutdown"
+ action 5.0 cli command "no shutdown"
+ action 6.0 cli command "end"
+cdp run
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+line vty 0 4
+ login local
+ transport input ssh telnet
+end

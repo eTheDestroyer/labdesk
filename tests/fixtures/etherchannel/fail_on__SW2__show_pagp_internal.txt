@@ -1,0 +1,10 @@
+Flags:  S - Device is sending Slow hello.  C - Device is in Consistent state.
+        A - Device is in Auto mode.        d - PAgP is down
+Timers: H - Hello timer is running.        Q - Quit timer is running.
+        S - Switching timer is running.    I - Interface timer is running.
+
+Channel group 2
+                                Hello    Partner  PAgP     Learning  Group
+Port      Flags State   Timers  Interval Count   Priority   Method  Ifindex
+Gi1/0     SAC	U6/S7   HQ	30s	 1        128        Any      9
+Gi1/1     SAC	U6/S7   HQ	30s	 1        128        Any      9

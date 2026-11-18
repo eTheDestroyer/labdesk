@@ -1,0 +1,7 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       TRUNK to SW1 Gi0/0 (router-on-a-stick)
+Gi0/0.10                       up             up       VLAN 10 USERS gateway
+Gi0/0.20                       up             up       VLAN 20 SERVERS gateway
+Gi0/1                          up             up       INTERNET cloud (LabDesk: answers 8.8.8.8, 1.1.1.1)
+Gi0/2                          admin down     down     
+Gi0/3                          admin down     down     

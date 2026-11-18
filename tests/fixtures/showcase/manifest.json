@@ -1,0 +1,399 @@
+{
+ "R1": {
+  "_connect_s": 0.12,
+  "show running-config": {
+   "file": "R1__show_running_config.txt",
+   "seconds": 9.77,
+   "lines": 162
+  },
+  "show ip interface brief": {
+   "file": "R1__show_ip_interface_brief.txt",
+   "seconds": 0.9,
+   "lines": 5
+  },
+  "show interfaces | include (line protocol|Description)": {
+   "file": "R1__show_interfaces_include_line_protocol_description.txt",
+   "seconds": 0.91,
+   "lines": 8
+  },
+  "show interfaces description": {
+   "file": "R1__show_interfaces_description.txt",
+   "seconds": 0.91,
+   "lines": 5
+  },
+  "show ip ospf interface brief": {
+   "file": "R1__show_ip_ospf_interface_brief.txt",
+   "seconds": 0.8,
+   "lines": 5
+  },
+  "show ip ospf neighbor": {
+   "file": "R1__show_ip_ospf_neighbor.txt",
+   "seconds": 0.5,
+   "lines": 2
+  },
+  "show ip ospf interface": {
+   "file": "R1__show_ip_ospf_interface.txt",
+   "seconds": 6.64,
+   "lines": 85
+  },
+  "show standby brief": {
+   "file": "R1__show_standby_brief.txt",
+   "seconds": 0.5,
+   "lines": 3
+  },
+  "show standby": {
+   "file": "R1__show_standby.txt",
+   "seconds": 1.01,
+   "lines": 12
+  },
+  "show vrrp brief": {
+   "file": "R1__show_vrrp_brief.txt",
+   "seconds": 0.4,
+   "lines": 1
+  },
+  "show vrrp": {
+   "file": "R1__show_vrrp.txt",
+   "seconds": 0.7,
+   "lines": 10
+  },
+  "show ip bgp summary": {
+   "file": "R1__show_ip_bgp_summary.txt",
+   "seconds": 0.2,
+   "lines": 1
+  },
+  "show ip bgp": {
+   "file": "R1__show_ip_bgp.txt",
+   "seconds": 0.2,
+   "lines": 1
+  },
+  "show ip route": {
+   "file": "R1__show_ip_route.txt",
+   "seconds": 3.12,
+   "lines": 31
+  },
+  "show ip route 0.0.0.0": {
+   "file": "R1__show_ip_route_0_0_0_0.txt",
+   "seconds": 0.7,
+   "lines": 7
+  },
+  "show cdp neighbors": {
+   "file": "R1__show_cdp_neighbors.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show cdp neighbors detail": {
+   "file": "R1__show_cdp_neighbors_detail.txt",
+   "seconds": 3.82,
+   "lines": 73
+  },
+  "show ip protocols": {
+   "file": "R1__show_ip_protocols.txt",
+   "seconds": 1.91,
+   "lines": 33
+  },
+  "ping 8.8.8.8": {
+   "file": "R1__ping_8_8_8_8.txt",
+   "seconds": 0.4,
+   "lines": 3
+  },
+  "traceroute 8.8.8.8 numeric timeout 1 ttl 1 6": {
+   "file": "R1__traceroute_8_8_8_8_numeric_timeout_1_ttl_1_6.txt",
+   "seconds": 0.81,
+   "lines": 8
+  }
+ },
+ "R2": {
+  "_connect_s": 0.12,
+  "show running-config": {
+   "file": "R2__show_running_config.txt",
+   "seconds": 10.48,
+   "lines": 168
+  },
+  "show ip interface brief": {
+   "file": "R2__show_ip_interface_brief.txt",
+   "seconds": 1.21,
+   "lines": 6
+  },
+  "show interfaces | include (line protocol|Description)": {
+   "file": "R2__show_interfaces_include_line_protocol_description.txt",
+   "seconds": 1.11,
+   "lines": 10
+  },
+  "show interfaces description": {
+   "file": "R2__show_interfaces_description.txt",
+   "seconds": 1.11,
+   "lines": 6
+  },
+  "show ip ospf interface brief": {
+   "file": "R2__show_ip_ospf_interface_brief.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip ospf neighbor": {
+   "file": "R2__show_ip_ospf_neighbor.txt",
+   "seconds": 0.6,
+   "lines": 2
+  },
+  "show ip ospf interface": {
+   "file": "R2__show_ip_ospf_interface.txt",
+   "seconds": 6.74,
+   "lines": 85
+  },
+  "show standby brief": {
+   "file": "R2__show_standby_brief.txt",
+   "seconds": 0.5,
+   "lines": 3
+  },
+  "show standby": {
+   "file": "R2__show_standby.txt",
+   "seconds": 1.01,
+   "lines": 13
+  },
+  "show vrrp brief": {
+   "file": "R2__show_vrrp_brief.txt",
+   "seconds": 0.4,
+   "lines": 1
+  },
+  "show vrrp": {
+   "file": "R2__show_vrrp.txt",
+   "seconds": 0.7,
+   "lines": 10
+  },
+  "show ip bgp summary": {
+   "file": "R2__show_ip_bgp_summary.txt",
+   "seconds": 0.2,
+   "lines": 1
+  },
+  "show ip bgp": {
+   "file": "R2__show_ip_bgp.txt",
+   "seconds": 0.2,
+   "lines": 1
+  },
+  "show ip route": {
+   "file": "R2__show_ip_route.txt",
+   "seconds": 3.12,
+   "lines": 31
+  },
+  "show ip route 0.0.0.0": {
+   "file": "R2__show_ip_route_0_0_0_0.txt",
+   "seconds": 0.81,
+   "lines": 7
+  },
+  "show cdp neighbors": {
+   "file": "R2__show_cdp_neighbors.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show cdp neighbors detail": {
+   "file": "R2__show_cdp_neighbors_detail.txt",
+   "seconds": 3.83,
+   "lines": 73
+  },
+  "show ip protocols": {
+   "file": "R2__show_ip_protocols.txt",
+   "seconds": 1.91,
+   "lines": 33
+  }
+ },
+ "R3": {
+  "_connect_s": 0.12,
+  "show running-config": {
+   "file": "R3__show_running_config.txt",
+   "seconds": 9.26,
+   "lines": 158
+  },
+  "show ip interface brief": {
+   "file": "R3__show_ip_interface_brief.txt",
+   "seconds": 0.81,
+   "lines": 4
+  },
+  "show interfaces | include (line protocol|Description)": {
+   "file": "R3__show_interfaces_include_line_protocol_description.txt",
+   "seconds": 0.7,
+   "lines": 6
+  },
+  "show interfaces description": {
+   "file": "R3__show_interfaces_description.txt",
+   "seconds": 0.7,
+   "lines": 4
+  },
+  "show ip ospf interface brief": {
+   "file": "R3__show_ip_ospf_interface_brief.txt",
+   "seconds": 0.7,
+   "lines": 3
+  },
+  "show ip ospf neighbor": {
+   "file": "R3__show_ip_ospf_neighbor.txt",
+   "seconds": 0.6,
+   "lines": 2
+  },
+  "show ip ospf interface": {
+   "file": "R3__show_ip_ospf_interface.txt",
+   "seconds": 3.52,
+   "lines": 43
+  },
+  "show standby brief": {
+   "file": "R3__show_standby_brief.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show standby": {
+   "file": "R3__show_standby.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show vrrp brief": {
+   "file": "R3__show_vrrp_brief.txt",
+   "seconds": 0.3,
+   "lines": 0
+  },
+  "show vrrp": {
+   "file": "R3__show_vrrp.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show ip bgp summary": {
+   "file": "R3__show_ip_bgp_summary.txt",
+   "seconds": 1.21,
+   "lines": 12
+  },
+  "show ip bgp": {
+   "file": "R3__show_ip_bgp.txt",
+   "seconds": 2.01,
+   "lines": 18
+  },
+  "show ip route": {
+   "file": "R3__show_ip_route.txt",
+   "seconds": 3.32,
+   "lines": 33
+  },
+  "show ip route 0.0.0.0": {
+   "file": "R3__show_ip_route_0_0_0_0.txt",
+   "seconds": 0.71,
+   "lines": 9
+  },
+  "show cdp neighbors": {
+   "file": "R3__show_cdp_neighbors.txt",
+   "seconds": 1.01,
+   "lines": 9
+  },
+  "show cdp neighbors detail": {
+   "file": "R3__show_cdp_neighbors_detail.txt",
+   "seconds": 2.92,
+   "lines": 55
+  },
+  "show ip protocols": {
+   "file": "R3__show_ip_protocols.txt",
+   "seconds": 2.82,
+   "lines": 46
+  }
+ },
+ "R4": {
+  "_connect_s": 0.13,
+  "show running-config": {
+   "file": "R4__show_running_config.txt",
+   "seconds": 9.56,
+   "lines": 166
+  },
+  "show ip interface brief": {
+   "file": "R4__show_ip_interface_brief.txt",
+   "seconds": 0.9,
+   "lines": 5
+  },
+  "show interfaces | include (line protocol|Description)": {
+   "file": "R4__show_interfaces_include_line_protocol_description.txt",
+   "seconds": 0.8,
+   "lines": 7
+  },
+  "show interfaces description": {
+   "file": "R4__show_interfaces_description.txt",
+   "seconds": 0.91,
+   "lines": 5
+  },
+  "show ip ospf interface brief": {
+   "file": "R4__show_ip_ospf_interface_brief.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show ip ospf neighbor": {
+   "file": "R4__show_ip_ospf_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show ip ospf interface": {
+   "file": "R4__show_ip_ospf_interface.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show standby brief": {
+   "file": "R4__show_standby_brief.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show standby": {
+   "file": "R4__show_standby.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show vrrp brief": {
+   "file": "R4__show_vrrp_brief.txt",
+   "seconds": 0.3,
+   "lines": 0
+  },
+  "show vrrp": {
+   "file": "R4__show_vrrp.txt",
+   "seconds": 0.1,
+   "lines": 0
+  },
+  "show ip bgp summary": {
+   "file": "R4__show_ip_bgp_summary.txt",
+   "seconds": 1.21,
+   "lines": 12
+  },
+  "show ip bgp": {
+   "file": "R4__show_ip_bgp.txt",
+   "seconds": 2.12,
+   "lines": 18
+  },
+  "show ip route": {
+   "file": "R4__show_ip_route.txt",
+   "seconds": 3.02,
+   "lines": 33
+  },
+  "show ip route 0.0.0.0": {
+   "file": "R4__show_ip_route_0_0_0_0.txt",
+   "seconds": 0.5,
+   "lines": 4
+  },
+  "show cdp neighbors": {
+   "file": "R4__show_cdp_neighbors.txt",
+   "seconds": 0.8,
+   "lines": 7
+  },
+  "show cdp neighbors detail": {
+   "file": "R4__show_cdp_neighbors_detail.txt",
+   "seconds": 1.11,
+   "lines": 19
+  },
+  "show ip protocols": {
+   "file": "R4__show_ip_protocols.txt",
+   "seconds": 1.71,
+   "lines": 26
+  },
+  "show ip nat translations": {
+   "file": "R4__show_ip_nat_translations.txt",
+   "seconds": 2.72,
+   "lines": 21
+  },
+  "show ip nat statistics": {
+   "file": "R4__show_ip_nat_statistics.txt",
+   "seconds": 0.9,
+   "lines": 16
+  },
+  "show dhcp lease": {
+   "file": "R4__show_dhcp_lease.txt",
+   "seconds": 1.01,
+   "lines": 10
+  }
+ }
+}

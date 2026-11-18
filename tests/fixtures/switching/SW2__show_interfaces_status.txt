@@ -1,0 +1,5 @@
+Port      Name               Status       Vlan       Duplex  Speed Type 
+Gi0/0     PC2 (VLAN 20 SERVE connected    20         a-full   auto RJ45
+Gi0/1     TRUNK to SW1 Gi0/1 connected    trunk      a-full   auto RJ45
+Gi0/2     TRUNK to SW1 Gi0/2 connected    trunk      a-full   auto RJ45
+Gi0/3     unused             disabled     1            auto   auto RJ45

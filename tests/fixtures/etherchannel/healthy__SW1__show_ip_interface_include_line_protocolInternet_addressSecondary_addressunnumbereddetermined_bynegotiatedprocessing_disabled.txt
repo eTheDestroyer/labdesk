@@ -1,0 +1,11 @@
+GigabitEthernet0/0 is up, line protocol is up
+GigabitEthernet0/1 is up, line protocol is up
+GigabitEthernet0/2 is up, line protocol is up
+GigabitEthernet0/3 is up, line protocol is up
+GigabitEthernet1/0 is up, line protocol is up
+GigabitEthernet1/1 is up, line protocol is up
+Port-channel1 is up, line protocol is up
+Port-channel2 is up, line protocol is up
+Vlan10 is up, line protocol is up
+  Internet address is 192.168.10.2/24
+  Address determined by configuration file

@@ -1,0 +1,16 @@
+interface Port-channel1
+ description LACP bundle to SW2 Po1 (Gi0/1+Gi0/2)
+ switchport trunk allowed vlan 10,20
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport nonegotiate
+interface Port-channel2
+ description PAgP bundle to SW2 Po2 (Gi1/0+Gi1/1)
+ switchport trunk allowed vlan 10,20
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode active
+ channel-group 1 mode active
+ channel-group 2 mode desirable
+ channel-group 2 mode desirable

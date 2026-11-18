@@ -1,0 +1,6 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       PC2 (VLAN 20 SERVERS)
+Gi0/1                          up             up       TRUNK to SW1 Gi0/1
+Gi0/2                          up             up       TRUNK to SW1 Gi0/2
+Gi0/3                          admin down     down     unused
+Vl10                           up             up       management SVI

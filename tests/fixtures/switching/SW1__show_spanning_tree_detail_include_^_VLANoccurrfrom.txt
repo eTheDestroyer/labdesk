@@ -1,0 +1,6 @@
+ VLAN0010 is executing the rstp compatible Spanning Tree protocol
+  Number of topology changes 3 last change occurred 00:06:13 ago
+          from GigabitEthernet0/0
+ VLAN0020 is executing the rstp compatible Spanning Tree protocol
+  Number of topology changes 3 last change occurred 00:06:12 ago
+          from GigabitEthernet0/0

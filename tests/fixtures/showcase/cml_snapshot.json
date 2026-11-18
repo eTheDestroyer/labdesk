@@ -1,0 +1,922 @@
+{
+ "lab": {
+  "state": "STARTED",
+  "created": "2026-11-17T01:59:32+00:00",
+  "modified": "2026-11-17T01:59:32+00:00",
+  "lab_title": "Protocol Showcase",
+  "lab_description": "HSRP/VRRP/OSPF p2p+broadcast/eBGP/default via NAT/admin-down link",
+  "lab_notes": "LabDesk fixture lab",
+  "owner": "00000000-0000-4000-a000-000000000000",
+  "owner_username": "admin",
+  "owner_fullname": "Default Admin",
+  "node_count": 7,
+  "link_count": 10,
+  "id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+  "groups": [],
+  "autostart": {
+   "enabled": false,
+   "priority": null,
+   "delay": null
+  },
+  "node_staging": {
+   "enabled": false,
+   "start_remaining": true,
+   "abort_on_failure": false
+  },
+  "effective_permissions": [
+   "lab_admin",
+   "lab_exec",
+   "lab_edit",
+   "lab_view"
+  ]
+ },
+ "nodes": [
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R1",
+   "node_definition": "iosv",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": -250,
+   "y": 0,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": 2,
+    "cpu_limit": 100,
+    "cpus": 1,
+    "data_volume": 0,
+    "ram": 512,
+    "image_definition": "iosv-159-3-m12",
+    "vnc_key": null,
+    "serial_consoles": [
+     {
+      "console_key": "ad62403d-e0e6-4c80-bf90-5dd999ac9a9f",
+      "device_number": 0,
+      "label": "Line #0"
+     },
+     {
+      "console_key": "85cc1c22-32ee-490e-a076-abba27400d94",
+      "device_number": 1,
+      "label": "Line #1"
+     }
+    ],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  },
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R2",
+   "node_definition": "iosv",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": 250,
+   "y": 0,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": 2,
+    "cpu_limit": 100,
+    "cpus": 1,
+    "data_volume": 0,
+    "ram": 512,
+    "image_definition": "iosv-159-3-m12",
+    "vnc_key": null,
+    "serial_consoles": [
+     {
+      "console_key": "225663e3-de05-4d57-9f80-b6c5228c9b68",
+      "device_number": 0,
+      "label": "Line #0"
+     },
+     {
+      "console_key": "ad1f02f1-f918-4cd0-a71a-7d4af334f178",
+      "device_number": 1,
+      "label": "Line #1"
+     }
+    ],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  },
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R3",
+   "node_definition": "iosv",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": 0,
+   "y": -200,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": 2,
+    "cpu_limit": 100,
+    "cpus": 1,
+    "data_volume": 0,
+    "ram": 512,
+    "image_definition": "iosv-159-3-m12",
+    "vnc_key": null,
+    "serial_consoles": [
+     {
+      "console_key": "539f48a0-8da7-4be1-bc02-6883ed1d22d6",
+      "device_number": 0,
+      "label": "Line #0"
+     },
+     {
+      "console_key": "d3431e3e-c812-461a-95e7-27dfa11d0b23",
+      "device_number": 1,
+      "label": "Line #1"
+     }
+    ],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  },
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R4",
+   "node_definition": "iosv",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": 0,
+   "y": -400,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": 2,
+    "cpu_limit": 100,
+    "cpus": 1,
+    "data_volume": 0,
+    "ram": 512,
+    "image_definition": "iosv-159-3-m12",
+    "vnc_key": null,
+    "serial_consoles": [
+     {
+      "console_key": "d5711300-1654-4b4c-baeb-e0f7ac73d6c9",
+      "device_number": 0,
+      "label": "Line #0"
+     },
+     {
+      "console_key": "0797751d-bd28-42c5-81be-2f7798def4ea",
+      "device_number": 1,
+      "label": "Line #1"
+     }
+    ],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  },
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "SW-A",
+   "node_definition": "unmanaged_switch",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": -150,
+   "y": 200,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": null,
+    "cpu_limit": null,
+    "cpus": null,
+    "data_volume": null,
+    "ram": null,
+    "image_definition": null,
+    "vnc_key": null,
+    "serial_consoles": [],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  },
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "SW-B",
+   "node_definition": "unmanaged_switch",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": 150,
+   "y": 200,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": null,
+    "cpu_limit": null,
+    "cpus": null,
+    "data_volume": null,
+    "ram": null,
+    "image_definition": null,
+    "vnc_key": null,
+    "serial_consoles": [],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  },
+  {
+   "boot_disk_size": null,
+   "cpu_limit": null,
+   "cpus": null,
+   "data_volume": null,
+   "hide_links": false,
+   "id": "6bdd66aa-bb54-4c45-ba85-258ff1dc5871",
+   "image_definition": null,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "NAT",
+   "node_definition": "external_connector",
+   "parameters": {},
+   "pinned_compute_id": null,
+   "priority": null,
+   "pyats": {
+    "username": null,
+    "password": null,
+    "enable_password": null
+   },
+   "ram": null,
+   "tags": [],
+   "x": 0,
+   "y": -580,
+   "state": "BOOTED",
+   "boot_progress": "Booted",
+   "operational": {
+    "compute_id": "fd898a63-a06b-49a8-9008-946004218889",
+    "boot_disk_size": null,
+    "cpu_limit": null,
+    "cpus": null,
+    "data_volume": null,
+    "ram": null,
+    "image_definition": null,
+    "vnc_key": null,
+    "serial_consoles": [],
+    "resource_pool": null,
+    "iol_app_id": null
+   }
+  }
+ ],
+ "links": [
+  {
+   "id": "cebbc2ea-df33-465a-9a4e-7ca9461f3bf7",
+   "interface_a": "d75a5ba5-1aaa-42b8-8626-150907ca0d17",
+   "interface_b": "9f6291a2-3e54-42b2-a90c-4b3ae5fc3002",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R1-GigabitEthernet0/0<->SW-A-port0",
+   "link_capture_key": "cebbc2ea-df33-465a-9a4e-7ca9461f3bf7",
+   "node_a": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "node_b": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "state": "STARTED"
+  },
+  {
+   "id": "80bed306-7158-44c7-8a7a-54880cf1e0bd",
+   "interface_a": "23a05bec-a7d2-4cb3-a49a-6508b66b3a0e",
+   "interface_b": "3f8433cf-b6a0-4e06-be19-db64eb82723e",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R2-GigabitEthernet0/0<->SW-A-port1",
+   "link_capture_key": "80bed306-7158-44c7-8a7a-54880cf1e0bd",
+   "node_a": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "node_b": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "state": "STARTED"
+  },
+  {
+   "id": "e08d0495-382a-448d-ad72-132bbf7dbe52",
+   "interface_a": "786dac2d-6a7a-449e-ba54-3094cbb7b1d8",
+   "interface_b": "d6e013df-5466-4ac0-8d72-46e3f2f12437",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R1-GigabitEthernet0/1<->SW-B-port0",
+   "link_capture_key": "e08d0495-382a-448d-ad72-132bbf7dbe52",
+   "node_a": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "node_b": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "state": "STARTED"
+  },
+  {
+   "id": "d839b67b-ad83-4600-b54b-6fb3390a4577",
+   "interface_a": "4c27d90f-c8dd-4307-9f44-e49533c52078",
+   "interface_b": "6d0a0752-b220-4040-a6d5-111630115fd1",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R2-GigabitEthernet0/1<->SW-B-port1",
+   "link_capture_key": "d839b67b-ad83-4600-b54b-6fb3390a4577",
+   "node_a": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "node_b": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "state": "STARTED"
+  },
+  {
+   "id": "6fcf0a2d-a5ef-46fd-9955-ba8655e98874",
+   "interface_a": "1c21d93f-68b7-4354-ac34-e0db41516470",
+   "interface_b": "2b5e79e5-c0d7-4996-b89d-5381e79e0d50",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R1-GigabitEthernet0/2<->R3-GigabitEthernet0/0",
+   "link_capture_key": "6fcf0a2d-a5ef-46fd-9955-ba8655e98874",
+   "node_a": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "node_b": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "state": "STARTED"
+  },
+  {
+   "id": "49213bad-0499-4c37-a801-59252aefb771",
+   "interface_a": "609f348c-0ade-4eb4-ae43-4d2d26028b84",
+   "interface_b": "18ab2bbd-8da7-4e31-8908-82115d2cdc96",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R2-GigabitEthernet0/2<->R3-GigabitEthernet0/1",
+   "link_capture_key": "49213bad-0499-4c37-a801-59252aefb771",
+   "node_a": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "node_b": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "state": "STARTED"
+  },
+  {
+   "id": "9d8f57a7-fd8d-4a03-9d9a-356cc03277f5",
+   "interface_a": "b49456d0-93ec-4502-87a2-e7f2f233f490",
+   "interface_b": "5142fc22-29f5-4f76-a6d2-7c56183dc4b5",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R1-GigabitEthernet0/3<->R2-GigabitEthernet0/3",
+   "link_capture_key": "9d8f57a7-fd8d-4a03-9d9a-356cc03277f5",
+   "node_a": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "node_b": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "state": "STARTED"
+  },
+  {
+   "id": "1ffd4d45-b1c3-4401-b0b6-1bd0a3aca05a",
+   "interface_a": "bd67b6db-d36e-4739-bc23-f962a9bdec6c",
+   "interface_b": "1bcc71dc-e560-41a6-9c81-90621f967547",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R3-GigabitEthernet0/2<->R4-GigabitEthernet0/0",
+   "link_capture_key": "1ffd4d45-b1c3-4401-b0b6-1bd0a3aca05a",
+   "node_a": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "node_b": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "state": "STARTED"
+  },
+  {
+   "id": "3af7ff20-9e35-478c-8822-8a9632b75ef1",
+   "interface_a": "4bd60fbd-a8c1-41d6-bd0a-b8528eb05f10",
+   "interface_b": "f60e878b-338d-40fa-bf47-3677be46a8d1",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R4-GigabitEthernet0/1<->NAT-port",
+   "link_capture_key": "3af7ff20-9e35-478c-8822-8a9632b75ef1",
+   "node_a": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "node_b": "6bdd66aa-bb54-4c45-ba85-258ff1dc5871",
+   "state": "STARTED"
+  },
+  {
+   "id": "32c7ac0a-67d4-4b27-a010-5260102d998b",
+   "interface_a": "43e79bad-9a35-4135-ae8e-96335c67eab2",
+   "interface_b": "31d9fd84-61ff-45e3-9fbc-5f7c1a87a7d6",
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "R2-GigabitEthernet0/4<->R4-GigabitEthernet0/2",
+   "link_capture_key": "32c7ac0a-67d4-4b27-a010-5260102d998b",
+   "node_a": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "node_b": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "state": "STARTED"
+  }
+ ],
+ "interfaces": [
+  {
+   "id": "b23610b7-6b6b-4d9b-a398-8c086647617c",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "Loopback0",
+   "mac_address": null,
+   "node": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "slot": null,
+   "type": "loopback",
+   "state": "STARTED",
+   "operational": null
+  },
+  {
+   "id": "d75a5ba5-1aaa-42b8-8626-150907ca0d17",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/0",
+   "mac_address": null,
+   "node": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:93:62:e0",
+    "dst_udp_port": 21033,
+    "src_udp_port": 21032
+   }
+  },
+  {
+   "id": "786dac2d-6a7a-449e-ba54-3094cbb7b1d8",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/1",
+   "mac_address": null,
+   "node": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "slot": 1,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:ca:2c:4d",
+    "dst_udp_port": 21035,
+    "src_udp_port": 21034
+   }
+  },
+  {
+   "id": "1c21d93f-68b7-4354-ac34-e0db41516470",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/2",
+   "mac_address": null,
+   "node": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "slot": 2,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:ca:d5:d2",
+    "dst_udp_port": 21037,
+    "src_udp_port": 21036
+   }
+  },
+  {
+   "id": "b49456d0-93ec-4502-87a2-e7f2f233f490",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/3",
+   "mac_address": null,
+   "node": "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b",
+   "slot": 3,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:de:64:1e",
+    "dst_udp_port": 21039,
+    "src_udp_port": 21038
+   }
+  },
+  {
+   "id": "905e7433-e0fb-454c-984d-9c7f5856c4ab",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "Loopback0",
+   "mac_address": null,
+   "node": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "slot": null,
+   "type": "loopback",
+   "state": "STARTED",
+   "operational": null
+  },
+  {
+   "id": "23a05bec-a7d2-4cb3-a49a-6508b66b3a0e",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/0",
+   "mac_address": null,
+   "node": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:4c:51:97",
+    "dst_udp_port": 21017,
+    "src_udp_port": 21016
+   }
+  },
+  {
+   "id": "4c27d90f-c8dd-4307-9f44-e49533c52078",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/1",
+   "mac_address": null,
+   "node": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "slot": 1,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:1b:8b:ec",
+    "dst_udp_port": 21019,
+    "src_udp_port": 21018
+   }
+  },
+  {
+   "id": "609f348c-0ade-4eb4-ae43-4d2d26028b84",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/2",
+   "mac_address": null,
+   "node": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "slot": 2,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:b8:dd:2a",
+    "dst_udp_port": 21021,
+    "src_udp_port": 21020
+   }
+  },
+  {
+   "id": "5142fc22-29f5-4f76-a6d2-7c56183dc4b5",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/3",
+   "mac_address": null,
+   "node": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "slot": 3,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:b6:0c:0e",
+    "dst_udp_port": 21023,
+    "src_udp_port": 21022
+   }
+  },
+  {
+   "id": "43e79bad-9a35-4135-ae8e-96335c67eab2",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/4",
+   "mac_address": null,
+   "node": "6b98d080-8c17-4d0d-823b-bd099d3308f5",
+   "slot": 4,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:94:11:14",
+    "dst_udp_port": 21025,
+    "src_udp_port": 21024
+   }
+  },
+  {
+   "id": "d827e278-2389-48cc-bf77-c48c0ddfa710",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "Loopback0",
+   "mac_address": null,
+   "node": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "slot": null,
+   "type": "loopback",
+   "state": "STARTED",
+   "operational": null
+  },
+  {
+   "id": "2b5e79e5-c0d7-4996-b89d-5381e79e0d50",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/0",
+   "mac_address": null,
+   "node": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:55:37:b0",
+    "dst_udp_port": 21041,
+    "src_udp_port": 21040
+   }
+  },
+  {
+   "id": "18ab2bbd-8da7-4e31-8908-82115d2cdc96",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/1",
+   "mac_address": null,
+   "node": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "slot": 1,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:df:c1:1e",
+    "dst_udp_port": 21043,
+    "src_udp_port": 21042
+   }
+  },
+  {
+   "id": "bd67b6db-d36e-4739-bc23-f962a9bdec6c",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/2",
+   "mac_address": null,
+   "node": "b7a2ba67-c487-4e60-bfab-e343d5c47059",
+   "slot": 2,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:6d:4d:76",
+    "dst_udp_port": 21045,
+    "src_udp_port": 21044
+   }
+  },
+  {
+   "id": "06f88293-4584-4ba5-ae64-b678c93be3dd",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "Loopback0",
+   "mac_address": null,
+   "node": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "slot": null,
+   "type": "loopback",
+   "state": "STARTED",
+   "operational": null
+  },
+  {
+   "id": "1bcc71dc-e560-41a6-9c81-90621f967547",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/0",
+   "mac_address": null,
+   "node": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:62:c3:61",
+    "dst_udp_port": 21027,
+    "src_udp_port": 21026
+   }
+  },
+  {
+   "id": "4bd60fbd-a8c1-41d6-bd0a-b8528eb05f10",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/1",
+   "mac_address": null,
+   "node": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "slot": 1,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:73:bc:e5",
+    "dst_udp_port": 21029,
+    "src_udp_port": 21028
+   }
+  },
+  {
+   "id": "31d9fd84-61ff-45e3-9fbc-5f7c1a87a7d6",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "GigabitEthernet0/2",
+   "mac_address": null,
+   "node": "fe9372bf-f226-4a35-bd41-0eb65fc114c9",
+   "slot": 2,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": "52:54:00:8d:f3:ae",
+    "dst_udp_port": 21031,
+    "src_udp_port": 21030
+   }
+  },
+  {
+   "id": "9f6291a2-3e54-42b2-a90c-4b3ae5fc3002",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port0",
+   "mac_address": null,
+   "node": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "3f8433cf-b6a0-4e06-be19-db64eb82723e",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port1",
+   "mac_address": null,
+   "node": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "slot": 1,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "cd15768e-8328-4218-b05f-5d4580956b26",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port2",
+   "mac_address": null,
+   "node": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "slot": 2,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "8e57c95c-5339-4eb5-9572-ea7d53642f33",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port3",
+   "mac_address": null,
+   "node": "e1dad7e4-983e-402e-8dad-d733a9145df9",
+   "slot": 3,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "d6e013df-5466-4ac0-8d72-46e3f2f12437",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port0",
+   "mac_address": null,
+   "node": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "6d0a0752-b220-4040-a6d5-111630115fd1",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port1",
+   "mac_address": null,
+   "node": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "slot": 1,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "86896051-f866-42e0-a6ea-c9f74a39aad7",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port2",
+   "mac_address": null,
+   "node": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "slot": 2,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "6aa73a34-979e-4a91-992f-9d95b7a5fd8d",
+   "is_connected": false,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port3",
+   "mac_address": null,
+   "node": "4181f267-9fe2-42d1-a306-5d51d4a8d64f",
+   "slot": 3,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  },
+  {
+   "id": "f60e878b-338d-40fa-bf47-3677be46a8d1",
+   "is_connected": true,
+   "lab_id": "fb0393aa-b6de-45fa-b056-f8607420f84f",
+   "label": "port",
+   "mac_address": null,
+   "node": "6bdd66aa-bb54-4c45-ba85-258ff1dc5871",
+   "slot": 0,
+   "type": "physical",
+   "state": "STARTED",
+   "operational": {
+    "device_name": null,
+    "mac_address": null,
+    "dst_udp_port": null,
+    "src_udp_port": null
+   }
+  }
+ ]
+}

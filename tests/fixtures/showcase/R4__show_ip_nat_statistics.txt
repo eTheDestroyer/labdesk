@@ -1,0 +1,17 @@
+Total active translations: 21 (0 static, 21 dynamic; 21 extended)
+Peak translations: 24, occurred 00:01:44 ago
+Outside interfaces:
+  GigabitEthernet0/1
+Inside interfaces: 
+  GigabitEthernet0/0, GigabitEthernet0/2
+Hits: 72  Misses: 0
+CEF Translated packets: 51, CEF Punted packets: 21
+Expired translations: 3
+Dynamic mappings:
+-- Inside Source
+[Id: 1] access-list NAT-INSIDE interface GigabitEthernet0/1 refcount 21
+
+Total doors: 0
+Appl doors: 0
+Normal doors: 0
+Queued Packets: 0

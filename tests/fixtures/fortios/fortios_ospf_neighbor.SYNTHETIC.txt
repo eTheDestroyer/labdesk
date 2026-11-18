@@ -1,0 +1,6 @@
+# SYNTHETIC SAMPLE - NOT captured from a live device (FortiGate not deployed yet).
+# Hand-written to match FortiOS 7.x CLI formatting; replace with a live capture once FGT runs.
+
+OSPF process 0, VRF root:
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+4.4.4.4           1   Full/ -         00:00:36    10.0.45.1       port2

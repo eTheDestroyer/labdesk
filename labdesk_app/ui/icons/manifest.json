@@ -1,0 +1,194 @@
+{
+ "application-menu": {
+  "16": "breeze/actions/16/application-menu.svg",
+  "22": "breeze/actions/22/application-menu.svg"
+ },
+ "arrow-down": {
+  "16": "breeze/actions/16/go-down.svg",
+  "22": "breeze/actions/22/go-down.svg"
+ },
+ "arrow-left": {
+  "16": "breeze/actions/16/go-previous.svg",
+  "22": "breeze/actions/22/go-previous.svg"
+ },
+ "arrow-right": {
+  "16": "breeze/actions/16/go-next.svg",
+  "22": "breeze/actions/22/go-next.svg"
+ },
+ "arrow-up": {
+  "16": "breeze/actions/16/go-up.svg",
+  "22": "breeze/actions/22/go-up.svg"
+ },
+ "color-management": {
+  "16": "breeze-dark/actions/16/color-management.svg",
+  "22": "breeze-dark/actions/22/color-management.svg"
+ },
+ "configure": {
+  "16": "breeze/actions/16/configure.svg",
+  "22": "breeze/actions/22/configure.svg"
+ },
+ "dialog-error": {
+  "16": "breeze/status/16/data-error.svg",
+  "22": "breeze/status/22/data-error.svg"
+ },
+ "dialog-information": {
+  "16": "breeze/status/16/data-information.svg",
+  "22": "breeze/status/22/data-information.svg"
+ },
+ "dialog-warning": {
+  "16": "breeze/status/16/data-warning.svg",
+  "22": "breeze/status/22/data-warning.svg"
+ },
+ "document-edit": {
+  "16": "breeze/actions/16/document-edit.svg",
+  "22": "breeze/actions/22/document-edit.svg"
+ },
+ "document-export": {
+  "16": "breeze/actions/16/document-export.svg",
+  "22": "breeze/actions/22/document-export.svg"
+ },
+ "document-new": {
+  "16": "breeze/actions/16/document-new.svg",
+  "22": "breeze/actions/22/document-new.svg"
+ },
+ "document-open": {
+  "16": "breeze/actions/16/document-open.svg",
+  "22": "breeze/actions/22/document-open.svg"
+ },
+ "document-properties": {
+  "16": "breeze/actions/16/document-properties.svg",
+  "22": "breeze/actions/22/document-properties.svg"
+ },
+ "document-save-as": {
+  "16": "breeze/actions/16/document-save-as.svg",
+  "22": "breeze/actions/22/document-save-as.svg"
+ },
+ "edit-clear": {
+  "16": "breeze/actions/16/edit-clear.svg",
+  "22": "breeze/actions/22/edit-clear.svg"
+ },
+ "edit-clear-all": {
+  "16": "breeze/actions/16/edit-clear-history.svg",
+  "22": "breeze/actions/22/edit-clear-history.svg"
+ },
+ "edit-copy": {
+  "16": "breeze/actions/16/edit-copy.svg",
+  "22": "breeze/actions/22/edit-copy.svg"
+ },
+ "edit-delete": {
+  "16": "breeze/actions/16/edit-delete.svg",
+  "22": "breeze/actions/22/edit-delete.svg"
+ },
+ "edit-find": {
+  "16": "breeze/actions/16/edit-find.svg",
+  "22": "breeze/actions/22/edit-find.svg"
+ },
+ "edit-rename": {
+  "16": "breeze/actions/16/document-edit.svg",
+  "22": "breeze/actions/22/document-edit.svg"
+ },
+ "folder-open": {
+  "16": "breeze/places/16/folder-open.svg",
+  "22": "breeze/places/22/folder-open.svg"
+ },
+ "go-down": {
+  "16": "breeze/actions/16/go-down.svg",
+  "22": "breeze/actions/22/go-down.svg"
+ },
+ "go-up": {
+  "16": "breeze/actions/16/go-up.svg",
+  "22": "breeze/actions/22/go-up.svg"
+ },
+ "help-about": {
+  "16": "breeze/actions/16/help-about.svg",
+  "22": "breeze/actions/22/help-about.svg"
+ },
+ "help-contents": {
+  "16": "breeze/actions/16/help-contents.svg",
+  "22": "breeze/actions/22/help-contents.svg"
+ },
+ "list-add": {
+  "16": "breeze/actions/16/list-add.svg",
+  "22": "breeze/actions/22/list-add.svg"
+ },
+ "media-playback-start": {
+  "16": "breeze/actions/16/media-playback-start.svg",
+  "22": "breeze/actions/22/media-playback-start.svg"
+ },
+ "media-playback-stop": {
+  "16": "breeze/actions/16/media-playback-stop.svg",
+  "22": "breeze/actions/22/media-playback-stop.svg"
+ },
+ "media-playlist-shuffle": {
+  "16": "breeze/actions/16/media-playlist-shuffle.svg",
+  "22": "breeze/actions/22/media-playlist-shuffle.svg"
+ },
+ "network-connect": {
+  "16": "breeze/actions/16/network-connect.svg",
+  "22": "breeze/actions/22/network-connect.svg"
+ },
+ "network-disconnect": {
+  "16": "breeze/actions/16/network-disconnect.svg",
+  "22": "breeze/actions/22/network-disconnect.svg"
+ },
+ "network-wired": {
+  "16": "breeze/devices/16/network-wired-activated.svg",
+  "22": "breeze/status/22/network-wired-activated.svg"
+ },
+ "network-wireless": {
+  "16": "breeze/devices/16/network-wireless-connected-100.svg",
+  "22": "breeze/status/22/network-wireless-connected-100.svg"
+ },
+ "object-locked": {
+  "16": "breeze/actions/16/object-locked.svg",
+  "22": "breeze/actions/22/object-locked.svg"
+ },
+ "overflow-menu": {
+  "16": "breeze/actions/16/overflow-menu.svg",
+  "22": "breeze/actions/22/overflow-menu.svg"
+ },
+ "system-run": {
+  "16": "breeze/actions/16/system-run.svg",
+  "22": "breeze/actions/22/system-run.svg"
+ },
+ "terminal": {
+  "16": "custom (LabDesk): line terminal glyph for the accent Console button",
+  "22": "custom (LabDesk): line terminal glyph for the accent Console button"
+ },
+ "utilities-terminal": {
+  "16": "breeze-dark/apps/16/utilities-terminal.svg",
+  "22": "breeze-dark/apps/22/utilities-terminal.svg"
+ },
+ "view-hidden": {
+  "16": "breeze/actions/16/view-hidden.svg",
+  "22": "breeze/actions/22/view-hidden.svg"
+ },
+ "view-list-details": {
+  "16": "breeze/actions/16/view-list-details.svg",
+  "22": "breeze/actions/22/view-list-details.svg"
+ },
+ "view-refresh": {
+  "16": "breeze/actions/16/view-refresh.svg",
+  "22": "breeze/actions/22/view-refresh.svg"
+ },
+ "view-visible": {
+  "16": "breeze/actions/16/view-visible.svg",
+  "22": "breeze/actions/22/view-visible.svg"
+ },
+ "window-close": {
+  "16": "breeze/actions/16/window-close.svg",
+  "22": "breeze/actions/22/window-close.svg"
+ },
+ "zoom-fit-best": {
+  "16": "breeze/actions/16/zoom-fit-best.svg",
+  "22": "breeze/actions/22/zoom-fit-best.svg"
+ },
+ "zoom-in": {
+  "16": "breeze/actions/16/zoom-in.svg",
+  "22": "breeze/actions/22/zoom-in.svg"
+ },
+ "zoom-out": {
+  "16": "breeze/actions/16/zoom-out.svg",
+  "22": "breeze/actions/22/zoom-out.svg"
+ }
+}

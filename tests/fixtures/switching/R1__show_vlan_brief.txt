@@ -1,0 +1,3 @@
+show vlan brief
+          ^
+% Invalid input detected at '^' marker.

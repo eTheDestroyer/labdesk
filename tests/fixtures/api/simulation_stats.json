@@ -1,0 +1,164 @@
+{
+ "links": {
+  "cebbc2ea-df33-465a-9a4e-7ca9461f3bf7": {
+   "readbytes": 158504,
+   "readpackets": 1591,
+   "writebytes": 145426,
+   "writepackets": 1377,
+   "drops": 0
+  },
+  "80bed306-7158-44c7-8a7a-54880cf1e0bd": {
+   "readbytes": 164866,
+   "readpackets": 1701,
+   "writebytes": 139124,
+   "writepackets": 1268,
+   "drops": 0
+  },
+  "e08d0495-382a-448d-ad72-132bbf7dbe52": {
+   "readbytes": 259454,
+   "readpackets": 3950,
+   "writebytes": 28574,
+   "writepackets": 102,
+   "drops": 0
+  },
+  "d839b67b-ad83-4600-b54b-6fb3390a4577": {
+   "readbytes": 48014,
+   "readpackets": 426,
+   "writebytes": 240074,
+   "writepackets": 3627,
+   "drops": 0
+  },
+  "6fcf0a2d-a5ef-46fd-9955-ba8655e98874": {
+   "readbytes": 85452,
+   "readpackets": 822,
+   "writebytes": 85986,
+   "writepackets": 820,
+   "drops": 0
+  },
+  "49213bad-0499-4c37-a801-59252aefb771": {
+   "readbytes": 79892,
+   "readpackets": 756,
+   "writebytes": 79994,
+   "writepackets": 752,
+   "drops": 0
+  },
+  "9d8f57a7-fd8d-4a03-9d9a-356cc03277f5": {
+   "readbytes": 79886,
+   "readpackets": 754,
+   "writebytes": 79590,
+   "writepackets": 755,
+   "drops": 0
+  },
+  "1ffd4d45-b1c3-4401-b0b6-1bd0a3aca05a": {
+   "readbytes": 58697,
+   "readpackets": 585,
+   "writebytes": 60605,
+   "writepackets": 588,
+   "drops": 0
+  },
+  "3af7ff20-9e35-478c-8822-8a9632b75ef1": {
+   "readbytes": 52208,
+   "readpackets": 467,
+   "writebytes": 6482,
+   "writepackets": 67,
+   "drops": 0
+  },
+  "32c7ac0a-67d4-4b27-a010-5260102d998b": {
+   "readbytes": 60,
+   "readpackets": 1,
+   "writebytes": 46907,
+   "writepackets": 402,
+   "drops": 0
+  }
+ },
+ "nodes": {
+  "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b": {
+   "cpu_usage": 34.8,
+   "ram_usage": 67.0,
+   "disk_usage": 12316,
+   "block0_wr_bytes": 1646080,
+   "block0_rd_bytes": 306778112,
+   "is_running": true,
+   "cpu_limit": 100,
+   "cpus": 1,
+   "ram": 512,
+   "times": {
+    "QUEUED": 15,
+    "STARTED": 3341,
+    "BOOTED": 3163
+   }
+  },
+  "6b98d080-8c17-4d0d-823b-bd099d3308f5": {
+   "cpu_usage": 34.8,
+   "ram_usage": 69.48,
+   "disk_usage": 12316,
+   "block0_wr_bytes": 1646080,
+   "block0_rd_bytes": 306790400,
+   "is_running": true,
+   "cpu_limit": 100,
+   "cpus": 1,
+   "ram": 512,
+   "times": {
+    "QUEUED": 4,
+    "STARTED": 3352,
+    "BOOTED": 3175
+   }
+  },
+  "b7a2ba67-c487-4e60-bfab-e343d5c47059": {
+   "cpu_usage": 29.97,
+   "ram_usage": 65.69,
+   "disk_usage": 12316,
+   "block0_wr_bytes": 1646080,
+   "block0_rd_bytes": 306775552,
+   "is_running": true,
+   "cpu_limit": 100,
+   "cpus": 1,
+   "ram": 512,
+   "times": {
+    "QUEUED": 41,
+    "STARTED": 3315,
+    "BOOTED": 3138
+   }
+  },
+  "fe9372bf-f226-4a35-bd41-0eb65fc114c9": {
+   "cpu_usage": 39.32,
+   "ram_usage": 70.34,
+   "disk_usage": 12316,
+   "block0_wr_bytes": 1117696,
+   "block0_rd_bytes": 306783744,
+   "is_running": true,
+   "cpu_limit": 100,
+   "cpus": 1,
+   "ram": 512,
+   "times": {
+    "QUEUED": 10,
+    "STARTED": 3346,
+    "BOOTED": 3169
+   }
+  },
+  "e1dad7e4-983e-402e-8dad-d733a9145df9": {
+   "times": {
+    "QUEUED": 1,
+    "STARTED": 3355,
+    "BOOTED": 3350
+   },
+   "is_running": true
+  },
+  "4181f267-9fe2-42d1-a306-5d51d4a8d64f": {
+   "times": {
+    "QUEUED": 1,
+    "STARTED": 3355,
+    "BOOTED": 3350
+   },
+   "is_running": true
+  },
+  "6bdd66aa-bb54-4c45-ba85-258ff1dc5871": {
+   "times": {
+    "QUEUED": 1,
+    "STARTED": 3355,
+    "BOOTED": 3350
+   },
+   "is_running": true
+  }
+ }
+}

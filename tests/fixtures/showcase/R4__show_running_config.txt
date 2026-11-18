@@ -1,0 +1,166 @@
+Building configuration...
+
+Current configuration : 3914 bytes
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R4
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 9 $9$0ChMUeIHud82x7$LzWNpeQGLqUVUuTomv5a4V9xomxF74V6WbA4PZqEgbQ
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username admin privilege 15 secret 9 $9$xFfEcaAr/babdd$Cz4ti0ADoDQ3KE0PTvktVQXcWygDzQYA29N9kv39Amo
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 4.4.4.4 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description eBGP to R3 Gi0/2 (AS 65000)
+ ip address 10.0.34.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description INTERNET via CML NAT (DHCP)
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description BACKUP to R2 Gi0/4 (R2 side admin down)
+ ip address 10.0.24.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router bgp 65004
+ bgp router-id 4.4.4.4
+ bgp log-neighbor-changes
+ neighbor 10.0.34.1 remote-as 65000
+ neighbor 10.0.34.1 description R3-CORE
+ !
+ address-family ipv4
+  network 4.4.4.4 mask 255.255.255.255
+  neighbor 10.0.34.1 activate
+  neighbor 10.0.34.1 default-originate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list NAT-INSIDE interface GigabitEthernet0/1 overload
+!
+ip access-list standard NAT-INSIDE
+ permit 1.1.1.1
+ permit 2.2.2.2
+ permit 3.3.3.3
+ permit 4.4.4.4
+ permit 10.0.0.0 0.255.255.255
+ permit 192.168.10.0 0.0.0.255
+ permit 192.168.20.0 0.0.0.255
+!
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login local
+ transport input telnet ssh
+!
+no scheduler allocate
+!
+end

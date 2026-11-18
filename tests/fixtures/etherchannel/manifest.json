@@ -1,0 +1,1295 @@
+{
+ "healthy__SW1": {
+  "captured": "2026-11-17 19:27:59",
+  "show etherchannel summary": {
+   "file": "healthy__SW1__show_etherchannel_summary.txt",
+   "seconds": 1.62,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "healthy__SW1__show_etherchannel_detail.txt",
+   "seconds": 10.45,
+   "lines": 173
+  },
+  "show lacp neighbor": {
+   "file": "healthy__SW1__show_lacp_neighbor.txt",
+   "seconds": 1.1,
+   "lines": 11
+  },
+  "show lacp internal": {
+   "file": "healthy__SW1__show_lacp_internal.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "healthy__SW1__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "healthy__SW1__show_pagp_neighbor.txt",
+   "seconds": 1.01,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "healthy__SW1__show_pagp_internal.txt",
+   "seconds": 1.21,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "healthy__SW1__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "healthy__SW1__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "healthy__SW1__show_interfaces_port_channel_2.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "healthy__SW1__show_interfaces_trunk.txt",
+   "seconds": 1.11,
+   "lines": 18
+  },
+  "show spanning-tree": {
+   "file": "healthy__SW1__show_spanning_tree.txt",
+   "seconds": 2.82,
+   "lines": 39
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "healthy__SW1__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 6.04,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "healthy__SW1__show_ip_interface_brief.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "healthy__SW1__show_interfaces_status.txt",
+   "seconds": 1.32,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "healthy__SW1__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "healthy__SW1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.91,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "healthy__SW1__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "healthy__SW1__show_spanning_tree_summary.txt",
+   "seconds": 2.11,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "healthy__SW1__show_mac_address_table_count.txt",
+   "seconds": 1.0,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "healthy__SW1__show_mac_address_table_dynamic.txt",
+   "seconds": 1.11,
+   "lines": 12
+  },
+  "show cdp neighbors": {
+   "file": "healthy__SW1__show_cdp_neighbors.txt",
+   "seconds": 1.41,
+   "lines": 11
+  },
+  "show interfaces description": {
+   "file": "healthy__SW1__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "healthy__SW1__show_ip_route_connected.txt",
+   "seconds": 1.61,
+   "lines": 14
+  }
+ },
+ "healthy__SW2": {
+  "captured": "2026-11-17 19:28:50",
+  "show etherchannel summary": {
+   "file": "healthy__SW2__show_etherchannel_summary.txt",
+   "seconds": 1.62,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "healthy__SW2__show_etherchannel_detail.txt",
+   "seconds": 10.57,
+   "lines": 173
+  },
+  "show lacp neighbor": {
+   "file": "healthy__SW2__show_lacp_neighbor.txt",
+   "seconds": 1.11,
+   "lines": 11
+  },
+  "show lacp internal": {
+   "file": "healthy__SW2__show_lacp_internal.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "healthy__SW2__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "healthy__SW2__show_pagp_neighbor.txt",
+   "seconds": 1.01,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "healthy__SW2__show_pagp_internal.txt",
+   "seconds": 1.21,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "healthy__SW2__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "healthy__SW2__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "healthy__SW2__show_interfaces_port_channel_2.txt",
+   "seconds": 2.22,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "healthy__SW2__show_interfaces_trunk.txt",
+   "seconds": 1.01,
+   "lines": 14
+  },
+  "show spanning-tree": {
+   "file": "healthy__SW2__show_spanning_tree.txt",
+   "seconds": 2.72,
+   "lines": 39
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "healthy__SW2__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.63,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "healthy__SW2__show_ip_interface_brief.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "healthy__SW2__show_interfaces_status.txt",
+   "seconds": 1.31,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "healthy__SW2__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "healthy__SW2__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "healthy__SW2__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.31,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "healthy__SW2__show_spanning_tree_summary.txt",
+   "seconds": 2.01,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "healthy__SW2__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "healthy__SW2__show_mac_address_table_dynamic.txt",
+   "seconds": 1.31,
+   "lines": 15
+  },
+  "show cdp neighbors": {
+   "file": "healthy__SW2__show_cdp_neighbors.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show interfaces description": {
+   "file": "healthy__SW2__show_interfaces_description.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "healthy__SW2__show_ip_route_connected.txt",
+   "seconds": 1.61,
+   "lines": 14
+  }
+ },
+ "partial__SW1": {
+  "captured": "2026-11-17 19:32:03",
+  "show etherchannel summary": {
+   "file": "partial__SW1__show_etherchannel_summary.txt",
+   "seconds": 1.62,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "partial__SW1__show_etherchannel_detail.txt",
+   "seconds": 10.37,
+   "lines": 173
+  },
+  "show lacp neighbor": {
+   "file": "partial__SW1__show_lacp_neighbor.txt",
+   "seconds": 1.12,
+   "lines": 11
+  },
+  "show lacp internal": {
+   "file": "partial__SW1__show_lacp_internal.txt",
+   "seconds": 1.0,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "partial__SW1__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "partial__SW1__show_pagp_neighbor.txt",
+   "seconds": 0.91,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "partial__SW1__show_pagp_internal.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "partial__SW1__show_etherchannel_load_balance.txt",
+   "seconds": 0.7,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "partial__SW1__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "partial__SW1__show_interfaces_port_channel_2.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "partial__SW1__show_interfaces_trunk.txt",
+   "seconds": 1.2,
+   "lines": 18
+  },
+  "show spanning-tree": {
+   "file": "partial__SW1__show_spanning_tree.txt",
+   "seconds": 2.72,
+   "lines": 39
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "partial__SW1__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.53,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "partial__SW1__show_ip_interface_brief.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "partial__SW1__show_interfaces_status.txt",
+   "seconds": 1.31,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "partial__SW1__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "partial__SW1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "partial__SW1__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "partial__SW1__show_spanning_tree_summary.txt",
+   "seconds": 2.02,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "partial__SW1__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "partial__SW1__show_mac_address_table_dynamic.txt",
+   "seconds": 0.91,
+   "lines": 10
+  },
+  "show cdp neighbors": {
+   "file": "partial__SW1__show_cdp_neighbors.txt",
+   "seconds": 1.31,
+   "lines": 10
+  },
+  "show interfaces description": {
+   "file": "partial__SW1__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "partial__SW1__show_ip_route_connected.txt",
+   "seconds": 1.51,
+   "lines": 14
+  }
+ },
+ "partial__SW2": {
+  "captured": "2026-11-17 19:32:53",
+  "show etherchannel summary": {
+   "file": "partial__SW2__show_etherchannel_summary.txt",
+   "seconds": 1.61,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "partial__SW2__show_etherchannel_detail.txt",
+   "seconds": 10.07,
+   "lines": 167
+  },
+  "show lacp neighbor": {
+   "file": "partial__SW2__show_lacp_neighbor.txt",
+   "seconds": 1.11,
+   "lines": 11
+  },
+  "show lacp internal": {
+   "file": "partial__SW2__show_lacp_internal.txt",
+   "seconds": 1.0,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "partial__SW2__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "partial__SW2__show_pagp_neighbor.txt",
+   "seconds": 1.01,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "partial__SW2__show_pagp_internal.txt",
+   "seconds": 1.21,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "partial__SW2__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "partial__SW2__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "partial__SW2__show_interfaces_port_channel_2.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "partial__SW2__show_interfaces_trunk.txt",
+   "seconds": 1.01,
+   "lines": 14
+  },
+  "show spanning-tree": {
+   "file": "partial__SW2__show_spanning_tree.txt",
+   "seconds": 2.72,
+   "lines": 39
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "partial__SW2__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.83,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "partial__SW2__show_ip_interface_brief.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "partial__SW2__show_interfaces_status.txt",
+   "seconds": 1.31,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "partial__SW2__show_vlan_brief.txt",
+   "seconds": 1.0,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "partial__SW2__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "partial__SW2__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.31,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "partial__SW2__show_spanning_tree_summary.txt",
+   "seconds": 1.91,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "partial__SW2__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "partial__SW2__show_mac_address_table_dynamic.txt",
+   "seconds": 0.9,
+   "lines": 9
+  },
+  "show cdp neighbors": {
+   "file": "partial__SW2__show_cdp_neighbors.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show interfaces description": {
+   "file": "partial__SW2__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "partial__SW2__show_ip_route_connected.txt",
+   "seconds": 1.61,
+   "lines": 14
+  }
+ },
+ "fail_on__SW1": {
+  "captured": "2026-11-17 19:38:41",
+  "show etherchannel summary": {
+   "file": "fail_on__SW1__show_etherchannel_summary.txt",
+   "seconds": 1.61,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "fail_on__SW1__show_etherchannel_detail.txt",
+   "seconds": 9.47,
+   "lines": 155
+  },
+  "show lacp neighbor": {
+   "file": "fail_on__SW1__show_lacp_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp internal": {
+   "file": "fail_on__SW1__show_lacp_internal.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "fail_on__SW1__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "fail_on__SW1__show_pagp_neighbor.txt",
+   "seconds": 0.91,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "fail_on__SW1__show_pagp_internal.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "fail_on__SW1__show_etherchannel_load_balance.txt",
+   "seconds": 0.81,
+   "lines": 9
+  },
+  "show interfaces port-channel 1": {
+   "file": "fail_on__SW1__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "fail_on__SW1__show_interfaces_port_channel_2.txt",
+   "seconds": 2.42,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "fail_on__SW1__show_interfaces_trunk.txt",
+   "seconds": 1.0,
+   "lines": 14
+  },
+  "show spanning-tree": {
+   "file": "fail_on__SW1__show_spanning_tree.txt",
+   "seconds": 2.82,
+   "lines": 39
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "fail_on__SW1__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.83,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "fail_on__SW1__show_ip_interface_brief.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "fail_on__SW1__show_interfaces_status.txt",
+   "seconds": 1.21,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "fail_on__SW1__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "fail_on__SW1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.8,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "fail_on__SW1__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.22,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "fail_on__SW1__show_spanning_tree_summary.txt",
+   "seconds": 2.01,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "fail_on__SW1__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "fail_on__SW1__show_mac_address_table_dynamic.txt",
+   "seconds": 1.21,
+   "lines": 14
+  },
+  "show cdp neighbors": {
+   "file": "fail_on__SW1__show_cdp_neighbors.txt",
+   "seconds": 1.21,
+   "lines": 9
+  },
+  "show interfaces description": {
+   "file": "fail_on__SW1__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "fail_on__SW1__show_ip_route_connected.txt",
+   "seconds": 1.61,
+   "lines": 14
+  }
+ },
+ "fail_on__SW2": {
+  "captured": "2026-11-17 19:39:29",
+  "show etherchannel summary": {
+   "file": "fail_on__SW2__show_etherchannel_summary.txt",
+   "seconds": 1.61,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "fail_on__SW2__show_etherchannel_detail.txt",
+   "seconds": 8.27,
+   "lines": 145
+  },
+  "show lacp neighbor": {
+   "file": "fail_on__SW2__show_lacp_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp internal": {
+   "file": "fail_on__SW2__show_lacp_internal.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp sys-id": {
+   "file": "fail_on__SW2__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "fail_on__SW2__show_pagp_neighbor.txt",
+   "seconds": 1.01,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "fail_on__SW2__show_pagp_internal.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "fail_on__SW2__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "fail_on__SW2__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "fail_on__SW2__show_interfaces_port_channel_2.txt",
+   "seconds": 2.31,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "fail_on__SW2__show_interfaces_trunk.txt",
+   "seconds": 1.03,
+   "lines": 14
+  },
+  "show spanning-tree": {
+   "file": "fail_on__SW2__show_spanning_tree.txt",
+   "seconds": 265.27,
+   "lines": 39
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "fail_on__SW2__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.34,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "fail_on__SW2__show_ip_interface_brief.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "fail_on__SW2__show_interfaces_status.txt",
+   "seconds": 1.31,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "fail_on__SW2__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "fail_on__SW2__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "fail_on__SW2__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "fail_on__SW2__show_spanning_tree_summary.txt",
+   "seconds": 1.92,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "fail_on__SW2__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "fail_on__SW2__show_mac_address_table_dynamic.txt",
+   "seconds": 0.91,
+   "lines": 10
+  },
+  "show cdp neighbors": {
+   "file": "fail_on__SW2__show_cdp_neighbors.txt",
+   "seconds": 1.0,
+   "lines": 8
+  },
+  "show interfaces description": {
+   "file": "fail_on__SW2__show_interfaces_description.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "fail_on__SW2__show_ip_route_connected.txt",
+   "seconds": 1.51,
+   "lines": 14
+  }
+ },
+ "fail_proto__SW1": {
+  "captured": "2026-11-17 19:45:40",
+  "show etherchannel summary": {
+   "file": "fail_proto__SW1__show_etherchannel_summary.txt",
+   "seconds": 1.61,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "fail_proto__SW1__show_etherchannel_detail.txt",
+   "seconds": 9.48,
+   "lines": 155
+  },
+  "show lacp neighbor": {
+   "file": "fail_proto__SW1__show_lacp_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp internal": {
+   "file": "fail_proto__SW1__show_lacp_internal.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "fail_proto__SW1__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "fail_proto__SW1__show_pagp_neighbor.txt",
+   "seconds": 0.91,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "fail_proto__SW1__show_pagp_internal.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "fail_proto__SW1__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "fail_proto__SW1__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "fail_proto__SW1__show_interfaces_port_channel_2.txt",
+   "seconds": 2.21,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "fail_proto__SW1__show_interfaces_trunk.txt",
+   "seconds": 1.01,
+   "lines": 14
+  },
+  "show spanning-tree": {
+   "file": "fail_proto__SW1__show_spanning_tree.txt",
+   "seconds": 2.61,
+   "lines": 37
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "fail_proto__SW1__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.94,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "fail_proto__SW1__show_ip_interface_brief.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "fail_proto__SW1__show_interfaces_status.txt",
+   "seconds": 1.31,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "fail_proto__SW1__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "fail_proto__SW1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "fail_proto__SW1__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "fail_proto__SW1__show_spanning_tree_summary.txt",
+   "seconds": 2.01,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "fail_proto__SW1__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "fail_proto__SW1__show_mac_address_table_dynamic.txt",
+   "seconds": 1.21,
+   "lines": 13
+  },
+  "show cdp neighbors": {
+   "file": "fail_proto__SW1__show_cdp_neighbors.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show interfaces description": {
+   "file": "fail_proto__SW1__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "fail_proto__SW1__show_ip_route_connected.txt",
+   "seconds": 1.51,
+   "lines": 14
+  }
+ },
+ "fail_proto__SW2": {
+  "captured": "2026-11-17 19:46:28",
+  "show etherchannel summary": {
+   "file": "fail_proto__SW2__show_etherchannel_summary.txt",
+   "seconds": 1.62,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "fail_proto__SW2__show_etherchannel_detail.txt",
+   "seconds": 9.88,
+   "lines": 160
+  },
+  "show lacp neighbor": {
+   "file": "fail_proto__SW2__show_lacp_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp internal": {
+   "file": "fail_proto__SW2__show_lacp_internal.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp sys-id": {
+   "file": "fail_proto__SW2__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "fail_proto__SW2__show_pagp_neighbor.txt",
+   "seconds": 1.01,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "fail_proto__SW2__show_pagp_internal.txt",
+   "seconds": 1.61,
+   "lines": 15
+  },
+  "show etherchannel load-balance": {
+   "file": "fail_proto__SW2__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "fail_proto__SW2__show_interfaces_port_channel_1.txt",
+   "seconds": 2.31,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "fail_proto__SW2__show_interfaces_port_channel_2.txt",
+   "seconds": 2.31,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "fail_proto__SW2__show_interfaces_trunk.txt",
+   "seconds": 1.21,
+   "lines": 18
+  },
+  "show spanning-tree": {
+   "file": "fail_proto__SW2__show_spanning_tree.txt",
+   "seconds": 2.82,
+   "lines": 41
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "fail_proto__SW2__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.74,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "fail_proto__SW2__show_ip_interface_brief.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "fail_proto__SW2__show_interfaces_status.txt",
+   "seconds": 1.21,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "fail_proto__SW2__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "fail_proto__SW2__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "fail_proto__SW2__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "fail_proto__SW2__show_spanning_tree_summary.txt",
+   "seconds": 2.12,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "fail_proto__SW2__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "fail_proto__SW2__show_mac_address_table_dynamic.txt",
+   "seconds": 1.01,
+   "lines": 11
+  },
+  "show cdp neighbors": {
+   "file": "fail_proto__SW2__show_cdp_neighbors.txt",
+   "seconds": 0.91,
+   "lines": 8
+  },
+  "show interfaces description": {
+   "file": "fail_proto__SW2__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "fail_proto__SW2__show_ip_route_connected.txt",
+   "seconds": 1.61,
+   "lines": 14
+  }
+ },
+ "fail_passive__SW1": {
+  "captured": "2026-11-17 19:50:30",
+  "show etherchannel summary": {
+   "file": "fail_passive__SW1__show_etherchannel_summary.txt",
+   "seconds": 1.62,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "fail_passive__SW1__show_etherchannel_detail.txt",
+   "seconds": 9.36,
+   "lines": 155
+  },
+  "show lacp neighbor": {
+   "file": "fail_passive__SW1__show_lacp_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp internal": {
+   "file": "fail_passive__SW1__show_lacp_internal.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "fail_passive__SW1__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "fail_passive__SW1__show_pagp_neighbor.txt",
+   "seconds": 1.01,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "fail_passive__SW1__show_pagp_internal.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "fail_passive__SW1__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "fail_passive__SW1__show_interfaces_port_channel_1.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "fail_passive__SW1__show_interfaces_port_channel_2.txt",
+   "seconds": 2.31,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "fail_passive__SW1__show_interfaces_trunk.txt",
+   "seconds": 1.01,
+   "lines": 14
+  },
+  "show spanning-tree": {
+   "file": "fail_passive__SW1__show_spanning_tree.txt",
+   "seconds": 2.51,
+   "lines": 37
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "fail_passive__SW1__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 6.04,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "fail_passive__SW1__show_ip_interface_brief.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "fail_passive__SW1__show_interfaces_status.txt",
+   "seconds": 1.21,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "fail_passive__SW1__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "fail_passive__SW1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "fail_passive__SW1__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "fail_passive__SW1__show_spanning_tree_summary.txt",
+   "seconds": 2.02,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "fail_passive__SW1__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "fail_passive__SW1__show_mac_address_table_dynamic.txt",
+   "seconds": 1.01,
+   "lines": 11
+  },
+  "show cdp neighbors": {
+   "file": "fail_passive__SW1__show_cdp_neighbors.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show interfaces description": {
+   "file": "fail_passive__SW1__show_interfaces_description.txt",
+   "seconds": 1.61,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "fail_passive__SW1__show_ip_route_connected.txt",
+   "seconds": 1.61,
+   "lines": 14
+  }
+ },
+ "fail_passive__SW2": {
+  "captured": "2026-11-17 19:51:18",
+  "show etherchannel summary": {
+   "file": "fail_passive__SW2__show_etherchannel_summary.txt",
+   "seconds": 1.52,
+   "lines": 23
+  },
+  "show etherchannel detail": {
+   "file": "fail_passive__SW2__show_etherchannel_detail.txt",
+   "seconds": 9.26,
+   "lines": 155
+  },
+  "show lacp neighbor": {
+   "file": "fail_passive__SW2__show_lacp_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show lacp internal": {
+   "file": "fail_passive__SW2__show_lacp_internal.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show lacp sys-id": {
+   "file": "fail_passive__SW2__show_lacp_sys_id.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show pagp neighbor": {
+   "file": "fail_passive__SW2__show_pagp_neighbor.txt",
+   "seconds": 0.91,
+   "lines": 7
+  },
+  "show pagp internal": {
+   "file": "fail_passive__SW2__show_pagp_internal.txt",
+   "seconds": 1.11,
+   "lines": 9
+  },
+  "show etherchannel load-balance": {
+   "file": "fail_passive__SW2__show_etherchannel_load_balance.txt",
+   "seconds": 0.6,
+   "lines": 7
+  },
+  "show interfaces port-channel 1": {
+   "file": "fail_passive__SW2__show_interfaces_port_channel_1.txt",
+   "seconds": 2.31,
+   "lines": 25
+  },
+  "show interfaces port-channel 2": {
+   "file": "fail_passive__SW2__show_interfaces_port_channel_2.txt",
+   "seconds": 2.32,
+   "lines": 25
+  },
+  "show interfaces trunk": {
+   "file": "fail_passive__SW2__show_interfaces_trunk.txt",
+   "seconds": 0.81,
+   "lines": 10
+  },
+  "show spanning-tree": {
+   "file": "fail_passive__SW2__show_spanning_tree.txt",
+   "seconds": 2.52,
+   "lines": 37
+  },
+  "show running-config | section Port-channel|channel-group": {
+   "file": "fail_passive__SW2__show_running_config_section_Port_channelchannel_group.txt",
+   "seconds": 5.63,
+   "lines": 15
+  },
+  "show ip interface brief": {
+   "file": "fail_passive__SW2__show_ip_interface_brief.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show interfaces status": {
+   "file": "fail_passive__SW2__show_interfaces_status.txt",
+   "seconds": 1.31,
+   "lines": 8
+  },
+  "show vlan brief": {
+   "file": "fail_passive__SW2__show_vlan_brief.txt",
+   "seconds": 1.01,
+   "lines": 8
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "fail_passive__SW2__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.8,
+   "lines": 5
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "fail_passive__SW2__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.21,
+   "lines": 10
+  },
+  "show spanning-tree summary": {
+   "file": "fail_passive__SW2__show_spanning_tree_summary.txt",
+   "seconds": 2.01,
+   "lines": 19
+  },
+  "show mac address-table count": {
+   "file": "fail_passive__SW2__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19
+  },
+  "show mac address-table dynamic": {
+   "file": "fail_passive__SW2__show_mac_address_table_dynamic.txt",
+   "seconds": 1.01,
+   "lines": 11
+  },
+  "show cdp neighbors": {
+   "file": "fail_passive__SW2__show_cdp_neighbors.txt",
+   "seconds": 1.0,
+   "lines": 8
+  },
+  "show interfaces description": {
+   "file": "fail_passive__SW2__show_interfaces_description.txt",
+   "seconds": 1.51,
+   "lines": 9
+  },
+  "show ip route connected": {
+   "file": "fail_passive__SW2__show_ip_route_connected.txt",
+   "seconds": 1.51,
+   "lines": 14
+  }
+ },
+ "healthy__R1": {
+  "captured": "2026-11-17 20:08:54",
+  "show ip interface brief": {
+   "file": "healthy__R1__show_ip_interface_brief.txt",
+   "seconds": 1.21,
+   "lines": 6
+  },
+  "show ip ospf interface brief": {
+   "file": "healthy__R1__show_ip_ospf_interface_brief.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show ip ospf neighbor": {
+   "file": "healthy__R1__show_ip_ospf_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show standby brief": {
+   "file": "healthy__R1__show_standby_brief.txt",
+   "seconds": 0.2,
+   "lines": 0
+  },
+  "show vrrp brief": {
+   "file": "healthy__R1__show_vrrp_brief.txt",
+   "seconds": 0.3,
+   "lines": 0
+  },
+  "show ip bgp summary": {
+   "file": "healthy__R1__show_ip_bgp_summary.txt",
+   "seconds": 0.2,
+   "lines": 1
+  },
+  "show ip route 0.0.0.0": {
+   "file": "healthy__R1__show_ip_route_0_0_0_0.txt",
+   "seconds": 0.5,
+   "lines": 4
+  },
+  "show ip cef 0.0.0.0/0": {
+   "file": "healthy__R1__show_ip_cef_0_0_0_0_0.txt",
+   "seconds": 0.3,
+   "lines": 1
+  },
+  "show ip interface | include line protocol|Internet address|Secondary address|unnumbered|determined by|negotiated|processing disabled": {
+   "file": "healthy__R1__show_ip_interface_include_line_protocolInternet_addressSecondary_addressunnumbereddetermined_bynegotiatedprocessing_disabled.txt",
+   "seconds": 1.61,
+   "lines": 14
+  },
+  "show interfaces description": {
+   "file": "healthy__R1__show_interfaces_description.txt",
+   "seconds": 1.11,
+   "lines": 6
+  },
+  "show ip protocols": {
+   "file": "healthy__R1__show_ip_protocols.txt",
+   "seconds": 0.91,
+   "lines": 12
+  },
+  "show ip route connected": {
+   "file": "healthy__R1__show_ip_route_connected.txt",
+   "seconds": 2.32,
+   "lines": 20
+  }
+ }
+}

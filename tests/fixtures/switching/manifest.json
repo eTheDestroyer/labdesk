@@ -1,0 +1,290 @@
+{
+ "SW1": {
+  "show vlan brief": {
+   "file": "SW1__show_vlan_brief.txt",
+   "seconds": 0.91,
+   "lines": 8,
+   "mode": ">"
+  },
+  "show interfaces trunk": {
+   "file": "SW1__show_interfaces_trunk.txt",
+   "seconds": 1.11,
+   "lines": 18,
+   "mode": ">"
+  },
+  "show interfaces status": {
+   "file": "SW1__show_interfaces_status.txt",
+   "seconds": 0.7,
+   "lines": 4,
+   "mode": ">"
+  },
+  "show spanning-tree": {
+   "file": "SW1__show_spanning_tree.txt",
+   "seconds": 2.62,
+   "lines": 39,
+   "mode": ">"
+  },
+  "show spanning-tree summary": {
+   "file": "SW1__show_spanning_tree_summary.txt",
+   "seconds": 1.91,
+   "lines": 19,
+   "mode": ">"
+  },
+  "show mac address-table count": {
+   "file": "SW1__show_mac_address_table_count.txt",
+   "seconds": 0.91,
+   "lines": 19,
+   "mode": ">"
+  },
+  "show mac address-table dynamic": {
+   "file": "SW1__show_mac_address_table_dynamic.txt",
+   "seconds": 0.71,
+   "lines": 7,
+   "mode": ">"
+  },
+  "show ip interface brief": {
+   "file": "SW1__show_ip_interface_brief.txt",
+   "seconds": 0.91,
+   "lines": 5,
+   "mode": ">"
+  },
+  "show cdp neighbors": {
+   "file": "SW1__show_cdp_neighbors.txt",
+   "seconds": 1.0,
+   "lines": 9,
+   "mode": ">"
+  },
+  "show etherchannel summary": {
+   "file": "SW1__show_etherchannel_summary.txt",
+   "seconds": 1.31,
+   "lines": 21,
+   "mode": ">"
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "SW1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.71,
+   "lines": 5,
+   "mode": ">"
+  },
+  "show ip route connected": {
+   "file": "SW1__show_ip_route_connected.txt",
+   "seconds": 1.51,
+   "lines": 14,
+   "mode": ">"
+  },
+  "show interfaces description": {
+   "file": "SW1__show_interfaces_description.txt",
+   "seconds": 0.91,
+   "lines": 5,
+   "mode": ">"
+  }
+ },
+ "SW2": {
+  "show vlan brief": {
+   "file": "SW2__show_vlan_brief.txt",
+   "seconds": 0.91,
+   "lines": 8,
+   "mode": ">"
+  },
+  "show interfaces trunk": {
+   "file": "SW2__show_interfaces_trunk.txt",
+   "seconds": 0.91,
+   "lines": 14,
+   "mode": ">"
+  },
+  "show interfaces status": {
+   "file": "SW2__show_interfaces_status.txt",
+   "seconds": 0.8,
+   "lines": 4,
+   "mode": ">"
+  },
+  "show spanning-tree": {
+   "file": "SW2__show_spanning_tree.txt",
+   "seconds": 2.52,
+   "lines": 39,
+   "mode": ">"
+  },
+  "show spanning-tree summary": {
+   "file": "SW2__show_spanning_tree_summary.txt",
+   "seconds": 1.91,
+   "lines": 19,
+   "mode": ">"
+  },
+  "show mac address-table count": {
+   "file": "SW2__show_mac_address_table_count.txt",
+   "seconds": 1.01,
+   "lines": 19,
+   "mode": ">"
+  },
+  "show mac address-table dynamic": {
+   "file": "SW2__show_mac_address_table_dynamic.txt",
+   "seconds": 0.81,
+   "lines": 9,
+   "mode": ">"
+  },
+  "show ip interface brief": {
+   "file": "SW2__show_ip_interface_brief.txt",
+   "seconds": 0.91,
+   "lines": 5,
+   "mode": ">"
+  },
+  "show cdp neighbors": {
+   "file": "SW2__show_cdp_neighbors.txt",
+   "seconds": 1.01,
+   "lines": 8,
+   "mode": ">"
+  },
+  "show etherchannel summary": {
+   "file": "SW2__show_etherchannel_summary.txt",
+   "seconds": 1.31,
+   "lines": 21,
+   "mode": ">"
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "SW2__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.81,
+   "lines": 5,
+   "mode": ">"
+  },
+  "show ip route connected": {
+   "file": "SW2__show_ip_route_connected.txt",
+   "seconds": 1.51,
+   "lines": 14,
+   "mode": ">"
+  },
+  "show interfaces description": {
+   "file": "SW2__show_interfaces_description.txt",
+   "seconds": 0.81,
+   "lines": 5,
+   "mode": ">"
+  }
+ },
+ "R1": {
+  "show vlan brief": {
+   "file": "R1__show_vlan_brief.txt",
+   "seconds": 0.3,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show interfaces trunk": {
+   "file": "R1__show_interfaces_trunk.txt",
+   "seconds": 0.3,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show interfaces status": {
+   "file": "R1__show_interfaces_status.txt",
+   "seconds": 0.4,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show spanning-tree": {
+   "file": "R1__show_spanning_tree.txt",
+   "seconds": 0.3,
+   "lines": 1,
+   "mode": ">"
+  },
+  "show spanning-tree summary": {
+   "file": "R1__show_spanning_tree_summary.txt",
+   "seconds": 0.3,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show mac address-table count": {
+   "file": "R1__show_mac_address_table_count.txt",
+   "seconds": 0.4,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show mac address-table dynamic": {
+   "file": "R1__show_mac_address_table_dynamic.txt",
+   "seconds": 0.4,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show ip interface brief": {
+   "file": "R1__show_ip_interface_brief.txt",
+   "seconds": 1.21,
+   "lines": 6,
+   "mode": ">"
+  },
+  "show cdp neighbors": {
+   "file": "R1__show_cdp_neighbors.txt",
+   "seconds": 0.81,
+   "lines": 7,
+   "mode": ">"
+  },
+  "show etherchannel summary": {
+   "file": "R1__show_etherchannel_summary.txt",
+   "seconds": 0.3,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show spanning-tree detail | include ^ VLAN|occurr|from": {
+   "file": "R1__show_spanning_tree_detail_include_^_VLANoccurrfrom.txt",
+   "seconds": 0.51,
+   "lines": 3,
+   "mode": ">"
+  },
+  "show ip route connected": {
+   "file": "R1__show_ip_route_connected.txt",
+   "seconds": 2.01,
+   "lines": 17,
+   "mode": ">"
+  },
+  "show interfaces description": {
+   "file": "R1__show_interfaces_description.txt",
+   "seconds": 1.01,
+   "lines": 6,
+   "mode": ">"
+  },
+  "show ip ospf interface brief": {
+   "file": "R1__show_ip_ospf_interface_brief.txt",
+   "seconds": 0.2,
+   "lines": 0,
+   "mode": ">"
+  },
+  "show ip ospf neighbor": {
+   "file": "R1__show_ip_ospf_neighbor.txt",
+   "seconds": 0.2,
+   "lines": 0,
+   "mode": ">"
+  },
+  "show standby brief": {
+   "file": "R1__show_standby_brief.txt",
+   "seconds": 0.2,
+   "lines": 0,
+   "mode": ">"
+  },
+  "show vrrp brief": {
+   "file": "R1__show_vrrp_brief.txt",
+   "seconds": 0.3,
+   "lines": 0,
+   "mode": ">"
+  },
+  "show ip bgp summary": {
+   "file": "R1__show_ip_bgp_summary.txt",
+   "seconds": 0.2,
+   "lines": 1,
+   "mode": ">"
+  },
+  "show ip route 0.0.0.0": {
+   "file": "R1__show_ip_route_0_0_0_0.txt",
+   "seconds": 0.2,
+   "lines": 0,
+   "mode": ">"
+  },
+  "show ip cef 0.0.0.0/0": {
+   "file": "R1__show_ip_cef_0_0_0_0_0.txt",
+   "seconds": 0.21,
+   "lines": 1,
+   "mode": ">"
+  },
+  "show ip protocols": {
+   "file": "R1__show_ip_protocols.txt",
+   "seconds": 0.91,
+   "lines": 12,
+   "mode": ">"
+  }
+ }
+}

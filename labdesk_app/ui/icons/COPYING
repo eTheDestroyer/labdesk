@@ -1,0 +1,9 @@
+The *.svg icons in this directory (except activity-*.svg) are copied unmodified from the KDE
+Breeze icon theme (breeze-icons, https://invent.kde.org/frameworks/breeze-icons),
+Copyright 2014 Uri Herrera <uri_herrera@nitrux.in> and the KDE Visual Design Group.
+They are licensed under the GNU Lesser General Public License, version 3 or (at your option)
+any later version (LGPL-3+); see /usr/share/common-licenses/LGPL-3 or
+https://www.gnu.org/licenses/lgpl-3.0.html.  manifest.json lists the source path of each one.
+LabDesk recolours them at runtime (the ColorScheme-Text colour) to match its theme.
+
+activity-16.svg / activity-22.svg are LabDesk's own (same licence as LabDesk).

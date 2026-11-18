@@ -1,0 +1,11 @@
+inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+A V Destination        P Prf   Metric 1   Metric 2  Next hop        AS path
+* ? 3.3.3.3/32         O  10          2            >10.0.34.1
+* ? 10.0.13.0/30       O  10          2            >10.0.34.1
+* ? 10.0.23.0/30       O  10          2            >10.0.34.1
+* ? 192.168.10.0/24    O  10          3            >10.0.34.1
+* ? 224.0.0.5/32       O  10          1             MultiRecv
+
+mgmt_junos.inet.0: 3 destinations, 3 routes (3 active, 0 holddown, 0 hidden)

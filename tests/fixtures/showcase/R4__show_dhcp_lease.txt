@@ -1,0 +1,11 @@
+Temp IP addr: 192.168.255.14  for peer on Interface: GigabitEthernet0/1
+Temp  sub net mask: 255.255.255.0
+   DHCP Lease server: 192.168.255.1, state: 5 Bound
+   DHCP transaction id: D6A
+   Lease: 3600 secs,  Renewal: 1800 secs,  Rebind: 3150 secs
+Temp default-gateway addr: 192.168.255.1
+   Next timer fires after: 00:24:55
+   Retry count: 0   Client-ID: cisco-5254.0073.bce5-Gi0/1
+   Client-ID hex dump: 636973636F2D353235342E303037332E
+                       626365352D4769302F31
+   Hostname: R4

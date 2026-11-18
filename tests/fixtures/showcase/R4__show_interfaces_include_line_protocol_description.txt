@@ -1,0 +1,8 @@
+GigabitEthernet0/0 is up, line protocol is up 
+  Description: eBGP to R3 Gi0/2 (AS 65000)
+GigabitEthernet0/1 is up, line protocol is up 
+  Description: INTERNET via CML NAT (DHCP)
+GigabitEthernet0/2 is up, line protocol is up 
+  Description: BACKUP to R2 Gi0/4 (R2 side admin down)
+Loopback0 is up, line protocol is up 
+NVI0 is up, line protocol is up

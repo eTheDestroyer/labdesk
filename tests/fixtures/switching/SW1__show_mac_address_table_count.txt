@@ -1,0 +1,19 @@
+Mac Entries for Vlan 1:
+---------------------------
+Dynamic Address Count  : 0
+Static  Address Count  : 0
+Total Mac Addresses    : 0
+
+Mac Entries for Vlan 10:
+---------------------------
+Dynamic Address Count  : 1
+Static  Address Count  : 0
+Total Mac Addresses    : 1
+
+Mac Entries for Vlan 20:
+---------------------------
+Dynamic Address Count  : 1
+Static  Address Count  : 0
+Total Mac Addresses    : 1
+
+Total Mac Address Space Available: 78394504

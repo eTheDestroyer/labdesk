@@ -1,0 +1,167 @@
+		Channel-group listing: 
+		----------------------
+
+Group: 1 
+----------
+Group state = L2 
+Ports: 2   Maxports = 4
+Port-channels: 1 Max Port-channels = 4
+Protocol:   LACP
+Minimum Links: 0
+
+
+		Ports in the group:
+		-------------------
+Port: Gi0/1
+------------
+
+Port state    = Up Mstr Assoc In-Bndl 
+Channel group = 1           Mode = Passive         Gcchange = -
+Port-channel  = Po1         GC   =   -             Pseudo port-channel = Po1
+Port index    = 0           Load = 0x00            Protocol =   LACP
+
+Flags:  S - Device is sending Slow LACPDUs   F - Device is sending fast LACPDUs.
+        A - Device is in active mode.        P - Device is in passive mode.
+
+Local information:
+                            LACP port     Admin     Oper    Port        Port
+Port      Flags   State     Priority      Key       Key     Number      State
+Gi0/1     SP      bndl      32768         0x1       0x1     0x2         0x3C  
+
+Partner's information:
+
+                  LACP port                        Admin  Oper   Port    Port
+Port      Flags   Priority  Dev ID          Age    key    Key    Number  State
+Gi0/1     SA      32768     5254.0054.8000  14s    0x0    0x1    0x2     0x3D  
+
+Age of the port in the current state: 0d:00h:09m:50s
+
+Port: Gi0/2
+------------
+
+Port state    = Up Cnt-bndl-rmt Suspend Mstr Rmt-LACP_Dsbl Not-in-Bndl 
+Channel group = 1           Mode = Passive         Gcchange = -
+Port-channel  = null        GC   =   -             Pseudo port-channel = Po1
+Port index    = 0           Load = 0x00            Protocol =   LACP
+
+Flags:  S - Device is sending Slow LACPDUs   F - Device is sending fast LACPDUs.
+        A - Device is in active mode.        P - Device is in passive mode.
+
+Local information:
+                            LACP port     Admin     Oper    Port        Port
+Port      Flags   State     Priority      Key       Key     Number      State
+Gi0/2     SP      susp      32768         0x1       0x1     0x3         0x7C  
+
+Age of the port in the current state: 0d:00h:01m:01s
+
+		Port-channels in the group: 
+		---------------------------
+
+Port-channel: Po1    (Primary Aggregator)
+
+------------
+
+Age of the Port-channel   = 0d:00h:10m:10s
+Logical slot/port   = 16/0          Number of ports = 1
+HotStandBy port = null 
+Port state          = Port-channel Ag-Inuse 
+Protocol            =   LACP
+Port security       = Disabled
+Load share deferral = Disabled   
+
+Ports in the Port-channel: 
+
+Index   Load   Port     EC state        No of bits
+------+------+------+------------------+-----------
+  0     00     Gi0/1    Passive            0
+
+Time since last port bundled:    0d:00h:09m:46s    Gi0/2
+Time since last port Un-bundled: 0d:00h:01m:01s    Gi0/2
+
+Group: 2 
+----------
+Group state = L2 
+Ports: 2   Maxports = 4
+Port-channels: 1 Max Port-channels = 1
+Protocol:   PAgP
+Minimum Links: 0
+
+
+		Ports in the group:
+		-------------------
+Port: Gi1/0
+------------
+
+Port state    = Up Mstr In-Bndl 
+Channel group = 2           Mode = Automatic-Sl    Gcchange = 0
+Port-channel  = Po2         GC   = 0x00020001      Pseudo port-channel = Po2
+Port index    = 0           Load = 0x00            Protocol =   PAgP
+
+Flags:  S - Device is sending Slow hello.  C - Device is in Consistent state.
+        A - Device is in Auto mode.        P - Device learns on physical port.
+        d - PAgP is down.
+Timers: H - Hello timer is running.        Q - Quit timer is running.
+        S - Switching timer is running.    I - Interface timer is running.
+
+Local information:
+                                Hello    Partner  PAgP     Learning  Group
+Port      Flags State   Timers  Interval Count   Priority   Method  Ifindex
+Gi1/0     SAC	U6/S7   HQ	30s	 1        128        Any      9
+
+Partner's information:
+
+          Partner              Partner          Partner         Partner Group
+Port      Name                 Device ID        Port       Age  Flags   Cap.
+Gi1/0     SW1                  5254.0054.8000	Gi1/0        0s SC	20001 
+
+Age of the port in the current state: 0d:00h:09m:49s
+
+Port: Gi1/1
+------------
+
+Port state    = Up Mstr In-Bndl 
+Channel group = 2           Mode = Automatic-Sl    Gcchange = 0
+Port-channel  = Po2         GC   = 0x00020001      Pseudo port-channel = Po2
+Port index    = 0           Load = 0x00            Protocol =   PAgP
+
+Flags:  S - Device is sending Slow hello.  C - Device is in Consistent state.
+        A - Device is in Auto mode.        P - Device learns on physical port.
+        d - PAgP is down.
+Timers: H - Hello timer is running.        Q - Quit timer is running.
+        S - Switching timer is running.    I - Interface timer is running.
+
+Local information:
+                                Hello    Partner  PAgP     Learning  Group
+Port      Flags State   Timers  Interval Count   Priority   Method  Ifindex
+Gi1/1     SAC	U6/S7   HQ	30s	 1        128        Any      9
+
+Partner's information:
+
+          Partner              Partner          Partner         Partner Group
+Port      Name                 Device ID        Port       Age  Flags   Cap.
+Gi1/1     SW1                  5254.0054.8000	Gi1/1        4s SC	20001 
+
+Age of the port in the current state: 0d:00h:09m:49s
+
+		Port-channels in the group: 
+		---------------------------
+
+Port-channel: Po2
+------------
+
+Age of the Port-channel   = 0d:00h:10m:10s
+Logical slot/port   = 16/1          Number of ports = 2
+GC                  = 0x00020001      HotStandBy port = null
+Port state          = Port-channel Ag-Inuse 
+Protocol            =   PAgP
+Port security       = Disabled
+Load share deferral = Disabled   
+
+Ports in the Port-channel: 
+
+Index   Load   Port     EC state        No of bits
+------+------+------+------------------+-----------
+  0     00     Gi1/0    Automatic-Sl       0
+  0     00     Gi1/1    Automatic-Sl       0
+
+Time since last port bundled:    0d:00h:09m:49s    Gi1/1

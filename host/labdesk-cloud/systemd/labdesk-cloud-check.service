@@ -1,0 +1,9 @@
+[Unit]
+Description=LabDesk Internet cloud: self-heal, re-apply return routes, write /run/labdesk-cloud/status
+After=labdesk-cloud.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/labdesk-cloud/check
+# runs every 10 s: keep the journal quiet (warnings and errors still get through)
+LogLevelMax=notice

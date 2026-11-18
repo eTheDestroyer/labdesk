@@ -1,0 +1,650 @@
+{
+    "route-information" : [
+    {
+        "attributes" : {"xmlns" : "http://xml.juniper.net/junos/26.2R0/junos-routing"},
+        "route-table" : [
+        {
+            "comment" : "keepalive",
+            "table-name" : [
+            {
+                "data" : "inet.0"
+            }
+            ],
+            "destination-count" : [
+            {
+                "data" : "10"
+            }
+            ],
+            "total-route-count" : [
+            {
+                "data" : "10"
+            }
+            ],
+            "active-route-count" : [
+            {
+                "data" : "10"
+            }
+            ],
+            "holddown-route-count" : [
+            {
+                "data" : "0"
+            }
+            ],
+            "hidden-route-count" : [
+            {
+                "data" : "0"
+            }
+            ],
+            "rt" : [
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "3.3.3.3/32"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "OSPF"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "10"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:06:43",
+                        "attributes" : {"junos:seconds" : "403"}
+                    }
+                    ],
+                    "metric" : [
+                    {
+                        "data" : "2"
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "to" : [
+                        {
+                            "data" : "10.0.34.1"
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "ge-0/0/0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "4.4.4.4/32"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "Direct"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "0"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:13:37",
+                        "attributes" : {"junos:seconds" : "817"}
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "lo0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "10.0.13.0/30"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "OSPF"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "10"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:06:43",
+                        "attributes" : {"junos:seconds" : "403"}
+                    }
+                    ],
+                    "metric" : [
+                    {
+                        "data" : "2"
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "to" : [
+                        {
+                            "data" : "10.0.34.1"
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "ge-0/0/0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "10.0.23.0/30"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "OSPF"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "10"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:06:43",
+                        "attributes" : {"junos:seconds" : "403"}
+                    }
+                    ],
+                    "metric" : [
+                    {
+                        "data" : "2"
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "to" : [
+                        {
+                            "data" : "10.0.34.1"
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "ge-0/0/0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "10.0.34.0/30"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "Direct"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "0"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:13:37",
+                        "attributes" : {"junos:seconds" : "817"}
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "ge-0/0/0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "10.0.34.2/32"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "Local"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "0"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:13:37",
+                        "attributes" : {"junos:seconds" : "817"}
+                    }
+                    ],
+                    "nh-type" : [
+                    {
+                        "data" : "Local"
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "nh-local-interface" : [
+                        {
+                            "data" : "ge-0/0/0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "10.0.45.0/30"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "Direct"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "0"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:13:37",
+                        "attributes" : {"junos:seconds" : "817"}
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "ge-0/0/1.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "10.0.45.1/32"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "Local"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "0"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:13:37",
+                        "attributes" : {"junos:seconds" : "817"}
+                    }
+                    ],
+                    "nh-type" : [
+                    {
+                        "data" : "Local"
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "nh-local-interface" : [
+                        {
+                            "data" : "ge-0/0/1.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "192.168.10.0/24"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "OSPF"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "10"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:06:37",
+                        "attributes" : {"junos:seconds" : "397"}
+                    }
+                    ],
+                    "metric" : [
+                    {
+                        "data" : "3"
+                    }
+                    ],
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ],
+                        "to" : [
+                        {
+                            "data" : "10.0.34.1"
+                        }
+                        ],
+                        "via" : [
+                        {
+                            "data" : "ge-0/0/0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "attributes" : {"junos:style" : "brief"},
+                "rt-destination" : [
+                {
+                    "data" : "224.0.0.5/32"
+                }
+                ],
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ],
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ],
+                    "protocol-name" : [
+                    {
+                        "data" : "OSPF"
+                    }
+                    ],
+                    "preference" : [
+                    {
+                        "data" : "10"
+                    }
+                    ],
+                    "age" : [
+                    {
+                        "data" : "00:13:37",
+                        "attributes" : {"junos:seconds" : "817"}
+                    }
+                    ],
+                    "metric" : [
+                    {
+                        "data" : "1"
+                    }
+                    ],
+                    "nh-type" : [
+                    {
+                        "data" : "MultiRecv"
+                    }
+                    ]
+                }
+                ]
+            }
+            ]
+        }
+        ]
+    }
+    ]
+}

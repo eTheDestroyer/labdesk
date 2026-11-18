@@ -1,0 +1,3 @@
+show mac address-table dynamic
+       ^
+% Invalid input detected at '^' marker.

@@ -1,0 +1,53 @@
+{
+ "interfaces": {
+  "b23610b7-6b6b-4d9b-a398-8c086647617c": "STARTED",
+  "d75a5ba5-1aaa-42b8-8626-150907ca0d17": "STARTED",
+  "786dac2d-6a7a-449e-ba54-3094cbb7b1d8": "STARTED",
+  "1c21d93f-68b7-4354-ac34-e0db41516470": "STARTED",
+  "b49456d0-93ec-4502-87a2-e7f2f233f490": "STARTED",
+  "905e7433-e0fb-454c-984d-9c7f5856c4ab": "STARTED",
+  "23a05bec-a7d2-4cb3-a49a-6508b66b3a0e": "STARTED",
+  "4c27d90f-c8dd-4307-9f44-e49533c52078": "STARTED",
+  "609f348c-0ade-4eb4-ae43-4d2d26028b84": "STARTED",
+  "5142fc22-29f5-4f76-a6d2-7c56183dc4b5": "STARTED",
+  "43e79bad-9a35-4135-ae8e-96335c67eab2": "STARTED",
+  "d827e278-2389-48cc-bf77-c48c0ddfa710": "STARTED",
+  "2b5e79e5-c0d7-4996-b89d-5381e79e0d50": "STARTED",
+  "18ab2bbd-8da7-4e31-8908-82115d2cdc96": "STARTED",
+  "bd67b6db-d36e-4739-bc23-f962a9bdec6c": "STARTED",
+  "06f88293-4584-4ba5-ae64-b678c93be3dd": "STARTED",
+  "1bcc71dc-e560-41a6-9c81-90621f967547": "STARTED",
+  "4bd60fbd-a8c1-41d6-bd0a-b8528eb05f10": "STARTED",
+  "31d9fd84-61ff-45e3-9fbc-5f7c1a87a7d6": "STARTED",
+  "9f6291a2-3e54-42b2-a90c-4b3ae5fc3002": "STARTED",
+  "3f8433cf-b6a0-4e06-be19-db64eb82723e": "STARTED",
+  "cd15768e-8328-4218-b05f-5d4580956b26": "STARTED",
+  "8e57c95c-5339-4eb5-9572-ea7d53642f33": "STARTED",
+  "d6e013df-5466-4ac0-8d72-46e3f2f12437": "STARTED",
+  "6d0a0752-b220-4040-a6d5-111630115fd1": "STARTED",
+  "86896051-f866-42e0-a6ea-c9f74a39aad7": "STARTED",
+  "6aa73a34-979e-4a91-992f-9d95b7a5fd8d": "STARTED",
+  "f60e878b-338d-40fa-bf47-3677be46a8d1": "STARTED"
+ },
+ "links": {
+  "cebbc2ea-df33-465a-9a4e-7ca9461f3bf7": "STARTED",
+  "80bed306-7158-44c7-8a7a-54880cf1e0bd": "STARTED",
+  "e08d0495-382a-448d-ad72-132bbf7dbe52": "STARTED",
+  "d839b67b-ad83-4600-b54b-6fb3390a4577": "STARTED",
+  "6fcf0a2d-a5ef-46fd-9955-ba8655e98874": "STARTED",
+  "49213bad-0499-4c37-a801-59252aefb771": "STARTED",
+  "9d8f57a7-fd8d-4a03-9d9a-356cc03277f5": "STARTED",
+  "1ffd4d45-b1c3-4401-b0b6-1bd0a3aca05a": "STARTED",
+  "3af7ff20-9e35-478c-8822-8a9632b75ef1": "STARTED",
+  "32c7ac0a-67d4-4b27-a010-5260102d998b": "STARTED"
+ },
+ "nodes": {
+  "3354b6a5-2be8-46c1-ab8d-a99ec8bb482b": "BOOTED",
+  "6b98d080-8c17-4d0d-823b-bd099d3308f5": "BOOTED",
+  "b7a2ba67-c487-4e60-bfab-e343d5c47059": "BOOTED",
+  "fe9372bf-f226-4a35-bd41-0eb65fc114c9": "BOOTED",
+  "e1dad7e4-983e-402e-8dad-d733a9145df9": "BOOTED",
+  "4181f267-9fe2-42d1-a306-5d51d4a8d64f": "BOOTED",
+  "6bdd66aa-bb54-4c45-ba85-258ff1dc5871": "BOOTED"
+ }
+}

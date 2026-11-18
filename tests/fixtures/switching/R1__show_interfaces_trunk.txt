@@ -1,0 +1,3 @@
+show interfaces trunk
+                 ^
+% Invalid input detected at '^' marker.

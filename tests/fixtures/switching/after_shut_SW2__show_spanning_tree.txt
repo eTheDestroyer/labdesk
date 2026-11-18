@@ -1,0 +1,39 @@
+VLAN0010
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    4106
+             Address     5254.0009.bcb6
+             Cost        4
+             Port        3 (GigabitEthernet0/2)
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32778  (priority 32768 sys-id-ext 10)
+             Address     5254.00fd.b47b
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/1               Desg LRN 4         128.2    P2p 
+Gi0/2               Root FWD 4         128.3    P2p 
+
+
+
+VLAN0020
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    4116
+             Address     5254.0009.bcb6
+             Cost        4
+             Port        3 (GigabitEthernet0/2)
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32788  (priority 32768 sys-id-ext 20)
+             Address     5254.00fd.b47b
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/0               Desg FWD 4         128.1    P2p Edge 
+Gi0/1               Desg LRN 4         128.2    P2p 
+Gi0/2               Root FWD 4         128.3    P2p 
+

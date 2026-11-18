@@ -1,0 +1,13 @@
+GigabitEthernet0/0 - Group 10 (version 2)
+  State is Active
+    2 state changes, last state change 00:02:49
+  Virtual IP address is 192.168.10.1
+  Active virtual MAC address is 0000.0c9f.f00a
+    Local virtual MAC address is 0000.0c9f.f00a (v2 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 1.728 secs
+  Preemption enabled
+  Active router is local
+  Standby router is 192.168.10.3, priority 100 (expires in 9.776 sec)
+  Priority 110 (configured 110)
+  Group name is "hsrp-Gi0/0-10" (default)

@@ -1,0 +1,10 @@
+EtherChannel Load-Balancing Configuration:
+        src-dst-ip
+
+EtherChannel Load-Balancing Addresses Used Per-Protocol:
+Non-IP: Source XOR Destination MAC address
+  IPv4: Source XOR Destination IP address
+  IPv6: Source XOR Destination IP address
+
+SW1#
+*Nov 17 17:38:28.023: %EC-5-L3DONTBNDL2: Gi0/2 suspended: LACP currently not enabled on the remote port.

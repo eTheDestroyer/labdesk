@@ -1,0 +1,10 @@
+# SYNTHETIC SAMPLE - NOT captured from a live device (FortiGate not deployed yet).
+Version: FortiFirewall-VM64-KVM v7.6.8,build3744,250929 (GA.M)
+Security Level: 1
+Firmware Signature: certified
+Serial-Number: FFVMEVSYNTHETIC1
+License Status: Invalid
+VM Resources: 1 CPU/1 allowed, 2007 MB RAM
+Hostname: FGT
+Operation Mode: NAT
+Current virtual domain: root

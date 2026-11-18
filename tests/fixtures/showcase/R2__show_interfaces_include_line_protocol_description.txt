@@ -1,0 +1,11 @@
+GigabitEthernet0/0 is up, line protocol is up 
+  Description: LAN-A (HSRP v2 grp 10 VIP 192.168.10.1)
+GigabitEthernet0/1 is up, line protocol is up 
+  Description: LAN-B (VRRP grp 20 VIP 192.168.20.1)
+GigabitEthernet0/2 is up, line protocol is up 
+  Description: P2P to R3 Gi0/1
+GigabitEthernet0/3 is up, line protocol is up 
+  Description: XLINK to R1 Gi0/3 (OSPF broadcast)
+GigabitEthernet0/4 is administratively down, line protocol is down 
+  Description: BACKUP to R4 Gi0/2 (admin down)
+Loopback0 is up, line protocol is up

@@ -1,0 +1,7 @@
+GigabitEthernet0/0 is up, line protocol is up 
+  Description: P2P to R1 Gi0/2
+GigabitEthernet0/1 is up, line protocol is up 
+  Description: P2P to R2 Gi0/2
+GigabitEthernet0/2 is up, line protocol is up 
+  Description: eBGP to R4 Gi0/0 (AS 65004)
+Loopback0 is up, line protocol is up

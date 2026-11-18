@@ -1,0 +1,10 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       PC2 (VLAN 20 SERVERS)
+Gi0/1                          up             down     Po1 LACP member to SW1 Gi0/1
+Gi0/2                          up             down     Po1 LACP member to SW1 Gi0/2
+Gi0/3                          admin down     down     unused
+Gi1/0                          up             up       Po2 PAgP member to SW1 Gi1/0
+Gi1/1                          up             up       Po2 PAgP member to SW1 Gi1/1
+Po1                            down           down     LACP bundle to SW1 Po1 (Gi0/1+Gi0/2)
+Po2                            up             up       PAgP bundle to SW1 Po2 (Gi1/0+Gi1/1)
+Vl10                           up             up       management SVI

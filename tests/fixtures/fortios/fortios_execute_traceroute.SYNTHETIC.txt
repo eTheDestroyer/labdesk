@@ -1,0 +1,5 @@
+# SYNTHETIC SAMPLE - NOT captured from a live device (FortiGate not deployed yet).
+# Hand-written to match FortiOS 7.x CLI formatting; replace with a live capture once FGT runs.
+traceroute to 3.3.3.3 (3.3.3.3), 32 hops max, 3 probe packets per hop, 84 byte packets
+ 1  10.0.45.1  0.434 ms  0.301 ms  0.288 ms
+ 2  3.3.3.3  1.902 ms  1.733 ms  1.689 ms

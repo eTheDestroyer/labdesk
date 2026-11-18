@@ -1,0 +1,417 @@
+annotations: []
+smart_annotations:
+- tag: labdesk-cloud
+  is_on: true
+  padding: 35
+  label: labdesk-cloud
+  tag_offset_x: 0
+  tag_offset_y: 0
+  tag_size: 14
+  group_distance: 400
+  thickness: 1
+  border_style: ''
+  fill_color: '#A4C8E180'
+  border_color: '#00000080'
+  z_index: 1
+nodes:
+- boot_disk_size: null
+  configuration:
+  - name: ios_config.txt
+    content: "hostname R1\nno ip domain lookup\nusername admin privilege 15 secret cisco\nenable secret cisco\ninterface GigabitEthernet0/0\n\
+      \ description TRUNK to SW1 Gi0/0 (router-on-a-stick)\n no ip address\n cdp enable\n no shutdown\ninterface GigabitEthernet0/0.10\n\
+      \ description VLAN 10 USERS gateway\n encapsulation dot1Q 10\n ip address 192.168.10.1 255.255.255.0\ninterface GigabitEthernet0/0.20\n\
+      \ description VLAN 20 SERVERS gateway\n encapsulation dot1Q 20\n ip address 192.168.20.1 255.255.255.0\ninterface GigabitEthernet0/1\n\
+      \ description INTERNET cloud (LabDesk: answers 8.8.8.8, 1.1.1.1)\n ip address 100.64.0.2 255.255.255.0\n no shutdown\n\
+      cdp run\nip route 0.0.0.0 0.0.0.0 100.64.0.1\nevent manager applet LABDESK-CLOUD-UPLINK\n event syslog pattern \"CVAC-4-CONFIG_DONE|PNP-6-PNP_DISCOVERY_STOPPED\"\
+      \n action 1.0 cli command \"enable\"\n action 2.0 cli command \"configure terminal\"\n action 3.0 cli command \"interface\
+      \ GigabitEthernet0/1\"\n action 4.0 cli command \"ip address 100.64.0.2 255.255.255.0\"\n action 5.0 cli command \"\
+      no shutdown\"\n action 6.0 cli command \"end\"\nline con 0\n exec-timeout 0 0\n logging synchronous\nline vty 0 4\n\
+      \ login local\n transport input ssh telnet\nend"
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n0
+  image_definition: null
+  label: R1
+  node_definition: iosv
+  parameters: {}
+  priority: null
+  pyats:
+    username: null
+    password: null
+    enable_password: null
+  ram: null
+  tags: []
+  x: 1
+  y: -231
+  interfaces:
+  - id: i0
+    label: Loopback0
+    mac_address: null
+    type: loopback
+  - id: i1
+    label: GigabitEthernet0/0
+    mac_address: null
+    type: physical
+    slot: 0
+  - id: i2
+    label: GigabitEthernet0/1
+    mac_address: null
+    type: physical
+    slot: 1
+  - id: i3
+    label: GigabitEthernet0/2
+    mac_address: null
+    type: physical
+    slot: 2
+  - id: i4
+    label: GigabitEthernet0/3
+    mac_address: null
+    type: physical
+    slot: 3
+- boot_disk_size: null
+  configuration:
+  - name: ios_config.txt
+    content: "hostname SW1\nno ip domain lookup\nusername admin privilege 15 secret cisco\nenable secret cisco\nvtp mode transparent\n\
+      spanning-tree mode rapid-pvst\nvlan 10\n name USERS\nvlan 20\n name SERVERS\nspanning-tree vlan 10,20 priority 4096\n\
+      port-channel load-balance src-dst-ip\ninterface Port-channel1\n description LACP bundle to SW2 Po1 (Gi0/1+Gi0/2)\n switchport\
+      \ trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\n\
+      interface Port-channel2\n description PAgP bundle to SW2 Po2 (Gi1/0+Gi1/1)\n switchport trunk encapsulation dot1q\n\
+      \ switchport trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\ninterface GigabitEthernet0/0\n\
+      \ description TRUNK to R1 Gi0/0 (router-on-a-stick)\n switchport trunk encapsulation dot1q\n switchport trunk allowed\
+      \ vlan 10,20\n switchport mode trunk\n switchport nonegotiate\n no shutdown\ninterface GigabitEthernet0/1\n description\
+      \ Po1 LACP member to SW2 Gi0/1\n switchport trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n switchport\
+      \ mode trunk\n switchport nonegotiate\n channel-group 1 mode active\n no shutdown\ninterface GigabitEthernet0/2\n description\
+      \ Po1 LACP member to SW2 Gi0/2\n switchport trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n switchport\
+      \ mode trunk\n switchport nonegotiate\n channel-group 1 mode active\n no shutdown\ninterface GigabitEthernet0/3\n description\
+      \ PC1 (VLAN 10 USERS)\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast edge\n no shutdown\n\
+      interface GigabitEthernet1/0\n description Po2 PAgP member to SW2 Gi1/0\n switchport trunk encapsulation dot1q\n switchport\
+      \ trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\n channel-group 2 mode desirable\n no shutdown\n\
+      interface GigabitEthernet1/1\n description Po2 PAgP member to SW2 Gi1/1\n switchport trunk encapsulation dot1q\n switchport\
+      \ trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\n channel-group 2 mode desirable\n no shutdown\n\
+      interface Vlan10\n description management SVI\n ip address 192.168.10.2 255.255.255.0\n no shutdown\nip default-gateway\
+      \ 192.168.10.1\nevent manager applet LABDESK-SVI-KICK\n event timer countdown time 60\n action 1.0 cli command \"enable\"\
+      \n action 2.0 cli command \"configure terminal\"\n action 3.0 cli command \"interface Vlan10\"\n action 4.0 cli command\
+      \ \"shutdown\"\n action 5.0 cli command \"no shutdown\"\n action 6.0 cli command \"end\"\ncdp run\nline con 0\n exec-timeout\
+      \ 0 0\n logging synchronous\nline vty 0 4\n login local\n transport input ssh telnet\nend"
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n1
+  image_definition: null
+  label: SW1
+  node_definition: iosvl2
+  parameters: {}
+  priority: null
+  pyats:
+    username: null
+    password: null
+    enable_password: null
+  ram: null
+  tags: []
+  x: -190
+  y: 0
+  interfaces:
+  - id: i0
+    label: Loopback0
+    mac_address: null
+    type: loopback
+  - id: i1
+    label: GigabitEthernet0/0
+    mac_address: null
+    type: physical
+    slot: 0
+  - id: i2
+    label: GigabitEthernet0/1
+    mac_address: null
+    type: physical
+    slot: 1
+  - id: i3
+    label: GigabitEthernet0/2
+    mac_address: null
+    type: physical
+    slot: 2
+  - id: i4
+    label: GigabitEthernet0/3
+    mac_address: null
+    type: physical
+    slot: 3
+  - id: i5
+    label: GigabitEthernet1/0
+    mac_address: null
+    type: physical
+    slot: 4
+  - id: i6
+    label: GigabitEthernet1/1
+    mac_address: null
+    type: physical
+    slot: 5
+- boot_disk_size: null
+  configuration:
+  - name: ios_config.txt
+    content: "hostname SW2\nno ip domain lookup\nusername admin privilege 15 secret cisco\nenable secret cisco\nvtp mode transparent\n\
+      spanning-tree mode rapid-pvst\nvlan 10\n name USERS\nvlan 20\n name SERVERS\nport-channel load-balance src-dst-ip\n\
+      interface Port-channel1\n description LACP bundle to SW1 Po1 (Gi0/1+Gi0/2)\n switchport trunk encapsulation dot1q\n\
+      \ switchport trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\ninterface Port-channel2\n description\
+      \ PAgP bundle to SW1 Po2 (Gi1/0+Gi1/1)\n switchport trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n\
+      \ switchport mode trunk\n switchport nonegotiate\ninterface GigabitEthernet0/0\n description PC2 (VLAN 20 SERVERS)\n\
+      \ switchport mode access\n switchport access vlan 20\n spanning-tree portfast edge\n no shutdown\ninterface GigabitEthernet0/1\n\
+      \ description Po1 LACP member to SW1 Gi0/1\n switchport trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n\
+      \ switchport mode trunk\n switchport nonegotiate\n channel-group 1 mode passive\n no shutdown\ninterface GigabitEthernet0/2\n\
+      \ description Po1 LACP member to SW1 Gi0/2\n switchport trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n\
+      \ switchport mode trunk\n switchport nonegotiate\n channel-group 1 mode passive\n no shutdown\ninterface GigabitEthernet0/3\n\
+      \ description unused\n shutdown\ninterface GigabitEthernet1/0\n description Po2 PAgP member to SW1 Gi1/0\n switchport\
+      \ trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\n\
+      \ channel-group 2 mode auto\n no shutdown\ninterface GigabitEthernet1/1\n description Po2 PAgP member to SW1 Gi1/1\n\
+      \ switchport trunk encapsulation dot1q\n switchport trunk allowed vlan 10,20\n switchport mode trunk\n switchport nonegotiate\n\
+      \ channel-group 2 mode auto\n no shutdown\ninterface Vlan10\n description management SVI\n ip address 192.168.10.3 255.255.255.0\n\
+      \ no shutdown\nip default-gateway 192.168.10.1\nevent manager applet LABDESK-SVI-KICK\n event timer countdown time 60\n\
+      \ action 1.0 cli command \"enable\"\n action 2.0 cli command \"configure terminal\"\n action 3.0 cli command \"interface\
+      \ Vlan10\"\n action 4.0 cli command \"shutdown\"\n action 5.0 cli command \"no shutdown\"\n action 6.0 cli command \"\
+      end\"\ncdp run\nline con 0\n exec-timeout 0 0\n logging synchronous\nline vty 0 4\n login local\n transport input ssh\
+      \ telnet\nend"
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n2
+  image_definition: null
+  label: SW2
+  node_definition: iosvl2
+  parameters: {}
+  priority: null
+  pyats:
+    username: null
+    password: null
+    enable_password: null
+  ram: null
+  tags: []
+  x: 190
+  y: 0
+  interfaces:
+  - id: i0
+    label: Loopback0
+    mac_address: null
+    type: loopback
+  - id: i1
+    label: GigabitEthernet0/0
+    mac_address: null
+    type: physical
+    slot: 0
+  - id: i2
+    label: GigabitEthernet0/1
+    mac_address: null
+    type: physical
+    slot: 1
+  - id: i3
+    label: GigabitEthernet0/2
+    mac_address: null
+    type: physical
+    slot: 2
+  - id: i4
+    label: GigabitEthernet0/3
+    mac_address: null
+    type: physical
+    slot: 3
+  - id: i5
+    label: GigabitEthernet1/0
+    mac_address: null
+    type: physical
+    slot: 4
+  - id: i6
+    label: GigabitEthernet1/1
+    mac_address: null
+    type: physical
+    slot: 5
+- boot_disk_size: null
+  configuration:
+  - name: node.cfg
+    content: '# this is a shell script which will be sourced at boot
+
+      hostname PC1
+
+      # configurable user account
+
+      USERNAME=cisco
+
+      PASSWORD=cisco
+
+      ip link set dev eth0 up
+
+      ip address add 192.168.10.10/24 dev eth0
+
+      ip route add default via 192.168.10.1'
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n3
+  image_definition: null
+  label: PC1
+  node_definition: alpine
+  parameters: {}
+  priority: null
+  pyats:
+    username: null
+    password: null
+    enable_password: null
+  ram: null
+  tags: []
+  x: -330
+  y: 220
+  interfaces:
+  - id: i0
+    label: eth0
+    mac_address: null
+    type: physical
+    slot: 0
+- boot_disk_size: null
+  configuration:
+  - name: node.cfg
+    content: '# this is a shell script which will be sourced at boot
+
+      hostname PC2
+
+      # configurable user account
+
+      USERNAME=cisco
+
+      PASSWORD=cisco
+
+      ip link set dev eth0 up
+
+      ip address add 192.168.20.10/24 dev eth0
+
+      ip route add default via 192.168.20.1'
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n4
+  image_definition: null
+  label: PC2
+  node_definition: alpine
+  parameters: {}
+  priority: null
+  pyats:
+    username: null
+    password: null
+    enable_password: null
+  ram: null
+  tags: []
+  x: 330
+  y: 220
+  interfaces:
+  - id: i0
+    label: eth0
+    mac_address: null
+    type: physical
+    slot: 0
+- boot_disk_size: null
+  configuration:
+  - name: default
+    content: System Bridge
+  cpu_limit: null
+  cpus: null
+  data_volume: null
+  hide_links: false
+  id: n5
+  image_definition: null
+  label: INTERNET
+  node_definition: external_connector
+  parameters: {}
+  priority: null
+  pyats:
+    username: null
+    password: null
+    enable_password: null
+  ram: null
+  tags:
+  - labdesk-cloud
+  x: 301
+  y: -271
+  interfaces:
+  - id: i0
+    label: port
+    mac_address: null
+    type: physical
+    slot: 0
+links:
+- id: l0
+  n1: n2
+  n2: n4
+  i1: i1
+  i2: i0
+  conditioning: {}
+  label: SW2-GigabitEthernet0/0<->PC2-eth0
+- id: l1
+  n1: n1
+  n2: n0
+  i1: i1
+  i2: i1
+  conditioning: {}
+  label: SW1-GigabitEthernet0/0<->R1-GigabitEthernet0/0
+- id: l2
+  n1: n1
+  n2: n2
+  i1: i2
+  i2: i2
+  conditioning: {}
+  label: SW1-GigabitEthernet0/1<->SW2-GigabitEthernet0/1
+- id: l3
+  n1: n1
+  n2: n2
+  i1: i3
+  i2: i3
+  conditioning: {}
+  label: SW1-GigabitEthernet0/2<->SW2-GigabitEthernet0/2
+- id: l4
+  n1: n1
+  n2: n3
+  i1: i4
+  i2: i0
+  conditioning: {}
+  label: SW1-GigabitEthernet0/3<->PC1-eth0
+- id: l5
+  n1: n0
+  n2: n5
+  i1: i2
+  i2: i0
+  conditioning: {}
+  label: R1-GigabitEthernet0/1<->INTERNET-port
+- id: l6
+  n1: n1
+  n2: n2
+  i1: i5
+  i2: i5
+  conditioning: {}
+  label: SW1-GigabitEthernet1/0<->SW2-GigabitEthernet1/0
+- id: l7
+  n1: n1
+  n2: n2
+  i1: i6
+  i2: i6
+  conditioning: {}
+  label: SW1-GigabitEthernet1/1<->SW2-GigabitEthernet1/1
+lab:
+  description: 'SW1/SW2 IOSvL2 with two parallel EtherChannels: Po1 LACP (active/passive) and Po2 PAgP (desirable/auto); STP
+    blocks Po2 as a whole. R1 router-on-a-stick + Internet cloud, PC1/PC2'
+  notes: 'Po1 LACP  SW1 Gi0/1+Gi0/2 active  <-> SW2 passive   trunk 10,20
+
+    Po2 PAgP  SW1 Gi1/0+Gi1/1 desirable <-> SW2 auto  trunk 10,20 (SW2 Po2 Altn BLK)
+
+    port-channel load-balance src-dst-ip; SW1 STP root for VLAN 10,20
+
+    VLAN 10 USERS 192.168.10.0/24 (PC1 .10), VLAN 20 SERVERS 192.168.20.0/24 (PC2 .10), R1 .1 gateways
+
+    R1 Gi0/1 100.64.0.2/24 -> INTERNET cloud (LabDesk host service), default via 100.64.0.1
+
+    Login: admin / cisco, enable secret cisco'
+  title: Switching Lab (EtherChannel)
+  node_staging:
+    enabled: false
+    start_remaining: true
+    abort_on_failure: false
+  version: 0.3.1

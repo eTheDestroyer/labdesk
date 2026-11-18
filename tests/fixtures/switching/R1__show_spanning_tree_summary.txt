@@ -1,0 +1,3 @@
+show spanning-tree summary
+                   ^
+% Invalid input detected at '^' marker.

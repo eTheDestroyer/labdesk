@@ -1,0 +1,9 @@
+Type escape sequence to abort.
+Tracing the route to 8.8.8.8
+VRF info: (vrf in name/id, vrf out name/id)
+  1 10.0.13.2 11 msec 3 msec 3 msec
+  2 10.0.34.2 7 msec 8 msec 9 msec
+  3 192.168.255.1 12 msec 10 msec 11 msec
+  4 192.168.122.1 10 msec 11 msec 11 msec
+  5 192.168.1.20 12 msec 12 msec 11 msec
+  6 212.143.208.119 17 msec 22 msec 14 msec

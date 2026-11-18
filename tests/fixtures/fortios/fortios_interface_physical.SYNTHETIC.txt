@@ -1,0 +1,25 @@
+# SYNTHETIC SAMPLE - NOT captured from a live device (FortiGate not deployed yet).
+# Hand-written to match FortiOS 7.x CLI formatting; replace with a live capture once FGT runs.
+== [onboard]
+        ==[port1]
+                mode: static
+                ip: 192.168.122.41 255.255.255.0
+                ipv6: ::/0
+                status: up
+                speed: 10000Mbps (Duplex: full)
+                FEC: none
+                FEC_cap: none
+        ==[port2]
+                mode: static
+                ip: 10.0.45.2 255.255.255.252
+                ipv6: ::/0
+                status: up
+                speed: 10000Mbps (Duplex: full)
+                FEC: none
+                FEC_cap: none
+        ==[port3]
+                mode: static
+                ip: 0.0.0.0 0.0.0.0
+                ipv6: ::/0
+                status: down
+                speed: n/a

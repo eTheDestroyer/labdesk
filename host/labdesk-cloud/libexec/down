@@ -1,0 +1,15 @@
+#!/bin/bash
+# labdesk-cloud down: remove the cloud namespace, its veth pair and the host /32 route.  Idempotent.
+# /etc/labdesk-cloud.conf and /var/lib/labdesk-cloud/routes.conf are kept.
+. /usr/local/libexec/labdesk-cloud/common.sh
+load_config
+
+rm -f "$ACTIVE"
+ip route del "$CLOUD_IP/32" dev "$BRIDGE" 2>/dev/null || true
+ip link del "$VETH_HOST" 2>/dev/null || true
+if ns_exists; then
+    ip netns del "$NS" || log "cannot delete netns $NS"
+fi
+write_status "state=stopped" "problem=labdesk-cloud.service is stopped"
+log "down"
+exit 0

@@ -1,0 +1,7 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       LAN-A (HSRP v2 grp 10 VIP 192.168.10.1)
+Gi0/1                          up             up       LAN-B (VRRP grp 20 VIP 192.168.20.1)
+Gi0/2                          up             up       P2P to R3 Gi0/1
+Gi0/3                          up             up       XLINK to R1 Gi0/3 (OSPF broadcast)
+Gi0/4                          admin down     down     BACKUP to R4 Gi0/2 (admin down)
+Lo0                            up             up

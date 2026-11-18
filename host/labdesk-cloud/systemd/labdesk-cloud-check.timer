@@ -1,0 +1,9 @@
+[Unit]
+Description=LabDesk Internet cloud health check every 10 s
+PartOf=labdesk-cloud.service
+After=labdesk-cloud.service
+
+[Timer]
+OnActiveSec=3s
+OnUnitActiveSec=10s
+AccuracySec=1s

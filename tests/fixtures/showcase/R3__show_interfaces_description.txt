@@ -1,0 +1,5 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       P2P to R1 Gi0/2
+Gi0/1                          up             up       P2P to R2 Gi0/2
+Gi0/2                          up             up       eBGP to R4 Gi0/0 (AS 65004)
+Lo0                            up             up

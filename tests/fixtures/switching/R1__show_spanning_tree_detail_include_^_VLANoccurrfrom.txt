@@ -1,0 +1,3 @@
+show spanning-tree detail | include ^ VLAN|occurr|from
+                   ^
+% Invalid input detected at '^' marker.

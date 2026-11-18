@@ -1,0 +1,9 @@
+Port      Name               Status       Vlan       Duplex  Speed Type 
+Gi0/0     TRUNK to R1 Gi0/0  connected    trunk      a-full   auto RJ45
+Gi0/1     Po1 LACP member to suspended    trunk      a-full   auto RJ45
+Gi0/2     Po1 LACP member to suspended    trunk      a-full   auto RJ45
+Gi0/3     PC1 (VLAN 10 USERS connected    10         a-full   auto RJ45
+Gi1/0     Po2 PAgP member to connected    trunk      a-full   auto RJ45
+Gi1/1     Po2 PAgP member to connected    trunk      a-full   auto RJ45
+Po1       LACP bundle to SW2 notconnect   trunk        auto   auto 
+Po2       PAgP bundle to SW2 connected    trunk      a-full   auto 

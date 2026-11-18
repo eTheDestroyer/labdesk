@@ -1,0 +1,10 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       TRUNK to R1 Gi0/0 (router-on-a-stick)
+Gi0/1                          up             down     Po1 LACP member to SW2 Gi0/1
+Gi0/2                          up             down     Po1 LACP member to SW2 Gi0/2
+Gi0/3                          up             up       PC1 (VLAN 10 USERS)
+Gi1/0                          up             up       Po2 PAgP member to SW2 Gi1/0
+Gi1/1                          up             up       Po2 PAgP member to SW2 Gi1/1
+Po1                            down           down     LACP bundle to SW2 Po1 (Gi0/1+Gi0/2)
+Po2                            up             up       PAgP bundle to SW2 Po2 (Gi1/0+Gi1/1)
+Vl10                           up             up       management SVI

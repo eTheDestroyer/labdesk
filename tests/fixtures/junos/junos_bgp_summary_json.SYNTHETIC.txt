@@ -1,0 +1,52 @@
+{
+    "bgp-information" : [
+    {
+        "attributes" : {"xmlns" : "http://xml.juniper.net/junos/26.2R0/junos-routing"},
+        "group-count" : [{"data" : "1"}],
+        "peer-count" : [{"data" : "2"}],
+        "down-peer-count" : [{"data" : "1"}],
+        "bgp-rib" : [
+        {
+            "name" : [{"data" : "inet.0"}],
+            "total-prefix-count" : [{"data" : "9"}],
+            "received-prefix-count" : [{"data" : "9"}],
+            "active-prefix-count" : [{"data" : "8"}]
+        }
+        ],
+        "bgp-peer" : [
+        {
+            "attributes" : {"junos:style" : "terse", "heading" : "Peer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped..."},
+            "peer-address" : [{"data" : "10.0.45.1"}],
+            "peer-as" : [{"data" : "65004"}],
+            "input-messages" : [{"data" : "42"}],
+            "output-messages" : [{"data" : "40"}],
+            "route-queue-count" : [{"data" : "0"}],
+            "flap-count" : [{"data" : "0"}],
+            "elapsed-time" : [{"data" : "17:35", "attributes" : {"junos:seconds" : "1055"}}],
+            "peer-state" : [{"data" : "Established", "attributes" : {"junos:format" : "Establ"}}],
+            "bgp-rib" : [
+            {
+                "attributes" : {"junos:style" : "terse"},
+                "name" : [{"data" : "inet.0"}],
+                "active-prefix-count" : [{"data" : "8"}],
+                "received-prefix-count" : [{"data" : "9"}],
+                "accepted-prefix-count" : [{"data" : "9"}],
+                "suppressed-prefix-count" : [{"data" : "0"}]
+            }
+            ]
+        },
+        {
+            "attributes" : {"junos:style" : "terse"},
+            "peer-address" : [{"data" : "6.6.6.6"}],
+            "peer-as" : [{"data" : "65010"}],
+            "input-messages" : [{"data" : "0"}],
+            "output-messages" : [{"data" : "0"}],
+            "route-queue-count" : [{"data" : "0"}],
+            "flap-count" : [{"data" : "0"}],
+            "elapsed-time" : [{"data" : "17:40", "attributes" : {"junos:seconds" : "1060"}}],
+            "peer-state" : [{"data" : "Active"}]
+        }
+        ]
+    }
+    ]
+}

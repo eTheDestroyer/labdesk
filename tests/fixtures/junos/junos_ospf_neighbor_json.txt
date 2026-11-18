@@ -1,0 +1,41 @@
+{
+    "ospf-neighbor-information" : [
+    {
+        "attributes" : {"xmlns" : "http://xml.juniper.net/junos/26.2R0/junos-routing"},
+        "ospf-neighbor" : [
+        {
+            "neighbor-address" : [
+            {
+                "data" : "10.0.34.1"
+            }
+            ],
+            "interface-name" : [
+            {
+                "data" : "ge-0/0/0.0"
+            }
+            ],
+            "ospf-neighbor-state" : [
+            {
+                "data" : "Full"
+            }
+            ],
+            "neighbor-id" : [
+            {
+                "data" : "3.3.3.3"
+            }
+            ],
+            "neighbor-priority" : [
+            {
+                "data" : "1"
+            }
+            ],
+            "activity-timer" : [
+            {
+                "data" : "31"
+            }
+            ]
+        }
+        ]
+    }
+    ]
+}

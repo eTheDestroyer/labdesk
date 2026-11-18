@@ -1,0 +1,10 @@
+Routing entry for 0.0.0.0/0, supernet
+  Known via "bgp 65000", distance 20, metric 0, candidate default path
+  Tag 65004, type external
+  Last update from 10.0.34.2 00:03:20 ago
+  Routing Descriptor Blocks:
+  * 10.0.34.2, from 10.0.34.2, 00:03:20 ago
+      Route metric is 0, traffic share count is 1
+      AS Hops 1
+      Route tag 65004
+      MPLS label: none

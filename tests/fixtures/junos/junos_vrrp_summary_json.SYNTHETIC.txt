@@ -1,0 +1,20 @@
+{
+    "vrrp-information" : [
+    {
+        "attributes" : {"xmlns" : "http://xml.juniper.net/junos/26.2R0/junos-vrrpd"},
+        "vrrp-interface" : [
+        {
+            "interface" : [{"data" : "ge-0/0/1.0"}],
+            "interface-state" : [{"data" : "up"}],
+            "group" : [{"data" : "20"}],
+            "vrrp-state" : [{"data" : "master"}],
+            "vrrp-mode" : [{"data" : "Active"}],
+            "address-type" : [{"data" : "lcl"}],
+            "address" : [{"data" : "192.168.50.2"}],
+            "virtual-address-type" : [{"data" : "vip"}],
+            "virtual-ip-address" : [{"data" : "192.168.50.1"}]
+        }
+        ]
+    }
+    ]
+}

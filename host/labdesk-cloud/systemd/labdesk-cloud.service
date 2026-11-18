@@ -1,0 +1,15 @@
+[Unit]
+Description=LabDesk simulated Internet cloud (netns labcloud on virbr0: answers 8.8.8.8 / 1.1.1.1)
+After=libvirtd.service virtnetworkd.service network.target
+Wants=libvirtd.service labdesk-cloud-check.timer labdesk-cloud-routes.path
+ConditionPathExists=/etc/labdesk-cloud.conf
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/libexec/labdesk-cloud/up
+ExecStop=/usr/local/libexec/labdesk-cloud/down
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

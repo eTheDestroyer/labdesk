@@ -1,0 +1,12 @@
+# SYNTHETIC SAMPLE - NOT captured from a live device (FortiGate not deployed yet).
+# Hand-written to match FortiOS 7.x 'get router info vrrp' formatting.
+Interface: port3, primary IP address: 192.168.60.3
+  UseVMAC: 0, SoftSW: 0, BrPortIdx: 0, PromiscCount: 0
+  HA mode: master (0:1), VRT master count: 1
+  VRID: 30
+    vrip: 192.168.60.1, priority: 120, state: BACKUP
+    adv_interval: 1, preempt: 1, ignore_dft: 0, start_time: 3
+    master_adv_interval: 100, accept: 1
+    vrmac: 00:00:5e:00:01:1e
+    vrdst:
+    vrgrp: 0

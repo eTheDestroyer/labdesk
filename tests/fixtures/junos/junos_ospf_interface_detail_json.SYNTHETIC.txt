@@ -1,0 +1,45 @@
+{
+    "ospf-interface-information" : [
+    {
+        "attributes" : {"xmlns" : "http://xml.juniper.net/junos/26.2R0/junos-routing"},
+        "ospf-interface" : [
+        {
+            "interface-name" : [{"data" : "ge-0/0/0.0"}],
+            "ospf-interface-state" : [{"data" : "PtToPt"}],
+            "ospf-area" : [{"data" : "0.0.0.0"}],
+            "dr-id" : [{"data" : "0.0.0.0"}],
+            "bdr-id" : [{"data" : "0.0.0.0"}],
+            "neighbor-count" : [{"data" : "1"}],
+            "interface-type" : [{"data" : "P2P"}],
+            "interface-address" : [{"data" : "10.0.45.2"}],
+            "address-mask" : [{"data" : "255.255.255.252"}],
+            "mtu" : [{"data" : "1500"}],
+            "interface-cost" : [{"data" : "1"}]
+        },
+        {
+            "interface-name" : [{"data" : "ge-0/0/1.0"}],
+            "ospf-interface-state" : [{"data" : "DR"}],
+            "ospf-area" : [{"data" : "0.0.0.0"}],
+            "dr-id" : [{"data" : "5.5.5.5"}],
+            "bdr-id" : [{"data" : "0.0.0.0"}],
+            "neighbor-count" : [{"data" : "0"}],
+            "interface-type" : [{"data" : "LAN"}],
+            "interface-address" : [{"data" : "192.168.50.1"}],
+            "address-mask" : [{"data" : "255.255.255.0"}],
+            "passive" : [{"data" : [null]}],
+            "interface-cost" : [{"data" : "1"}]
+        },
+        {
+            "interface-name" : [{"data" : "lo0.0"}],
+            "ospf-interface-state" : [{"data" : "DR"}],
+            "ospf-area" : [{"data" : "0.0.0.0"}],
+            "neighbor-count" : [{"data" : "0"}],
+            "interface-type" : [{"data" : "LAN"}],
+            "interface-address" : [{"data" : "5.5.5.5"}],
+            "address-mask" : [{"data" : "255.255.255.255"}],
+            "interface-cost" : [{"data" : "0"}]
+        }
+        ]
+    }
+    ]
+}

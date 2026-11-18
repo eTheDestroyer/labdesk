@@ -1,0 +1,69 @@
+#!/bin/bash
+# labdesk-cloud check: every 10 s (labdesk-cloud-check.timer) and whenever LabDesk rewrites
+# /var/lib/labdesk-cloud/routes.conf (labdesk-cloud-routes.path).
+#   * repairs the cloud if it is supposed to be up (namespace gone, veth detached after a libvirt
+#     network restart, bridge recreated ...) by re-running 'up'
+#   * re-applies the return routes from the user-writable routes file
+#   * pings every answer address from inside the namespace and writes /run/labdesk-cloud/status
+#     (world-readable key=value; LabDesk reads it for the cloud's health dot)
+. /usr/local/libexec/labdesk-cloud/common.sh
+load_config
+
+if [ ! -e "$ACTIVE" ]; then
+    write_status "state=stopped" "problem=labdesk-cloud.service is not running"
+    exit 0
+fi
+
+healed=""
+attached() {
+    [ -e "/sys/class/net/$VETH_HOST/master" ] && \
+        [ "$(basename "$(readlink -f "/sys/class/net/$VETH_HOST/master")")" = "$BRIDGE" ]
+}
+if [ -d "/sys/class/net/$BRIDGE/bridge" ]; then
+    if ! ns_exists || ! attached || ! ip -n "$NS" -4 addr show dev "$VETH_NS" 2>/dev/null | grep -q "inet $CLOUD_ADDR"; then
+        /usr/local/libexec/labdesk-cloud/up --quiet && healed="repaired $(date +%H:%M:%S)"
+    fi
+fi
+
+problem=""
+ns_exists || problem="namespace $NS missing"
+[ -z "$problem" ] && ! [ -d "/sys/class/net/$BRIDGE/bridge" ] && problem="bridge $BRIDGE missing (libvirt default network down?)"
+[ -z "$problem" ] && ! attached && problem="veth $VETH_HOST not attached to $BRIDGE"
+
+self=""
+routes=""; rx=""; echo_ignore=""; forwarding=""
+ok_all=1
+if ns_exists; then
+    apply_routes
+    for a in $CLOUD_IP $ANSWER_IPS; do
+        if ip netns exec "$NS" ping -n -q -c1 -W1 "$a" >/dev/null 2>&1; then
+            self="$self $a:ok"
+        else
+            self="$self $a:fail"; ok_all=0
+        fi
+    done
+    [ $ok_all = 1 ] || [ -n "$problem" ] || problem="namespace does not answer its own ping"
+    echo_ignore=$(ip netns exec "$NS" cat /proc/sys/net/ipv4/icmp_echo_ignore_all 2>/dev/null)
+    forwarding=$(ip netns exec "$NS" cat /proc/sys/net/ipv4/ip_forward 2>/dev/null)
+    routes=$(ip -n "$NS" -4 route show proto $RT_PROTO | sed -nE 's/^([0-9./]+) via ([0-9.]+) .*/\1>\2/p' | tr '\n' ' ')
+    rx=$(ip -n "$NS" -s -j link show "$VETH_NS" 2>/dev/null | grep -oE '"rx":\{"bytes":[0-9]+,"packets":[0-9]+' | grep -oE '[0-9]+$')
+else
+    ok_all=0
+fi
+
+edge=""
+for r in $routes; do
+    pfx=${r%>*}
+    case " $RETURN_PREFIXES " in *" $pfx "*) edge=${r#*>}; break ;; esac
+done
+
+write_status \
+    "state=$([ -z "$problem" ] && echo up || echo degraded)" \
+    "ns=$NS" "bridge=$BRIDGE" "veth=$VETH_HOST" \
+    "cloud_addr=$CLOUD_ADDR" "answers=$ANSWER_IPS" \
+    "selfping=${self# }" \
+    "icmp_echo_ignore_all=${echo_ignore:-?}" "ip_forward=${forwarding:-?}" \
+    "edge_gw=$edge" "routes=${routes% }" \
+    "rx_packets=${rx:-0}" \
+    "healed=$healed" "problem=$problem"
+exit 0

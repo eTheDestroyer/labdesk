@@ -1,0 +1,6 @@
+ VLAN0010 is executing the rstp compatible Spanning Tree protocol
+  Number of topology changes 2 last change occurred 00:05:04 ago
+          from Port-channel1
+ VLAN0020 is executing the rstp compatible Spanning Tree protocol
+  Number of topology changes 2 last change occurred 00:05:04 ago
+          from Port-channel1

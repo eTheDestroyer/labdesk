@@ -1,0 +1,8 @@
+[Unit]
+Description=LabDesk Internet cloud: re-apply return routes when LabDesk edits routes.conf
+PartOf=labdesk-cloud.service
+After=labdesk-cloud.service
+
+[Path]
+PathChanged=/var/lib/labdesk-cloud/routes.conf
+Unit=labdesk-cloud-check.service

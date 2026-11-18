@@ -1,0 +1,6 @@
+Interface                      Status         Protocol Description
+Gi0/0                          up             up       eBGP to R3 Gi0/2 (AS 65000)
+Gi0/1                          up             up       INTERNET via CML NAT (DHCP)
+Gi0/2                          up             up       BACKUP to R2 Gi0/4 (R2 side admin down)
+Lo0                            up             up       
+NV0                            up             up

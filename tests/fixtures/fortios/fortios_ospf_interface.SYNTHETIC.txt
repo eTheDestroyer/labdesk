@@ -1,0 +1,22 @@
+# SYNTHETIC SAMPLE - NOT captured from a live device (FortiGate not deployed yet).
+# Hand-written to match FortiOS 7.x 'get router info ospf interface' (zebra) formatting.
+port1 is up, line protocol is up
+  OSPF not enabled on this interface
+port2 is up, line protocol is up
+  Internet Address 10.0.45.2/30, Area 0.0.0.0, MTU 1500
+  Process ID 0, VRF 0, Router ID 6.6.6.6, Network Type POINTOPOINT, Cost: 10
+  Transmit Delay is 1 sec, State Point-To-Point, Priority 1
+  No designated router on this network
+  No backup designated router on this network
+  Timer intervals configured, Hello 10.000, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:03
+  Neighbor Count is 1, Adjacent neighbor count is 1
+port3 is up, line protocol is up
+  Internet Address 192.168.60.3/24, Area 0.0.0.0, MTU 1500
+  Process ID 0, VRF 0, Router ID 6.6.6.6, Network Type BROADCAST, Cost: 10
+  Transmit Delay is 1 sec, State DR, Priority 1
+  Designated Router (ID) 6.6.6.6, Interface Address 192.168.60.3
+  No backup designated router on this network
+  Timer intervals configured, Hello 10.000, Dead 40, Wait 40, Retransmit 5
+    No Hellos (Passive interface)
+  Neighbor Count is 0, Adjacent neighbor count is 0

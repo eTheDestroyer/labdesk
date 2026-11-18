@@ -1,0 +1,7 @@
+GigabitEthernet0/0 is up, line protocol is up
+GigabitEthernet0/1 is up, line protocol is up
+GigabitEthernet0/2 is up, line protocol is up
+GigabitEthernet0/3 is administratively down, line protocol is down
+Vlan10 is up, line protocol is up
+  Internet address is 192.168.10.3/24
+  Address determined by configuration file
