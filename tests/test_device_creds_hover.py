@@ -217,6 +217,7 @@ def _mode(p: Path) -> int:
     return stat.S_IMODE(p.stat().st_mode)
 
 
+@pytest.mark.linux_only
 def test_save_round_trip_mode_and_atomic(cfile):
     C.save("R1", {"USERNAME": "admin", "PASSWORD": "pw-R1!", "ENABLE": "en-R1"})
     assert _mode(cfile) == 0o600
@@ -257,6 +258,7 @@ def test_use_defaults_drops_node_keys_and_writes_defaults(cfile):
     assert _mode(cfile) == 0o600
 
 
+@pytest.mark.linux_only
 def test_save_fixes_a_loose_mode_and_rejects_bad_values(cfile):
     cfile.parent.mkdir(parents=True)
     cfile.write_text("DEFAULT_ENABLE=x\n")

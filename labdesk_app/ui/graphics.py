@@ -380,7 +380,7 @@ def paint_tile(p: QPainter, dtype: DeviceType, size: float, *, dim: bool = False
 
 INTERNET_TOP, INTERNET_BOTTOM = "#5FD3F5", "#1381B8"     # sky cyan: never ROUTE_BLUE (that means "default route")
 CLOUD_HEALTH_COLORS = {"up": T.LINK_UP, "degraded": T.AMBER, "down": T.DOWN_RED, "stopped": T.DOWN_RED,
-                       "not_installed": T.DOWN_RED, "unknown": T.NEUTRAL}
+                       "not_installed": T.DOWN_RED, "unknown": T.NEUTRAL, "unsupported": T.NEUTRAL}
 CLOUD_DOWN_STATES = ("down", "stopped", "not_installed")
 
 
@@ -987,7 +987,8 @@ class NodeItem(_HitMixin, QGraphicsObject):
             tip = "<br>".join(html.escape(t) for t in (h.tooltip_lines() if h is not None else ["checking the cloud…"]))
             out.append(("inet", (text, st), tip, 1))
             if h is not None and st not in ("up", "unknown"):
-                out.append(("cloudstate", ("cloud DOWN" if st != "degraded" else "cloud degraded", st), tip, 0))
+                word = {"degraded": "cloud degraded", "unsupported": "Linux only"}.get(st, "cloud DOWN")
+                out.append(("cloudstate", (word, st), tip, 0))
             return out
         if kind == "cloud" and self.key in ctx.egress_caption:
             text, verified, tip = ctx.egress_caption[self.key]
@@ -1212,13 +1213,13 @@ class NodeItem(_HitMixin, QGraphicsObject):
         if kind == "inet":
             text, st = payload
             col = T.resolve(CLOUD_HEALTH_COLORS.get(st, T.NEUTRAL), tk)
-            glyph = {"up": "up", "unknown": "neutral", "degraded": "warn"}.get(st, "down")
+            glyph = {"up": "up", "unknown": "neutral", "unsupported": "neutral", "degraded": "warn"}.get(st, "down")
             ink = QColor(INTERNET_BOTTOM) if not tk.dark else QColor(INTERNET_TOP)
             return T.draw_pill(p, c, text, tk, border=T.alpha(ink, 0.8), text_color=tk.ink, bold=True,
                                glyph=glyph, icon_color=col, height=T.CHIP_H)
         if kind == "cloudstate":
             text, st = payload
-            state = "warn" if st == "degraded" else "down"
+            state = "warn" if st in ("degraded", "unsupported") else "down"
             return T.draw_pill(p, c, text, tk, border=T.status_fill(state, tk), text_color=T.status_text(state, tk),
                                fill=T.alpha(T.status_fill(state, tk), 0.12), bold=True, glyph="warn" if
                                state == "warn" else "down", height=T.CHIP_H)

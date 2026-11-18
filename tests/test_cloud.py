@@ -2,6 +2,8 @@
 catalog / topology marking and the console config step (no network, no root)."""
 import ipaddress
 
+import pytest
+
 from fake_console import FakeConsole
 
 from labdesk_app import catalog, cloud
@@ -350,6 +352,7 @@ def _desired(tmp_path, routes_text, conf_text=CONF_TEXT):
     return cp.stdout.split("\n")[:-1], cp.stderr
 
 
+@pytest.mark.linux_only
 def test_root_helper_validates_user_routes_file(tmp_path):
     out, err = _desired(tmp_path, cloud.render_routes("100.64.0.3", {"192.168.30.0/24": "100.64.0.4"}))
     assert out == ["10.0.0.0/8 100.64.0.3", "172.16.0.0/12 100.64.0.3", "192.168.0.0/16 100.64.0.3",

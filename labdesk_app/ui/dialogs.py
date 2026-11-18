@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogBut
                                QPushButton, QScrollArea, QSizePolicy, QTableWidget, QTableWidgetItem, QTabBar,
                                QVBoxLayout, QWidget)
 
-from .. import config
+from .. import config, plat
 from . import icons
 from . import theme as T
 from .widgets import StatusPill
@@ -695,9 +695,15 @@ class CredentialsDialog(LabDeskDialog):
 
 # ============================================================================ About
 def git_hash() -> str:
+    build = config.APP_DIR / "BUILD_INFO"                # LabDesk.exe: written by the Windows CI build
+    if plat.FROZEN:
+        try:
+            return build.read_text(encoding="utf-8").strip()[:40]
+        except OSError:
+            return ""
     try:
         out = subprocess.run(["git", "-C", str(config.APP_DIR), "rev-parse", "--short", "HEAD"],
-                             capture_output=True, text=True, timeout=2)
+                             capture_output=True, text=True, timeout=2, **plat.no_window_kwargs())
         return out.stdout.strip() if out.returncode == 0 else ""
     except (OSError, subprocess.SubprocessError):
         return ""

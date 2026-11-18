@@ -29,6 +29,8 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import plat
+
 CLOUD_TAG = "labdesk-cloud"            # CML node tag that marks the System-Bridge connector as the cloud
 CLOUD_LABEL = "INTERNET"
 LAB_ENABLE_SECRET = "cisco"             # every lab router/switch has 'enable secret cisco' (catalog.IOS_BASE_CONFIG)
@@ -134,6 +136,7 @@ def _is_net(s: str) -> bool:
 @dataclass
 class CloudHealth:
     state: str                       # 'up' | 'degraded' | 'down' | 'stopped' | 'not_installed' | 'unknown'
+    #                                  | 'unsupported' (LabDesk for Windows: Linux only)
     answers: tuple = ()
     selfping: dict = field(default_factory=dict)        # ip -> bool (from the namespace itself)
     host_ping: bool | None = None                       # host -> cloud_ip over virbr0
@@ -165,6 +168,8 @@ class CloudHealth:
             return f"cloud degraded — {self.problem or 'partly working'}"
         if self.state == "not_installed":
             return "cloud not installed on this host"
+        if self.state == "unsupported":
+            return "Internet cloud: Linux only (not available in LabDesk for Windows)"
         if self.state == "stopped":
             return "cloud DOWN — labdesk-cloud.service is stopped"
         if self.state == "down":
@@ -270,8 +275,11 @@ def _ping(ip: str, timeout_s: int = 1) -> bool:
 
 def check_health(conf: CloudConf | None = None) -> CloudHealth:
     """IO: status file + /run/netns/<ns> + one host ping (≈1 ms when up, ≤1 s when down).
-    Never needs root; run it on the TaskRunner."""
+    Never needs root; run it on the TaskRunner.  Windows: always 'unsupported' (Linux only)."""
     conf = conf or load_conf()
+    if not plat.HAS_CLOUD:
+        return CloudHealth("unsupported", problem="Linux only", cloud_ip=conf.cloud_ip, net=str(conf.network),
+                           ts=time.time())
     installed = UP_SCRIPT.exists() or CONF_PATH.exists()
     ns_exists = Path(f"/run/netns/{conf.ns}").exists()
     try:

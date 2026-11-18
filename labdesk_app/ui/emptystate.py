@@ -16,7 +16,7 @@ from PySide6.QtGui import QIcon, QPainter, QPen
 from PySide6.QtWidgets import (QGraphicsDropShadowEffect, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QVBoxLayout,
                                QWidget)
 
-from .. import config
+from .. import config, plat
 from . import theme as T
 from .widgets import StatusPill
 
@@ -177,7 +177,8 @@ class EmptyStateCard(QWidget):
             self.sub.setText(f"The CML controller{(' at ' + host) if host else ''} does not answer. Start its VM; "
                              "LabDesk reconnects once the API is up.")
             self.primary.setText("Start CML VM")
-            self.primary.setToolTip("virsh start cml, then wait for the API")
+            self.primary.setToolTip("vmrun start (VMware) or start it yourself, then wait for the API"
+                                    if plat.IS_WINDOWS else "virsh start cml, then wait for the API")
         else:
             self.title.setText("No lab open")
             self.sub.setText("Open a lab from the CML controller, start one from a template, or begin with an "

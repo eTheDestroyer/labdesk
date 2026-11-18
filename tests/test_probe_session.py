@@ -1,4 +1,5 @@
 """D1/D10: burst etiquette against a scripted console (no network)."""
+import pytest
 from fake_console import FakeConsole
 from showcase_replay import fixture_text
 
@@ -13,6 +14,7 @@ def outputs(r="R1"):
     return {c: fixture_text(r, c) for c in CMDS}
 
 
+@pytest.mark.linux_only
 def test_argv_is_batchmode_tt_and_key_based():
     argv = termserver_argv("ad62403d-e0e6-4c80-bf90-5dd999ac9a9f", "admin")
     assert argv[0] == "ssh" and argv.count("-t") == 2

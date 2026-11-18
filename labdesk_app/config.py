@@ -10,22 +10,26 @@ import os
 import threading
 from pathlib import Path
 
-APP_DIR = Path(__file__).resolve().parent.parent          # ~/cml-labs/labdesk
-PKG_DIR = Path(__file__).resolve().parent
+from . import plat
+
+APP_DIR = plat.resource_dir()                             # ~/cml-labs/labdesk (or the unpacked LabDesk.exe)
+PKG_DIR = APP_DIR / "labdesk_app"
 TEMPLATES_DIR = APP_DIR / "templates"
 ICON_PATH = APP_DIR / "labdesk.svg"
 
 CML_VM_NAME = os.environ.get("LABDESK_CML_VM", "cml")
 LIBVIRT_URI = os.environ.get("LABDESK_LIBVIRT_URI", "qemu:///system")
-CRED_FILE = Path(os.path.expanduser(os.environ.get("CML_CRED_FILE", "~/cml-labs/cml-credentials.env")))
+# Linux: ~/cml-labs/cml-credentials.env (install.sh); Windows: %APPDATA%\LabDesk\cml-credentials.env
+CRED_FILE = Path(os.path.expanduser(os.environ["CML_CRED_FILE"])) if os.environ.get("CML_CRED_FILE") \
+    else plat.default_cred_file()
 
 SSH_KEY = Path(os.path.expanduser("~/.ssh/labdesk_ed25519"))
 KNOWN_HOSTS = Path(os.path.expanduser("~/.ssh/labdesk_known_hosts"))
 DEVICE_KNOWN_HOSTS = Path(os.path.expanduser("~/.ssh/labdesk_devices_known_hosts"))
 
-CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))) / "labdesk"
+CONFIG_DIR = plat.default_config_dir()                    # ~/.config/labdesk | %APPDATA%\LabDesk
 STATE_FILE = CONFIG_DIR / "state.json"
-CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))) / "labdesk"
+CACHE_DIR = plat.default_cache_dir()                      # ~/.cache/labdesk | %LOCALAPPDATA%\LabDesk\cache
 
 # host-KVM images (Downloads); base volumes are uploaded once into the libvirt pool
 KVM_POOL = "images"
@@ -60,6 +64,68 @@ def _cml_host() -> str:
 
 
 CML_HOST = _cml_host()
+
+
+def reload_cml_host() -> str:
+    """Re-read the CML address after the connection dialog saved a new one (module attribute updated)."""
+    global CML_HOST
+    CML_HOST = _cml_host()
+    return CML_HOST
+
+
+def needs_setup(path: Path | str | None = None) -> bool:
+    """True when the credentials file is missing or has no CML_ADMIN_PASS (first run)."""
+    try:
+        return not load_env_file(path or CRED_FILE).get("CML_ADMIN_PASS")
+    except OSError:
+        return True
+
+
+def _env_quote(v: str) -> str:
+    # load_env_file strips surrounding whitespace, then quotes: keep leading/trailing spaces inside quotes
+    if v != v.strip():
+        return "'" + v + "'" if "'" not in v else '"' + v + '"'
+    return v
+
+
+def update_env_file(updates: dict[str, str | None], path: Path | str | None = None) -> Path:
+    """Set / remove KEY=VALUE lines in the credentials file (other lines kept), atomically, owner-only."""
+    import tempfile
+    p = Path(path or CRED_FILE)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        lines = p.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        lines = ["# LabDesk: CML login (written by LabDesk; keep this file private)"]
+    out, done = [], set()
+    for line in lines:
+        st = line.strip()
+        k = st.split("=", 1)[0].strip() if st and not st.startswith("#") and "=" in st else None
+        if k is not None and k in updates:
+            if k not in done and updates[k] is not None:
+                out.append(f"{k}={_env_quote(str(updates[k]))}")
+            done.add(k)
+            continue
+        out.append(line)
+    for k, v in updates.items():
+        if k not in done and v is not None:
+            out.append(f"{k}={_env_quote(str(v))}")
+    data = ("\n".join(out).rstrip("\n") + "\n").encode("utf-8")
+    fd, tmp = tempfile.mkstemp(prefix=".cml-credentials.", dir=str(p.parent))
+    try:
+        if not plat.IS_WINDOWS:
+            os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        os.replace(tmp, p)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+    plat.harden_private_file(p)
+    return p
 
 
 class State:

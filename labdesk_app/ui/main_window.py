@@ -5,6 +5,7 @@ from __future__ import annotations
 import html
 import subprocess
 import time
+from pathlib import Path
 
 from PySide6.QtCore import QEvent, QMimeData, QObject, QPointF, QRectF, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QAction, QActionGroup, QColor, QDrag, QFont, QIcon, QKeySequence, QPainter
@@ -12,7 +13,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QDockWidget, QFileDialog, 
                                QLabel, QListWidget, QListWidgetItem, QMainWindow, QMenu, QPushButton, QScrollArea,
                                QSizePolicy, QToolBar, QToolButton, QVBoxLayout, QWidget)
 
-from .. import cloud, config, kvm, launchers, validate
+from .. import cloud, config, kvm, launchers, plat, validate
 from ..catalog import BY_KEY, DEVICE_TYPES, NON_COUNTING_DEFS
 from ..cml_api import CMLClient, CMLError, CMLUnreachable, NodeLockedError
 from ..controller import LabController, LabView as LabData
@@ -103,6 +104,15 @@ class _Bridge(QObject):
     changed = Signal()
 
 
+def unavailable_reason(d) -> str:
+    """Why a device type cannot be added on this OS ('' = it can)."""
+    if d.backend == "kvm" and not plat.HAS_KVM:
+        return plat.LINUX_ONLY_TIP
+    if d.key == "ext_cloud" and not plat.HAS_CLOUD:
+        return plat.CLOUD_LINUX_ONLY_TIP
+    return ""
+
+
 class Palette(QListWidget):
     """Device palette.  ``set_rail(True)`` (L10 compact) shows icons only in a 56 px rail."""
 
@@ -151,7 +161,7 @@ class Palette(QListWidget):
         for d in DEVICE_TYPES:
             if d.backend == "cml" and d.vendor == "generic" and d.shape not in ("switch", "hub"):
                 self._add(d)
-        self._section("Host KVM (outside CML)")
+        self._section("Host KVM (outside CML)" + (" - Linux only" if not plat.HAS_KVM else ""))
         for d in DEVICE_TYPES:
             if d.backend == "kvm":
                 self._add(d)
@@ -167,6 +177,11 @@ class Palette(QListWidget):
         it.setData(Qt.UserRole + 1, title)
         it.setToolTip(f"<b>{d.title}</b><br>{d.note}<br><i>Drag onto the canvas</i>")
         it.setSizeHint(QSize(10, self._row_h(title)))
+        why = unavailable_reason(d)
+        if why:                                      # LabDesk for Windows: Linux-only device, greyed out
+            it.setFlags(it.flags() & ~(Qt.ItemIsEnabled | Qt.ItemIsDragEnabled | Qt.ItemIsSelectable))
+            it.setToolTip(f"<b>{d.title}</b><br>{why}")
+            it.setData(Qt.UserRole + 2, why)
         self.addItem(it)
 
     @staticmethod
@@ -194,7 +209,7 @@ class Palette(QListWidget):
 
     def startDrag(self, actions):
         it = self.currentItem()
-        if not it or not it.data(Qt.UserRole):
+        if not it or not it.data(Qt.UserRole) or not (it.flags() & Qt.ItemIsEnabled):
             return
         mime = QMimeData()
         mime.setData(MIME, it.data(Qt.UserRole).encode())
@@ -227,7 +242,7 @@ class MainWindow(QMainWindow):
     def __init__(self, controller: LabController | None = None, launcher=None):
         super().__init__()
         self.ctl = controller or LabController()
-        self.launcher = launcher or launchers.KonsoleLauncher()
+        self.launcher = launcher or launchers.default_launcher()
         self.runner = TaskRunner(self)
         self.view_data: LabData | None = None
         self._polling = False
@@ -485,6 +500,9 @@ class MainWindow(QMainWindow):
             tb.addAction(a)
         m = QMenu(self)
         m.addAction(self._act("Export YAML…", self.export_yaml, icon="document-save-as"))
+        self.a_connection = self._act("CML connection…", self.edit_connection, None,
+                                      "CML address, username and password", icon="network-connect")
+        m.addAction(self.a_connection)
         da = self._act("Delete lab…", self.delete_lab)
         da.setIcon(icons.icon("edit-delete", "danger"))
         m.addAction(da)
@@ -1411,15 +1429,54 @@ class MainWindow(QMainWindow):
         if self.a_link.isChecked():
             self.log("link mode: drag from one device to another (Esc to leave)")
 
+    def edit_connection(self, first_run: bool = False) -> bool:
+        """CML connection dialog (Lab menu ▸ CML connection…): saves the credentials file, then points the
+        client, consoles and probes at the (maybe new) address."""
+        from .connection_dialog import CmlConnectionDialog
+        dlg = CmlConnectionDialog(self, first_run=first_run, settings=self.settings)
+        if not dlg.exec() or not dlg.saved:
+            return False
+        host = config.reload_cml_host()
+        self.ctl.client.set_host(host)
+        if self.ctl.telemetry is not None:
+            self.ctl.telemetry.cml_user = dlg.saved_user
+        self.log(f"CML connection saved ({host})", "ok")
+        self.poll()
+        return True
+
+    def _start_cml_windows(self):
+        """Windows: VMware Workstation 'vmrun start <vmx>' when configured, else tell the user what to do."""
+        vmx = str(self.settings.value("cml/vmx_path", "") or "").strip()
+        vmrun = plat.vmrun_exe()
+        if not (vmx and vmrun and Path(vmx).exists()):
+            why = ("VMware Workstation's vmrun was not found" if not vmrun else
+                   "no CML VM file (.vmx) is set" if not vmx else f"{vmx} does not exist")
+            info(self, "Start CML VM",
+                 "Start the CML virtual machine in VMware Workstation (or Hyper-V), then wait about 2 minutes: "
+                 "LabDesk reconnects by itself.",
+                 f"LabDesk can start it for you when VMware Workstation is installed and the CML VM's .vmx file "
+                 f"is set under Lab ▸ CML connection… (now: {why}).")
+            return None
+        return [vmrun, "-T", "ws", "start", vmx, "nogui"]
+
     def start_cml_vm(self):
+        start_cmd = None
+        if plat.IS_WINDOWS:
+            start_cmd = self._start_cml_windows()
+            if start_cmd is None:
+                return
         self.start_cml_btn.setEnabled(False)
-        self.log("starting CML VM (virsh start cml) and waiting for the API…")
+        self.log("starting CML VM (" + ("vmrun start" if start_cmd else "virsh start cml")
+                 + ") and waiting for the API…")
 
         def work():
             try:
-                kvm.run(kvm.virsh("start", config.CML_VM_NAME), timeout=60)
+                if start_cmd:
+                    kvm.run(start_cmd, timeout=120)
+                else:
+                    kvm.run(kvm.virsh("start", config.CML_VM_NAME), timeout=60)
             except kvm.KvmError as e:
-                if "already active" not in str(e):
+                if "already active" not in str(e) and "already running" not in str(e).lower():
                     raise
             end = time.time() + 900
             client = CMLClient()
@@ -1447,6 +1504,10 @@ class MainWindow(QMainWindow):
             info(self, "LabDesk", "Open or create a lab first.")
             return
         d = BY_KEY[type_key]
+        why = unavailable_reason(d)
+        if why:
+            info(self, d.title, why)
+            return
         if d.backend == "kvm":
             text = (f"Create a host-KVM VM '{d.title}' via libvirt?\n\n{d.note}\n\n"
                     "The disk is a thin overlay on a base image uploaded once to the 'images' pool. "
@@ -1505,6 +1566,8 @@ class MainWindow(QMainWindow):
         if old is None or old.state != h.state:
             if h.ok:
                 self.log(h.headline, "ok", tag="CLOUD", hue=T.LINK_UP)
+            elif h.state == "unsupported":
+                self.log(h.headline, "warn", tag="CLOUD")
             elif h.state != "unknown":
                 self.log(f"{h.headline}" + (f" - fix: {h.hint}" if h.hint else ""), "error", tag="CLOUD",
                          hue=T.DOWN_RED)
@@ -2381,8 +2444,11 @@ class MainWindow(QMainWindow):
         m = QMenu(self)
         sub = m.addMenu("Add device here")
         for d in DEVICE_TYPES:
-            sub.addAction(QIcon(device_pixmap(d, 24)), d.title).triggered.connect(
-                lambda _=False, k=d.key: self.on_device_dropped(k, spos.x(), spos.y()))
+            a = sub.addAction(QIcon(device_pixmap(d, 24)), d.title)
+            a.triggered.connect(lambda _=False, k=d.key: self.on_device_dropped(k, spos.x(), spos.y()))
+            if unavailable_reason(d):
+                a.setEnabled(False)
+                a.setToolTip(unavailable_reason(d))
         m.addAction("Fit view").triggered.connect(self.view.fit_all)
         lm = m.addMenu("Layers")
         self._fill_layers_menu(lm)

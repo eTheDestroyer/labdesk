@@ -36,7 +36,7 @@ from pathlib import Path
 from typing import Callable
 
 from . import accounts as accounts_mod
-from . import config
+from . import config, plat
 from .catalog import BY_KEY, type_for_cml_node
 from .cml_api import CMLError
 from .facts import (DOWN_KINDS, EC_CMDS, L2_CMDS, MANAGED_SWITCH_DEFS, ROLE_WORDS, STP_MODE_LABELS, AddrInfo, CollectorState,
@@ -52,7 +52,7 @@ from .parsers.common import SyslogLine, iface_key, short_iface
 from .probe import creds as creds_mod
 from .probe.redact import redact, redact_values
 from .probe.session import CONFIG_KEY, SAVE_KEY, BurstResult, BurstStatus, IosDialect, run_burst
-from .probe.transport import TermserverPty
+from .probe.transport import TermserverPty, default_transport  # noqa: F401  (TermserverPty: tests / API)
 
 # ----------------------------------------------------------------------- cadence (D2)
 FAST_S = 15.0
@@ -318,12 +318,47 @@ class ActionResult:
 
 
 # ======================================================================= helpers
+_UUID_RX = re.compile(rb"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+
+def console_uuids_in(argv: list[bytes]) -> set[str]:
+    """The console uuid of an ssh '... connect <uuid>' argv (empty for anything else)."""
+    out: set[str] = set()
+    if not argv:
+        return out
+    prog = argv[0].lower()
+    if not (prog.endswith(b"ssh") or prog.endswith(b"ssh.exe")):
+        return out
+    for i, a in enumerate(argv[:-1]):
+        if a == b"connect" and _UUID_RX.match(argv[i + 1]):
+            out.add(argv[i + 1].decode())
+    return out
+
+
+def _windows_console_uuids(ex: set[int]) -> set[str]:
+    """Windows: the same scan with psutil (ssh.exe processes in Windows Terminal tabs)."""
+    out: set[str] = set()
+    try:
+        import psutil
+    except ImportError:
+        return out
+    for proc in psutil.process_iter(["pid", "name"]):
+        try:
+            if proc.info["pid"] in ex or (proc.info["name"] or "").lower() != "ssh.exe":
+                continue
+            out |= console_uuids_in([a.encode("utf-8", "replace") for a in proc.cmdline()])
+        except (psutil.Error, OSError):
+            continue
+    return out
+
+
 def open_console_uuids(exclude_pids: set[int] | None = None) -> set[str]:
     """Console uuids with an ssh 'connect <uuid>' process on this host (LabDesk Konsole tabs
     and the user's own ssh).  Cheap /proc scan; our own probe pids are excluded."""
     out = set()
     ex = exclude_pids or set()
-    rx = re.compile(rb"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+    if plat.IS_WINDOWS:
+        return _windows_console_uuids(ex)
     try:
         pids = [p for p in os.listdir("/proc") if p.isdigit()]
     except OSError:
@@ -338,9 +373,7 @@ def open_console_uuids(exclude_pids: set[int] | None = None) -> set[str]:
             continue
         if not argv or not argv[0].endswith(b"ssh"):
             continue
-        for i, a in enumerate(argv[:-1]):
-            if a == b"connect" and rx.match(argv[i + 1]):
-                out.add(argv[i + 1].decode())
+        out |= console_uuids_in(argv)
     return out
 
 
@@ -406,7 +439,7 @@ class TelemetryEngine:
                  console_scan: Callable[[set], set] | None = None, autostart: bool = True):
         self.client = client
         self.now = now
-        self.transport_factory = transport_factory or (lambda uuid, user: TermserverPty(uuid, user))
+        self.transport_factory = transport_factory or (lambda uuid, user: default_transport(uuid, user))
         self.creds_loader = creds_loader or creds_mod.load
         self.console_scan = console_scan or open_console_uuids
         self.probe_log_dir = Path(probe_log_dir) if probe_log_dir else config.CACHE_DIR / "probe"
@@ -2124,13 +2157,34 @@ def _condition_from_api(c: dict, ts: float) -> LinkCondition:
 
 
 def host_mem_available_gb() -> float | None:
-    """MemAvailable from /proc/meminfo (V8 status bar; cheap, GUI-thread safe)."""
+    """MemAvailable from /proc/meminfo (V8 status bar; cheap, GUI-thread safe).  Windows: GlobalMemoryStatusEx."""
+    if plat.IS_WINDOWS:
+        return _windows_mem_available_gb()
     try:
         with open("/proc/meminfo") as fh:
             for line in fh:
                 if line.startswith("MemAvailable:"):
                     return int(line.split()[1]) / 1024 / 1024
     except (OSError, ValueError):
+        pass
+    return None
+
+
+def _windows_mem_available_gb() -> float | None:
+    import ctypes
+
+    class MEMORYSTATUSEX(ctypes.Structure):
+        _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+    try:
+        st = MEMORYSTATUSEX()
+        st.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
+        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(st)):
+            return st.ullAvailPhys / 1024 ** 3
+    except (AttributeError, OSError):
         pass
     return None
 

@@ -3,3 +3,6 @@ pexpect>=4.9
 PyYAML>=6.0
 websocket-client>=1.7
 pytest>=8
+# LabDesk for Windows only: probe transport (no pty there) and the open-console scan
+paramiko>=3.4; sys_platform == "win32"
+psutil>=5.9; sys_platform == "win32"

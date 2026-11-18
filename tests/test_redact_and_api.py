@@ -24,6 +24,7 @@ def test_vendor_secrets():
     assert redact_values("pw is hunter22", ["hunter22"]) == f"pw is {MASK}"
 
 
+@pytest.mark.linux_only
 def test_device_creds_mode_and_repr(tmp_path):
     p = tmp_path / "device-creds"
     p.write_text("DEFAULT_ENABLE=topsecret\nR1_ENABLE=other\n")

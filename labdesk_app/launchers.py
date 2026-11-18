@@ -8,6 +8,11 @@ Console commands are argv lists that run on a REAL pty inside Konsole:
                password never appears on a command line or in Konsole)
 * host VM   -> virsh -c qemu:///system console <vm> --force
 
+Windows (LabDesk.exe): one tab per device in a Windows Terminal window named "LabDesk"
+(``wt -w LabDesk new-tab``), or a new console window when Windows Terminal is missing; the
+command is the built-in OpenSSH client.  No askpass there: the user types the CML password in
+the console unless ~/.ssh/labdesk_ed25519 exists.
+
 Konsole: ONE dedicated window (``konsole --separate --profile LabDesk``), one tab per
 device, driven over D-Bus. The LabDesk profile's command is ``tabexec.py``: it reads one
 JSON line ({argv, env, title}) with echo off and runs that argv on the tab's pty - no user
@@ -23,7 +28,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import config, validate
+from . import config, plat, validate
 
 ASKPASS = config.PKG_DIR / "askpass.py"
 TABEXEC = config.PKG_DIR / "tabexec.py"
@@ -42,10 +47,21 @@ class ConsoleCommand:
 
 
 # ------------------------------------------------------------------ builders
-def cml_ssh_base(user: str, host: str = config.CML_HOST, key: Path = config.SSH_KEY) -> list[str]:
-    argv = ["ssh", "-t",
+def _known_hosts_opt(path: Path) -> list[str]:
+    """``-o UserKnownHostsFile=<path>``.  Windows: forward slashes; a path with blanks is left out (ssh
+    would split it into several files, and Windows Terminal re-quotes the command line): ssh then uses
+    its default ~/.ssh/known_hosts."""
+    if not plat.IS_WINDOWS:
+        return ["-o", f"UserKnownHostsFile={path}"]
+    p = Path(path).as_posix()
+    return [] if any(c.isspace() for c in p) else ["-o", f"UserKnownHostsFile={p}"]
+
+
+def cml_ssh_base(user: str, host: str | None = None, key: Path = config.SSH_KEY) -> list[str]:
+    host = host or config.CML_HOST             # read at call time (connection dialog)
+    argv = [plat.ssh_exe(), "-t",
             "-e", "none",                                   # no ~ escapes: raw passthrough
-            "-o", f"UserKnownHostsFile={config.KNOWN_HOSTS}",
+            *_known_hosts_opt(config.KNOWN_HOSTS),
             "-o", "StrictHostKeyChecking=accept-new",
             "-o", "ServerAliveInterval=30",
             "-o", "LogLevel=ERROR",
@@ -64,7 +80,8 @@ def askpass_env(cred_key: str = "CML_ADMIN_PASS") -> dict[str, str]:
 
 def cml_console(label: str, console_uuid: str, user: str) -> ConsoleCommand:
     argv = cml_ssh_base(user) + ["connect", validate.uuid(console_uuid)]
-    return ConsoleCommand(validate.cml_label(label), argv, askpass_env())
+    # Windows: no askpass helper (it is a Python script) - ssh asks for the CML password in the console
+    return ConsoleCommand(validate.cml_label(label), argv, {} if plat.IS_WINDOWS else askpass_env())
 
 
 def kvm_console(vm: str) -> ConsoleCommand:
@@ -77,14 +94,21 @@ LEGACY_SSH_OPTS = ["-o", "KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hell
 
 
 def ssh_to_device(label: str, ip: str, user: str = "admin") -> ConsoleCommand:
-    argv = ["ssh", "-o", f"UserKnownHostsFile={config.DEVICE_KNOWN_HOSTS}",
+    argv = [plat.ssh_exe(), *_known_hosts_opt(config.DEVICE_KNOWN_HOSTS),
             "-o", "StrictHostKeyChecking=no", "-o", "PubkeyAuthentication=no",
             *LEGACY_SSH_OPTS, "-l", validate.username(user), validate.host(ip)]
     return ConsoleCommand(f"{label} (ssh)", argv, {})
 
 
 def telnet_to_device(label: str, ip: str) -> ConsoleCommand:
-    return ConsoleCommand(f"{label} (telnet)", ["telnet", validate.host(ip)], {})
+    host = validate.host(ip)
+    if plat.IS_WINDOWS:
+        exe = shutil.which("telnet")
+        if not exe:
+            raise RuntimeError("the Windows Telnet Client is not installed (Control Panel > Programs > "
+                               "Turn Windows features on or off > Telnet Client)")
+        return ConsoleCommand(f"{label} (telnet)", [exe, host], {})
+    return ConsoleCommand(f"{label} (telnet)", ["telnet", host], {})
 
 
 def http_url(ip: str, https: bool) -> str:
@@ -95,6 +119,9 @@ def http_url(ip: str, https: bool) -> str:
 
 
 def open_url(url: str) -> None:
+    if plat.IS_WINDOWS:
+        os.startfile(url)                          # default browser  # noqa: S606
+        return
     subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                      start_new_session=True)
 
@@ -268,3 +295,58 @@ class KonsoleLauncher:
             raise RuntimeError("neither konsole nor xterm found")
         subprocess.Popen(argv, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         return f"new terminal window '{cmd.title}'"
+
+
+# ------------------------------------------------------------------- Windows
+_WT_WINDOW = "LabDesk"
+
+
+def _win_title(title: str) -> str:
+    """A tab / window title that is safe on a cmd.exe / wt.exe command line."""
+    import re
+    return re.sub(r"[^A-Za-z0-9 ._()\-]", "_", title)[:60] or "LabDesk"
+
+
+def wt_argv(wt: str, cmd: ConsoleCommand) -> list[str]:
+    """``wt -w LabDesk new-tab --title T --suppressApplicationTitle <argv>``: a tab in the one window
+    named LabDesk (created on first use).  wt splits its command line on ';' - escape it."""
+    return [wt, "-w", _WT_WINDOW, "new-tab", "--title", _win_title(cmd.title), "--suppressApplicationTitle",
+            *[a.replace(";", "\\;") for a in cmd.argv]]
+
+
+def conhost_cmdline(cmd: ConsoleCommand) -> str:
+    """cmd.exe line for a NEW console window: set the title, run the command, keep the window open
+    (pause) when it fails so the error can be read."""
+    inner = subprocess.list2cmdline(cmd.argv)
+    return f'cmd.exe /d /s /c "title {_win_title(cmd.title)} & {inner} || pause"'
+
+
+class WindowsConsoleLauncher:
+    """Windows: Windows Terminal tab per device (real console: Tab, ?, Ctrl-C, arrows); otherwise a new
+    console window.  ``popen`` is injectable for tests."""
+
+    def __init__(self, popen=None, wt_finder=None):
+        self._popen = popen or subprocess.Popen
+        self._wt_finder = wt_finder or plat.windows_terminal_exe
+
+    def open(self, cmd: ConsoleCommand) -> str:
+        env = dict(os.environ)
+        env.update(cmd.env)
+        wt = self._wt_finder()
+        if wt:
+            try:
+                self._popen(wt_argv(wt, cmd), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                            **plat.no_window_kwargs())
+                return f"Windows Terminal tab '{cmd.title}'"
+            except OSError:
+                pass
+        self._popen(conhost_cmdline(cmd), env=env, creationflags=plat.CREATE_NEW_CONSOLE)
+        return f"new console window '{cmd.title}'"
+
+    def sessions(self) -> list[dict]:
+        return []
+
+
+def default_launcher():
+    """The console launcher for this OS."""
+    return WindowsConsoleLauncher() if plat.IS_WINDOWS else KonsoleLauncher()

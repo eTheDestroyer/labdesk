@@ -94,8 +94,10 @@ def short_ifname(name: str) -> str:
 
 
 class CMLClient:
-    def __init__(self, host: str = config.CML_HOST, cred_file=config.CRED_FILE,
+    def __init__(self, host: str | None = None, cred_file=None,
                  transport: Transport | None = None, timeout: float = 10.0):
+        host = host or config.CML_HOST            # read at call time: the connection dialog can change it
+        cred_file = cred_file or config.CRED_FILE
         self.base = f"https://{host}/api/v0"
         self.host = host
         self.timeout = timeout
@@ -146,6 +148,25 @@ class CMLClient:
         if not isinstance(tok, str) or not tok:
             raise CMLError("CML authentication returned no token")
         self._token = tok
+
+    def set_host(self, host: str) -> None:
+        """Point this client at another controller (connection dialog); the next call re-authenticates."""
+        with self._auth_lock:
+            self.host = host
+            self.base = f"https://{host}/api/v0"
+            self._token = None
+
+    def check_login(self, user: str, password: str) -> None:
+        """Try ``user`` / ``password`` without storing anything (connection dialog's *Test connection*).
+        Raises CMLUnreachable / CMLError with a readable message."""
+        try:
+            tok = self._raw("POST", "/authenticate", {"username": user, "password": password}, auth=False)
+        except CMLError as e:
+            if e.status in (401, 403):
+                raise CMLError("wrong username or password", e.status) from None
+            raise
+        if not isinstance(tok, str) or not tok:
+            raise CMLError("CML answered but returned no login token")
 
     def request(self, method: str, path: str, body=None, **kw):
         with self._auth_lock:

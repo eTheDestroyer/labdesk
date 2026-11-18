@@ -76,6 +76,7 @@ def test_askpass_reads_named_key_only(tmp_path):
     assert out.returncode == 1 and out.stdout == ""
 
 
+@pytest.mark.linux_only
 def test_tabexec_runs_whitelisted_argv_on_pty():
     child = pexpect.spawn("/usr/bin/python3", ["-I", "-S", str(TABEXEC)], encoding="utf-8", timeout=10)
     child.sendline('{"title":"T","argv":["ssh","-V"],"env":{}}')
@@ -86,6 +87,7 @@ def test_tabexec_runs_whitelisted_argv_on_pty():
     assert '"argv"' not in child.before          # request line not echoed
 
 
+@pytest.mark.linux_only
 def test_tabexec_refuses_other_programs():
     child = pexpect.spawn("/usr/bin/python3", ["-I", "-S", str(TABEXEC)], encoding="utf-8", timeout=10)
     child.sendline('{"title":"T","argv":["bash","-c","id"],"env":{}}')

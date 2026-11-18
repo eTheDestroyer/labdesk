@@ -8,6 +8,7 @@ from labdesk_app.validate import ValidationError
 UUID = "0f1e2d3c-4b5a-4968-8776-655443322110"
 
 
+@pytest.mark.linux_only
 def test_cml_console_argv_is_direct_and_raw():
     cmd = launchers.cml_console("R1", UUID, "admin")
     a = cmd.argv
@@ -25,6 +26,7 @@ def test_cml_console_uses_key_when_present(tmp_path, monkeypatch):
     assert "IdentitiesOnly=yes" in a
 
 
+@pytest.mark.linux_only
 def test_no_password_anywhere_in_console_command(tmp_path, monkeypatch):
     cmd = launchers.cml_console("R1", UUID, "admin")
     blob = json.dumps({"argv": cmd.argv, "env": cmd.env})

@@ -13,7 +13,7 @@ import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import config, validate
+from . import config, plat, validate
 
 URI = config.LIBVIRT_URI
 POOL = config.KVM_POOL
@@ -164,7 +164,8 @@ def memory_warning(kind: str, meminfo: str | None = None) -> str | None:
 # ------------------------------------------------------------------ runners
 def run(cmd: list[str], timeout: float = 120, input_text: str | None = None) -> str:
     try:
-        cp = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, input=input_text)
+        cp = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, input=input_text,
+                            **plat.no_window_kwargs())
     except FileNotFoundError:
         raise KvmError(f"{cmd[0]} not installed") from None
     except subprocess.TimeoutExpired:

@@ -23,7 +23,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from .. import config
+from .. import config, plat
 
 
 def creds_path() -> Path:
@@ -54,7 +54,8 @@ def load(label: str, path: Path | None = None) -> DeviceCreds:
     if not p.exists():
         return DeviceCreds()
     st = p.stat()
-    if st.st_mode & (stat.S_IRWXG | stat.S_IRWXO):
+    # Windows: st_mode always looks like 0o666 - the per-user profile's ACLs protect the file instead
+    if not plat.IS_WINDOWS and st.st_mode & (stat.S_IRWXG | stat.S_IRWXO):
         raise CredsError(f"{p} must be mode 0600 (chmod 600 {p})")
     vals = config.load_env_file(p)
     k = _key(label)
@@ -197,7 +198,8 @@ def save(label: str | None, values: dict, path: Path | None = None, *, use_defau
     data = ("\n".join(out).rstrip("\n") + "\n").encode("utf-8")
     fd, tmp = tempfile.mkstemp(prefix=".device-creds.", dir=str(p.parent))
     try:
-        os.fchmod(fd, 0o600)
+        if not plat.IS_WINDOWS:
+            os.fchmod(fd, 0o600)
         with os.fdopen(fd, "wb") as fh:
             fh.write(data)
             fh.flush()
@@ -209,7 +211,7 @@ def save(label: str | None, values: dict, path: Path | None = None, *, use_defau
         except OSError:
             pass
         raise
-    os.chmod(p, 0o600)
+    plat.harden_private_file(p)
     return p
 
 
