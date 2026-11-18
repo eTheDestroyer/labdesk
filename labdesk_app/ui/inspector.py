@@ -700,6 +700,14 @@ class Inspector(QWidget):
                                   "(stored in device-creds, mode 0600)")
         self.creds_btn.clicked.connect(lambda: self.key and self.win.edit_credentials(self.key))
         row.addWidget(self.creds_btn)
+        self.copy_user_btn = QPushButton(icons.icon("edit-copy"), "User")
+        self.copy_user_btn.setToolTip("Copy the login username to the clipboard")
+        self.copy_user_btn.clicked.connect(lambda: self.key and self.win.copy_login(self.key, "user"))
+        self.copy_pw_btn = QPushButton(icons.icon("edit-copy"), "Password")
+        self.copy_pw_btn.setToolTip("Copy the login password to the clipboard (never shown here)")
+        self.copy_pw_btn.clicked.connect(lambda: self.key and self.win.copy_login(self.key, "password"))
+        row.addWidget(self.copy_user_btn)
+        row.addWidget(self.copy_pw_btn)
         row.addStretch(1)
         v.addLayout(row)
         v.addWidget(self.probe_open)
@@ -1156,7 +1164,8 @@ class Inspector(QWidget):
             rows.append(("Management", f"{m.get('user', '')}@{m['ip']}", True))
         item = self.win.scene.nodes.get(nv.key) if hasattr(self.win, "scene") else None
         if item is not None and item.has_card:
-            rows.append(("Login", login_summary(nv.label), False))
+            first = self.win.first_login_of(nv.key) if hasattr(self.win, "first_login_of") else None
+            rows.append(("Login", login_summary(nv.label, first), False))
         if nt is not None and nt.rid:
             rows.append(("Router ID", nt.rid, True))
         if nt is not None and nt.loopback:
@@ -1348,6 +1357,14 @@ class Inspector(QWidget):
         self.probe_open.setVisible(probed)
         item = self.win.scene.nodes.get(nv.key) if hasattr(self.win, "scene") else None
         self.creds_btn.setVisible(bool(item is not None and item.has_card))
+        fl = None
+        if item is not None and item.has_card and hasattr(self.win, "login_of"):
+            try:
+                fl, _ = self.win.login_of(nv.key)
+            except Exception:  # noqa: BLE001
+                fl = None
+        self.copy_user_btn.setVisible(bool(fl is not None and fl.username))
+        self.copy_pw_btn.setVisible(bool(fl is not None and fl.password))
         if nt is not None:
             self.probe_open.setChecked(bool(nt.probe_while_open))
             self.probe_btn.setText("Probe now (output appears in your console)" if nt.console_open else "Probe now")
@@ -1994,20 +2011,30 @@ class Inspector(QWidget):
             self.win.set_condition(self.link_key, self.cond_combo.currentText())
 
 
-def login_summary(label: str) -> str:
-    """'admin · password + enable secret saved' - never the values themselves (the Inspector can be copied)."""
+def login_summary(label: str, first=None) -> str:
+    """'admin · password + enable secret (default)' - never the password values (the Inspector can be copied).
+    ``first``: default_logins.FirstLogin used when nothing is saved."""
+    from .. import default_logins as DL
     from ..probe import creds as creds_mod
     d = creds_mod.load_detail(label)
     if d.error:
         return "device-creds unreadable (mode must be 0600)"
-    c = d.creds
-    if not (c.username or c.password or c.enable):
+    fl, tag = DL.effective(d, first)
+    if fl is None:
         return "not set (Credentials…)"
-    parts = [c.username or "no user"]
-    saved = [w for w, v in (("password", c.password), ("enable secret", c.enable)) if v]
-    if saved:
-        parts.append(" + ".join(saved) + " saved")
-    return " · ".join(parts) + (" (default)" if d.uses_defaults else "")
+    if not fl.username and not fl.password:
+        return "no login: press Enter" + (" · enable: no password" if fl.has_enable and not fl.enable else "") \
+            + " (default)"
+    parts = [fl.username or "no user"]
+    have = [w for w, v in (("password", fl.password), ("enable secret", fl.enable)) if v]
+    if have:
+        parts.append(" + ".join(have))
+    if fl.password_encrypted or fl.enable_encrypted:
+        parts.append(DL.ENCRYPTED)
+    tag_txt = {"default": " (first-login default)", "saved": " (saved)"}.get(tag or "", "")
+    if tag == "saved" and d.uses_defaults:
+        tag_txt = " (shared default)"
+    return " · ".join(parts) + tag_txt
 
 
 def addressing_html(ad) -> str:

@@ -87,6 +87,8 @@ def all_secret_values(path: Path | None = None) -> list[str]:
 
 # ----------------------------------------------------------------------------- per-node detail + writer
 FIELDS = ("USERNAME", "PASSWORD", "ENABLE")
+SOURCE = "SOURCE"                  # <NODE>_SOURCE=first-login: values came from default_logins, not the user
+SEEDED = "first-login"
 
 
 @dataclass(frozen=True)
@@ -96,6 +98,7 @@ class CredsDetail:
     own: dict                      # FIELD -> value stored for this node (only the fields that exist)
     defaults: dict                 # FIELD -> DEFAULT_* value
     error: str | None = None       # e.g. the file has the wrong mode
+    seeded: bool = False           # the node's values were written from the first-login defaults (not edited)
 
     @property
     def uses_defaults(self) -> bool:
@@ -134,7 +137,7 @@ def load_detail(label: str, path: Path | None = None) -> CredsDetail:
     k = _key(label)
     own = {f: vals[f"{k}_{f}"] for f in FIELDS if vals.get(f"{k}_{f}")}
     dfl = {f: vals[f"DEFAULT_{f}"] for f in FIELDS if vals.get(f"DEFAULT_{f}")}
-    return CredsDetail(creds, own, dfl)
+    return CredsDetail(creds, own, dfl, seeded=vals.get(f"{k}_{SOURCE}") == SEEDED)
 
 
 def check_value(fld: str, value: str | None) -> str | None:
@@ -152,7 +155,8 @@ def check_value(fld: str, value: str | None) -> str | None:
     return None
 
 
-def save(label: str | None, values: dict, path: Path | None = None, *, use_defaults: bool = False) -> Path:
+def save(label: str | None, values: dict, path: Path | None = None, *, use_defaults: bool = False,
+         seeded: bool = False) -> Path:
     """Store credentials for ``label`` (or the DEFAULT_* set when ``label`` is None).
 
     ``values``: {'USERNAME'|'PASSWORD'|'ENABLE': str|None}; an empty / None value removes that key.
@@ -160,7 +164,9 @@ def save(label: str | None, values: dict, path: Path | None = None, *, use_defau
     ``values`` (if any) are written as the DEFAULT_* set.
 
     Atomic: written to a 0600 temp file in the same directory, fsync'ed, then ``os.replace``d; every other
-    line of the file (other devices, comments, blank lines) is kept verbatim.  Values are never logged."""
+    line of the file (other devices, comments, blank lines) is kept verbatim.  Values are never logged.
+    ``seeded=True`` marks the node's values as first-login defaults (``<NODE>_SOURCE=first-login``); a normal
+    save (the Credentials dialog) drops that marker, so the hover card then says "saved"."""
     p = Path(path) if path else creds_path()
     for f, v in values.items():
         if f not in FIELDS:
@@ -177,9 +183,12 @@ def save(label: str | None, values: dict, path: Path | None = None, *, use_defau
     if use_defaults or node is None:
         updates = {f"DEFAULT_{f}": (v or None) for f, v in values.items()}
         if node is not None:
-            updates.update({f"{node}_{f}": None for f in FIELDS})
+            updates.update({f"{node}_{f}": None for f in FIELDS + (SOURCE,)})
     else:
         updates = {f"{node}_{f}": (v or None) for f, v in values.items()}
+        # first-login marker; a user save that clears every field is remembered as 'user' so the
+        # first-login backfill does not fill the node in again
+        updates[f"{node}_{SOURCE}"] = SEEDED if seeded else (None if any(values.values()) else "user")
     out, done = [], set()
     for line in old:
         st = line.strip()
@@ -213,6 +222,43 @@ def save(label: str | None, values: dict, path: Path | None = None, *, use_defau
         raise
     plat.harden_private_file(p)
     return p
+
+
+def has_entry(label: str, path: Path | None = None) -> bool:
+    """The node has any key of its own (values or the first-login marker)."""
+    p = Path(path) if path else creds_path()
+    try:
+        vals = config.load_env_file(p) if p.exists() else {}
+    except OSError:
+        return True                  # unreadable: never write over it
+    k = _key(label)
+    return any(f"{k}_{f}" in vals for f in FIELDS + (SOURCE,))
+
+
+def seed(label: str, values: dict, path: Path | None = None) -> bool:
+    """Write first-login defaults for ``label`` when it has no entry yet (never overwrites a saved login).
+    Fields that a DEFAULT_* value already covers are left to DEFAULT_* (the user's shared login wins).
+    Writes ``<NODE>_SOURCE=first-login`` even when there is nothing to store, so the node is not seeded twice.
+    Returns True when the file was written."""
+    p = Path(path) if path else creds_path()
+    if has_entry(label, p):
+        return False
+    try:
+        vals = config.load_env_file(p) if p.exists() else {}
+    except OSError:
+        return False
+    if p.exists() and not plat.IS_WINDOWS and p.stat().st_mode & (stat.S_IRWXG | stat.S_IRWXO):
+        return False                 # wrong mode: load() reports it; do not touch the file
+    vals_to_write = {f: v for f, v in values.items() if v and not vals.get(f"DEFAULT_{f}")}
+    save(label, vals_to_write, p, seeded=True)
+    return True
+
+
+def reset_to_default(label: str, values: dict, path: Path | None = None) -> Path:
+    """Credentials dialog 'Reset to default': drop the node's own keys, then store the first-login values."""
+    p = Path(path) if path else creds_path()
+    save(label, {f: None for f in FIELDS}, p)
+    return save(label, {f: v for f, v in values.items() if v}, p, seeded=True)
 
 
 def mtime(path: Path | None = None) -> float | None:

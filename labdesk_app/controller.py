@@ -133,6 +133,9 @@ class LabController:
         self._other_running = 0
         self._force_full = True
         self.element_state_ok = True
+        self.first_login_backfill = True        # write first-login defaults to device-creds (default_logins)
+        self._first_login_seen: set[tuple] = set()
+        self.first_login_seeded: list[str] = []  # labels seeded since the UI last asked (pop_first_login_seeded)
         self.telemetry = None
         if telemetry:
             from .telemetry import TelemetryEngine
@@ -304,6 +307,8 @@ class LabController:
                    and n.get("state") in ACTIVE_STATES)
         view = LabView(lab_id, title, snap.lab.get("state", ""), views, links, snap.running_total,
                        this_lab_running=mine)
+        if full and self.first_login_backfill:
+            self.backfill_first_logins(views)
         if self.telemetry is not None:
             self._attach_telemetry(view, snap, lab_state, kvm_states, full)
         return view
@@ -338,6 +343,37 @@ class LabController:
             lv.addressing = lf.addressing
             lv.traffic, lv.condition = tv.traffic.get(lv.key), tv.conditions.get(lv.key)
             lv.bundle = lf.bundle
+
+    # ------------------------------------------------------- first logins
+    def backfill_first_logins(self, views: list[NodeView]) -> list[str]:
+        """Store each node's first login (day-0 config or default_logins table) in device-creds when the node
+        has no entry yet - on lab open, after a palette drop / import / build (next full poll).  Never
+        overwrites a saved login; mode 0600 + the atomic writer of probe.creds.  Returns the labels written."""
+        from . import default_logins as DL
+        from .probe import creds as creds_mod
+        env = None
+        done = []
+        for nv in views:
+            mark = (self.lab_id, nv.key, nv.label)
+            if mark in self._first_login_seen:
+                continue
+            self._first_login_seen.add(mark)
+            if nv.dtype.backend == "kvm" and env is None:
+                env = DL.load_env()
+            fl = DL.for_node(nv, env)
+            if fl is None:
+                continue
+            try:
+                if creds_mod.seed(nv.label, fl.creds_values()):
+                    done.append(nv.label)
+            except (OSError, ValueError):
+                continue
+        self.first_login_seeded.extend(done)
+        return done
+
+    def pop_first_login_seeded(self) -> list[str]:
+        out, self.first_login_seeded = self.first_login_seeded, []
+        return out
 
     # ---------------------------------------------------------------- nodes
     def existing_labels(self) -> set[str]:

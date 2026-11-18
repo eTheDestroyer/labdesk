@@ -97,9 +97,21 @@ Every PE link behaves like its own cable: nothing else is on it, no DHCP, no IP 
 
 BGP: PE AS 65000, HUB AS 65100, R1 + R2 AS 65200 (one site = one AS).
 
-Logins: Cisco `admin` / `cisco`, enable `cisco` (SSH + telnet). PCs `cisco` / `cisco`.
-PE: `JUNOS_ADMIN_USER` / `JUNOS_ADMIN_PASS` from `~/cml-labs/cml-credentials.env`
-(`ssh <user>@192.168.122.238`, or the serial console `virsh -c qemu:///system console PE --force`).
+### First logins
+
+LabDesk shows these on each device's hover card and saves them in `~/.config/labdesk/device-creds` (0600); right-click
+a device → **Copy password**. Checked live on 2026-11-18 (HUB, PC-DATA, PE).
+
+| Device | Console | SSH / telnet | enable |
+|---|---|---|---|
+| HUB, R1, R2 (Cisco IOSv) | no login: press Enter (`line con 0` has no `login`) | `admin` / `cisco` (VTY `login local`) | `cisco` |
+| PC-DATA, PC-PHONE (alpine) | `cisco` / `cisco` | - | - (shell user) |
+| PE (vJunos) | `admin`, or `root` (both set from `cml-credentials.env`) | `ssh admin@192.168.122.238` | - |
+| SW-DATA, SW-PHONE, BR-PE-* | no console | - | - |
+
+PE password: saved in LabDesk (hover card / right-click → **Copy password**); or
+`grep JUNOS_ADMIN_PASS ~/cml-labs/cml-credentials.env`. User name = `JUNOS_ADMIN_USER` from the same file.
+PE console: `virsh -c qemu:///system console PE --force`.
 
 ## What each config block does
 

@@ -47,6 +47,7 @@ class Row:
     note: str = ""                     # right-aligned muted remark
     note_tone: str | None = None
     secret: bool = False               # value is a password (shown or masked)
+    badge: str = ""                    # small right-aligned pill ('default' / 'saved')
 
 
 @dataclass
@@ -80,7 +81,8 @@ class CardModel:
         out += [f"{r.text}: {r.value}" + (f" ({r.note})" if r.note else "") for r in self.meta]
         for s in self.sections:
             out.append(f"[{s.title}]" + (f" {s.aside}" if s.aside else ""))
-            out += [f"  {r.text}: {r.value}" + (f" ({r.note})" if r.note else "") for r in s.rows]
+            out += [f"  {r.text}: {r.value}" + (f" ({r.note})" if r.note else "") + (f" [{r.badge}]" if r.badge else "")
+                    for r in s.rows]
             if s.more:
                 out.append(f"  +{s.more} more")
             if s.note:
@@ -211,30 +213,41 @@ def _short(name: str | None) -> str:
         return name
 
 
-def _login_section(creds, show: bool) -> Section:
+def _login_section(creds, show: bool, first=None) -> Section:
+    """'First login' row (+ 'enable') with a 'default' tag (first-login defaults: default_logins table or
+    the node's day-0 config) or 'saved' (the user's own values / the shared DEFAULT_* login).  ``first``:
+    default_logins.FirstLogin of the node (None = old behaviour: only what device-creds holds)."""
+    from .. import default_logins as DL
     sec = Section("Login")
-    if creds is None:
-        sec.note = f"no credentials saved — {CREDS_HINT}"
-        return sec
-    if getattr(creds, "error", None):
+    if creds is not None and getattr(creds, "error", None):
         sec.note, sec.note_tone = f"{creds.error}", "warn"
         return sec
-    c = creds.creds
-    if not (c.username or c.password or c.enable):
+    fl, tag = DL.effective(creds, first)
+    if fl is None:
         sec.note = f"no credentials saved — {CREDS_HINT}"
         return sec
-    dflt = "default" if creds.uses_defaults else ""
-    user = c.username or "—"
-    if c.password:
-        rows_val = f"{user} / {_secret(c.password, show)}"
+    if not fl.username and not fl.password:
+        sec.rows.append(Row("First login", "no login (press Enter)", badge=tag or "", tone="muted"))
     else:
-        rows_val = f"{user} / (no password)"
-    sec.rows.append(Row("LabDesk login", rows_val, mono=True, secret=bool(c.password), note=dflt))
-    if c.enable:
-        src = creds.source("ENABLE")
-        sec.rows.append(Row("enable", _secret(c.enable, show), mono=True, secret=True,
-                            note="default" if src == "default" and not dflt else ""))
-    if not show:
+        if fl.password_encrypted:
+            pw = DL.ENCRYPTED
+        elif fl.password:
+            pw = _secret(fl.password, show)
+        else:
+            pw = "(no password)"
+        sec.rows.append(Row("First login", f"{fl.username or '—'} / {pw}", mono=True, secret=bool(fl.password),
+                            badge=tag or ""))
+    if fl.enable_encrypted:
+        sec.rows.append(Row("enable", DL.ENCRYPTED, tone="muted"))
+    elif fl.enable:
+        src = creds.source("ENABLE") if creds is not None and hasattr(creds, "source") else None
+        sec.rows.append(Row("enable", _secret(fl.enable, show), mono=True, secret=True,
+                            note="shared default" if src == "default" and tag == "saved" else ""))
+    elif fl.has_enable:
+        sec.rows.append(Row("enable", "no password", tone="muted"))
+    if fl.note:
+        sec.note = fl.note
+    if not show and (fl.password or fl.enable):
         sec.aside = "hidden"
     return sec
 
@@ -283,9 +296,11 @@ def _device_section(nv, nt, show: bool) -> Section:
     return sec
 
 
-def build_card(nv, *, creds=None, show_passwords: bool = True, mgmt_ip: str | None = None) -> CardModel:
+def build_card(nv, *, creds=None, show_passwords: bool = True, mgmt_ip: str | None = None,
+               first_login=None) -> CardModel:
     """``nv``: controller.NodeView (duck-typed: key, label, dtype, state, tele, chips).  ``creds``: probe.creds
-    CredsDetail or None.  ``mgmt_ip``: the stored / detected management address."""
+    CredsDetail or None.  ``mgmt_ip``: the stored / detected management address.  ``first_login``:
+    default_logins.FirstLogin shown when nothing is saved yet (None: 'no credentials saved')."""
     dtype = nv.dtype
     nt = getattr(nv, "tele", None)
     platform = (getattr(dtype, "title", "") or "").split(" (")[0]
@@ -314,6 +329,6 @@ def build_card(nv, *, creds=None, show_passwords: bool = True, mgmt_ip: str | No
         prow = _proto_rows(nv, nt)
         if prow:
             m.sections.append(Section("Protocols", prow[:MAX_PROTO_ROWS], more=max(0, len(prow) - MAX_PROTO_ROWS)))
-    m.sections.append(_login_section(creds, show_passwords))
+    m.sections.append(_login_section(creds, show_passwords, first_login))
     m.sections.append(_device_section(nv, nt, show_passwords))
     return m

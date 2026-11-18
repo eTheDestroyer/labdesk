@@ -286,7 +286,17 @@ class HoverCard(QWidget):
                            (fm["mono"] if r.glyph else fm["small"]).elidedText(r.text, Qt.ElideRight, key_w))
             # note (right) and value
             nw = 0.0
-            if r.note:
+            if r.badge:
+                p.setFont(f["tag"])
+                bw = fm["tag"].horizontalAdvance(r.badge) + 12
+                br = QRectF(x1 - bw, cy - (fm["tag"].height() + 2) / 2, bw, fm["tag"].height() + 2)
+                p.setPen(Qt.NoPen)
+                p.setBrush(T.alpha(tk.N(11), 0.16 if tk.dark else 0.10))
+                p.drawRoundedRect(br, 4, 4)
+                p.setPen(tk.N(11))
+                p.drawText(br, Qt.AlignCenter, r.badge)
+                nw = bw
+            elif r.note:
                 p.setFont(f["small"])
                 nw = min(fm["small"].horizontalAdvance(r.note), (x1 - vx) * 0.55)
                 p.setPen(self._tone(r.note_tone or "muted", tk))

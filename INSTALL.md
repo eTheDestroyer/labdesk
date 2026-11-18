@@ -199,8 +199,10 @@ To pin it to the taskbar, right-click the LabDesk icon in the menu and choose *P
    * `switching-lab-etherchannel.yaml`: switches with VLANs, LACP and PAgP.
 3. Click **Start all**. Routers take 2 to 5 minutes to boot. A green ✓ on a device means it is up.
 4. **Double-click a device** to open its console in Konsole. Leave a console with **Ctrl-]**.
-5. **Hover over a device** to see its live information. To save its login, right-click it and choose **Credentials…**.
-   The lab templates use `admin` / `cisco`.
+5. **Hover over a device** to see its live information, including its **first login** (what to type the first time
+   you open its console - LabDesk saves it for you, nothing to set up). Cisco routers and switches: press Enter, then
+   `enable` → `cisco` (SSH / telnet: `admin` / `cisco`); Linux PCs: `cisco` / `cisco`. Right-click a device →
+   **Copy password** / **Credentials…** to copy or change it. All platforms: README, "First logins".
 
 CML-Free runs at most **5 devices at a time**. The counter in the toolbar (`CML n/5`) shows how many are running.
 

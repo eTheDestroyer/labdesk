@@ -599,7 +599,7 @@ class CredentialsDialog(LabDeskDialog):
     FIELDS = ("USERNAME", "PASSWORD", "ENABLE")
     NAMES = {"USERNAME": "Username", "PASSWORD": "Password", "ENABLE": "Enable secret"}
 
-    def __init__(self, label: str, detail, parent=None):
+    def __init__(self, label: str, detail, parent=None, first_login=None):
         super().__init__(f"Credentials - {label}", parent,
                          header=("object-locked", f"Credentials for {label}",
                                  "The login LabDesk uses on this device's console (probes and auto-configure)."))
@@ -640,6 +640,19 @@ class CredentialsDialog(LabDeskDialog):
         self.error.setStyleSheet(f"color: {T.status_text('down').name()};")
         self.error.setFont(T.type("small"))
         self.body.addWidget(self.error)
+        self.first_login = first_login
+        self.reset_requested = False
+        if first_login is not None:
+            fl_hint = QLabel(f"First login (default): {first_login.summary(show=False)}"
+                             + (f" - {first_login.note}" if first_login.note else ""))
+            fl_hint.setWordWrap(True)
+            fl_hint.setObjectName("muted")
+            fl_hint.setFont(T.type("small"))
+            self.body.addWidget(fl_hint)
+            self.reset_btn = self.add_button("Reset to default", QDialogButtonBox.ResetRole)
+            self.reset_btn.setToolTip("Replace this device's saved login with its first-login default "
+                                      "(day-0 config / platform default)")
+            self.reset_btn.clicked.connect(self._reset)
         self.cancel_button()
         self.ok = self.add_button("Save", QDialogButtonBox.AcceptRole, "primary", default=True)
         self._own = dict(detail.own)
@@ -685,6 +698,10 @@ class CredentialsDialog(LabDeskDialog):
         self.error.setText(err)
         self.error.setVisible(bool(err))
         self.ok.setEnabled(not err)
+
+    def _reset(self):
+        self.reset_requested = True
+        self.accept()
 
     def use_defaults(self) -> bool:
         return self.defaults_box.isChecked()

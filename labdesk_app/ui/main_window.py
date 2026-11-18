@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QDockWidget, QFileDialog, 
                                QSizePolicy, QToolBar, QToolButton, QVBoxLayout, QWidget)
 
 from .. import cloud, config, kvm, launchers, plat, validate
+from .. import default_logins as DL
 from ..catalog import BY_KEY, DEVICE_TYPES, NON_COUNTING_DEFS
 from ..cml_api import CMLClient, CMLError, CMLUnreachable, NodeLockedError
 from ..controller import LabController, LabView as LabData
@@ -1023,6 +1024,11 @@ class MainWindow(QMainWindow):
         if data.lab_id != self.ctl.lab_id or self._closing:
             return
         self.apply_view(data)
+        seeded = self.ctl.pop_first_login_seeded() if hasattr(self.ctl, "pop_first_login_seeded") else []
+        if seeded:
+            self.log(f"first login saved for {', '.join(seeded)} (device-creds, mode 0600; hover a device to "
+                     "see it)", "ok", tag="LOGIN")
+            self.view.refresh_hover_card()
 
     def clear_canvas(self):
         for b in list(self.scene.bundles.values()):
@@ -1795,15 +1801,20 @@ class MainWindow(QMainWindow):
         LabDesk.ini, CML or the log.  The probes use them for login and enable."""
         lbl = self._label(key)
         detail = creds_mod.load_detail(lbl)
-        dlg = CredentialsDialog(lbl, detail, self)
+        first = self.first_login_of(key)
+        dlg = CredentialsDialog(lbl, detail, self, first_login=first)
         if dlg.exec() != CredentialsDialog.Accepted:
             return
         try:
-            creds_mod.save(lbl, dlg.values(), use_defaults=dlg.use_defaults())
+            if dlg.reset_requested and first is not None:
+                creds_mod.reset_to_default(lbl, first.creds_values())
+            else:
+                creds_mod.save(lbl, dlg.values(), use_defaults=dlg.use_defaults())
         except (ValueError, OSError) as e:
             info(self, "Credentials", f"Not saved: {e}")
             return
-        what = "now uses the default login" if dlg.use_defaults() else "credentials saved"
+        what = ("reset to its first-login default" if dlg.reset_requested
+                else "now uses the default login" if dlg.use_defaults() else "credentials saved")
         self.log(f"{lbl}: {what} (device-creds, mode 0600)", "ok")
         if self.ctl.telemetry is not None:
             try:
@@ -1817,13 +1828,55 @@ class MainWindow(QMainWindow):
         self.settings.setValue("ui/hover_show_passwords", bool(on))
         self.view.refresh_hover_card()
 
+    def first_login_of(self, key: str):
+        """default_logins.FirstLogin of a node (day-0 config / platform table / cml-credentials.env), or None."""
+        item = self.scene.nodes.get(key)
+        nv = getattr(item, "nv", None)
+        if nv is None:
+            return None
+        env = DL.load_env() if nv.dtype.backend == "kvm" else None
+        return DL.for_node(nv, env)
+
+    def login_of(self, key: str):
+        """(effective FirstLogin, 'default' | 'saved' | None) - what the card, menu and console hint show."""
+        return DL.effective(creds_mod.load_detail(self._label(key)), self.first_login_of(key))
+
+    def copy_login(self, key: str, what: str):
+        fl, _ = self.login_of(key)
+        val = (fl.username if what == "user" else fl.password) if fl is not None else None
+        lbl = self._label(key)
+        if not val:
+            self.notify(f"{lbl}: no {'username' if what == 'user' else 'password'} to copy", "warn", 4000)
+            return
+        QApplication.clipboard().setText(val)
+        self.log(f"{lbl}: {'username' if what == 'user' else 'password'} copied to the clipboard", "info")
+
+    def _first_console_hint(self, key: str):
+        """First console of a node in this session: event log + toast with its login."""
+        seen = self.__dict__.setdefault("_console_hint_seen", set())
+        lbl = self._label(key)
+        if (self.ctl.lab_id, lbl) in seen:
+            return
+        seen.add((self.ctl.lab_id, lbl))
+        fl, tag = self.login_of(key)
+        show = self.a_show_pw.isChecked()
+        text = DL.console_hint(lbl, fl, show=show)
+        if not text:
+            return
+        # the event log keeps only lab-default passwords in clear; a saved / cml-credentials.env one is masked
+        lab_default = tag == "default" and fl.source != "cml-credentials.env"
+        log_text = text if lab_default else DL.console_hint(lbl, fl, show=False)
+        self.log(log_text + ("" if lab_default else " - right-click ▸ Copy password"), "info", tag="LOGIN")
+        self.notify(text, "info", 10000)
+
     def _hover_card_for(self, item):
         nv = item.nv
         if nv is None:
             return None
         detail = creds_mod.load_detail(nv.label)
         mg = self.mgmt_of(nv.key) or {}
-        model = build_card(nv, creds=detail, show_passwords=self.a_show_pw.isChecked(), mgmt_ip=mg.get("ip"))
+        model = build_card(nv, creds=detail, show_passwords=self.a_show_pw.isChecked(), mgmt_ip=mg.get("ip"),
+                           first_login=self.first_login_of(nv.key))
         dpr = self.devicePixelRatioF() or 1.0
         ck = (nv.dtype.key, T.generation(), round(dpr, 2))
         cache = self.__dict__.setdefault("_card_icons", {})
@@ -1844,6 +1897,7 @@ class MainWindow(QMainWindow):
             return
         lbl = self._label(key)
         self.log(f"opening console of {lbl}…")
+        self._first_console_hint(key)
 
         def work():
             cmd = self.ctl.console_command(key)
@@ -2202,6 +2256,9 @@ class MainWindow(QMainWindow):
         if item.has_card:
             m.addAction(icons.icon("object-locked"), "Credentials…").triggered.connect(
                 lambda: self.edit_credentials(key))
+            m.addAction(icons.icon("edit-copy"), "Copy login").triggered.connect(lambda: self.copy_login(key, "user"))
+            m.addAction(icons.icon("edit-copy"), "Copy password").triggered.connect(
+                lambda: self.copy_login(key, "password"))
         m.addAction(icons.icon("document-properties"), "Properties…").triggered.connect(
             lambda: self.edit_properties(key))
         m.addAction(icons.icon("edit-delete", "danger"), "Delete… (Del)").triggered.connect(self.delete_selected)

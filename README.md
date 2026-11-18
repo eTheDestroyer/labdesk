@@ -204,6 +204,42 @@ creds; replay only). Live, read-only: `.venv/bin/python tools/accounts_live_chec
 --enable-prompt` runs the CONFIG tier's burst on a running "Switching Lab" (gated next to a running LabDesk) and
 prints how each account is stored (seen live: R1 IOSv `type 9 scrypt`, SW1 IOSvL2 `type 5 MD5`).
 
+**First logins.** You never have to look a login up: every device shows the login to use the first time.
+LabDesk writes each node's first login into `device-creds` itself (per node, `R1_USERNAME=` … plus
+`R1_SOURCE=first-login`; mode 0600, the same atomic writer) when it creates the node (palette drop, template import,
+build) and, on lab open, for every existing node that has no entry yet - it never overwrites a login you saved, and
+a field you set as the shared default (`DEFAULT_*`) stays yours. The probes use these values, so login, `enable`
+and the *On the device* accounts work out of the box. Where it shows:
+
+* **Hover card ▸ Login**: `First login  admin / cisco` + `enable  cisco`, tagged **default** (first-login value)
+  or **saved** (you edited it), with a one-line hint (e.g. *the console has no login: press Enter, then 'enable'*).
+  *View ▸ Show passwords on hover* masks it like every other password.
+* **Inspector ▸ Overview**: a *Login* row (never the password) and *User* / *Password* copy buttons.
+* **Right-click**: *Copy login* (user name), *Copy password*.
+* **First console of a node in a session**: a toast and an event-log line, e.g.
+  `R1 first login: admin / cisco (enable: cisco) · console: no username, press Enter, then 'enable'`. A password
+  that comes from `cml-credentials.env` or that you saved is masked in the event log. The Konsole tab itself is not
+  touched (the password would have to go on the tab's command line).
+* **Credentials… ▸ Reset to default** puts the first-login value back.
+
+The node's own day-0 config wins over the table: `username … secret|password …` / `enable secret|password …` lines
+(plain text only - a hashed one shows *set in config (encrypted)*), `line con 0` with or without `login`, alpine
+`USERNAME=` / `PASSWORD=`, Ubuntu cloud-init `default_user` / `password:`. The table (`labdesk_app/default_logins.py`):
+
+| Device | First login | enable | Source |
+|---|---|---|---|
+| Cisco IOSv / IOSvL2 / IOL-XE created by LabDesk | console: none (press Enter); SSH / telnet: `admin` / `cisco` | `cisco` | LabDesk day-0 config (`catalog.IOS_BASE_CONFIG`) |
+| Cisco node with no login in its day-0 config (blank IOSv) | none - press Enter | no password until you configure one | IOS default |
+| Alpine / Desktop / Ubuntu (CML) | `cisco` / `cisco` | - | CML node definition ("cisco/cisco by default") |
+| Tiny Core (CML `server`) | `cisco` / `cisco` (user `tc`: no password) | - | CML node definition |
+| Juniper vJunos (host KVM) | `root`, no password at the console (amnesiac): type `cli`, then `set system root-authentication plain-text-password` | - | vJunos factory default (LabDesk sets nothing); `JUNOS_ADMIN_USER` / `JUNOS_ADMIN_PASS` from `cml-credentials.env` when set |
+| FortiOS (host KVM) | `admin`, empty password - you must set a new one at first login | - | FortiOS factory default; `FGT_ADMIN_USER` / `FGT_ADMIN_PASS` when set |
+| Unmanaged switch, NAT / bridge connector, Internet cloud | no console, no login | - | - |
+
+Live QA (read-only; real `device-creds`, temp settings): `QT_QPA_PLATFORM=offscreen .venv/bin/python
+tools/first_login_live.py --lab "PE Hub-Spoke HSRP" --nodes R1,PC-DATA,PE` backfills, waits for the probes and
+writes `qa/first-login/*.png` (a password from `cml-credentials.env` is masked in the PNG).
+
 ### CML gotchas handled
 
 * A node's interfaces are **locked while it has a disk**. If a link needs a new interface on such a
