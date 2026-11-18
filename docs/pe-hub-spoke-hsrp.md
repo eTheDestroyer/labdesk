@@ -12,13 +12,19 @@ A small "service provider + customer" lab:
 * **BGP** carries the routes, and **only prefix-lists** decide what is sent and accepted.
 * The Cisco routers put their LANs into BGP **only with `redistribute connected` + a route-map** - there
   is no `network` statement anywhere in BGP (see "Redistribute instead of network").
+* **Internet via the hub**: HUB is the Internet edge (Gi0/1 to LabDesk's always-on **INTERNET** cloud, which
+  answers 8.8.8.8 / 1.1.1.1 / 9.9.9.9 / 208.67.222.222). HUB's static default is redistributed into BGP, so every
+  device reaches 8.8.8.8 (see "Default route to the Internet").
 
 ## Diagram
 
 ```
-                         HUB  (Cisco IOSv, AS 65100)
-                         Lo10 192.168.10.1/24   = "HUB LAN"
-                         Gi0/0 10.1.1.2/30
+                                                       INTERNET  (LabDesk Internet cloud = CML connector,
+                                                          |       System Bridge -> host virbr0 -> netns labcloud
+                                                          |       100.64.0.1/24, answers 8.8.8.8 1.1.1.1 ...)
+                         HUB  (Cisco IOSv, AS 65100) -----+  Gi0/1 100.64.0.2/24
+                         Lo10 192.168.10.1/24   = "HUB LAN"   ip route 0.0.0.0 0.0.0.0 100.64.0.1
+                         Gi0/0 10.1.1.2/30                    -> BGP: redistribute static + default-information originate
                           |
                      [BR-PE-HUB]  CML connector "PE-HUB" = bridge1 -> host labdesk-pe-hub
                           |
@@ -46,8 +52,8 @@ A small "service provider + customer" lab:
              172.16.0.10   192.168.20.10
 ```
 
-CML-Free runs at most 5 counted nodes: HUB, R1, R2, PC-DATA, PC-PHONE. Switches and the three
-`BR-PE-*` connectors don't count. The PE is not a CML node at all: it is a KVM VM on this PC
+CML-Free runs at most 5 counted nodes: HUB, R1, R2, PC-DATA, PC-PHONE. Switches, the three
+`BR-PE-*` connectors and the `INTERNET` connector don't count. The PE is not a CML node at all: it is a KVM VM on this PC
 (`virsh -c qemu:///system list`).
 
 ## How it's wired (one isolated L2 segment per PE link)
@@ -60,7 +66,11 @@ Every PE link behaves like its own cable: nothing else is on it, no DHCP, no IP 
  R1  Gi0/0  ---------- BR-PE-R1  "PE-R1"  -- bridge2 on enp8s0 -- net labdesk-pe-r1  (virbr2) -- NIC 3 = ge-0/0/1
  R2  Gi0/0  ---------- BR-PE-R2  "PE-R2"  -- bridge3 on enp9s0 -- net labdesk-pe-r2  (virbr3) -- NIC 4 = ge-0/0/2
                                              bridge0 on enp1s0 -- net default        (virbr0) -- NIC 1 = fxp0 (mgmt, DHCP)
+ HUB Gi0/1  ---------- INTERNET  "System Bridge" -- bridge0 --------- virbr0 -- veth -- netns labcloud 100.64.0.1
 ```
+
+The Internet link is the only lab cable on the shared `virbr0` segment (192.168.122.0/24 + 100.64.0.0/24 on
+the same L2): that is where LabDesk's Internet cloud lives, see "Default route to the Internet".
 
 * **Host**: three libvirt networks `labdesk-pe-hub`, `labdesk-pe-r1`, `labdesk-pe-r2` with no `<ip>` and no
   `<forward>` (persistent, autostart). libvirt names their bridges `virbr1..3` (the numbers can differ on
@@ -82,6 +92,8 @@ Every PE link behaves like its own cable: nothing else is on it, no DHCP, no IP 
 |---|---|---|---|
 | HUB | Lo10 | 192.168.10.1/24 | the HUB LAN (a loopback, no 6th node is allowed) |
 | HUB | Gi0/0 | 10.1.1.2/30 | to PE ge-0/0/0 |
+| HUB | Gi0/1 | 100.64.0.2/24 | to INTERNET (cloud 100.64.0.1); default route `0.0.0.0/0 via 100.64.0.1` |
+| INTERNET | (host netns `labcloud`) | 100.64.0.1/24 | answers 8.8.8.8, 1.1.1.1, 9.9.9.9, 208.67.222.222 |
 | PE | ge-0/0/0.0 | 10.1.1.1/30 | in CUSTOMER |
 | PE | ge-0/0/1.0 | 10.1.2.1/30 | in CUSTOMER |
 | PE | ge-0/0/2.0 | 10.1.3.1/30 | in CUSTOMER |
@@ -109,7 +121,7 @@ a device → **Copy password**. Checked live on 2026-11-18 (HUB, PC-DATA, PE).
 | HUB, R1, R2 (Cisco IOSv) | no login: press Enter (`line con 0` has no `login`) | `admin` / `cisco` (VTY `login local`) | `cisco` |
 | PC-DATA, PC-PHONE (alpine) | `cisco` / `cisco` | - | - (shell user) |
 | PE (vJunos) | `admin`, or `root` (both set from `cml-credentials.env`) | `ssh admin@192.168.122.238` | - |
-| SW-DATA, SW-PHONE, BR-PE-* | no console | - | - |
+| SW-DATA, SW-PHONE, BR-PE-*, INTERNET | no console | - | - |
 
 PE password: saved in LabDesk (hover card / right-click → **Copy password**); or
 `grep JUNOS_ADMIN_PASS ~/cml-labs/cml-credentials.env`. User name = `JUNOS_ADMIN_USER` from the same file.
@@ -148,8 +160,8 @@ PE console: `virsh -c qemu:///system console PE --force`.
   172.16.0.0/24 + 192.168.20.0/24); `deny 100` keeps every other connected subnet (the WAN /30 ...) out.
 * **Prefix-list filtering (requirement 2)**
   * Spokes: `prefix-list BRANCH-OUT` (only 172.16.0.0/24 and 192.168.20.0/24) out to the PE,
-    `prefix-list HUB-IN` (only 192.168.10.0/24) in from the PE and on the iBGP session.
-  * HUB: `prefix-list HUB-LAN` out, `prefix-list BRANCH-LANS` in.
+    `prefix-list HUB-IN` (192.168.10.0/24 + the default 0.0.0.0/0) in from the PE and on the iBGP session.
+  * HUB: `prefix-list HUB-LAN` out (192.168.10.0/24 + 0.0.0.0/0), `prefix-list BRANCH-LANS` in.
 * **Path symmetry** - `route-map TO-PE`: R1 advertises DATA normally and PHONE with
   `as-path prepend 65200 65200`; R2 does the opposite. So the PE (and the HUB) send traffic for each
   LAN back to the router that is HSRP-active for it: no asymmetric routing.
@@ -172,20 +184,71 @@ PE console: `virsh -c qemu:///system console PE --force`.
   local copy) as with `network`.
 * Nothing else changes: the outbound `prefix-list BRANCH-OUT` / `HUB-LAN` and inbound lists stay (two
   independent layers: what enters BGP, what is sent), the `TO-PE` prepend route-maps match by prefix, not
-  by origin, and the R1-R2 iBGP only carries 192.168.10.0/24 (`HUB-IN` both ways), so the redistributed
-  LANs never loop through it. The PE policies match prefixes (`from prefix-list`), not origin, so the PE
+  by origin, and the R1-R2 iBGP only carries 192.168.10.0/24 + 0.0.0.0/0 (`HUB-IN` both ways), so the
+  redistributed LANs never loop through it. The PE policies match prefixes (`from prefix-list`), not origin, so the PE
   accepts the `?` routes unchanged.
 * To add another LAN later: add the interface **and** a line to `CONNECTED-TO-BGP` (and to the
   outbound list `BRANCH-OUT` / `HUB-LAN` and the PE prefix-list, or it is still filtered).
+
+### Default route to the Internet
+
+The lab reaches "the Internet" through the hub (classic hub-and-spoke: branches have no Internet link of their own).
+
+* **The cloud**: LabDesk's always-on Internet cloud - a network namespace `labcloud` on this PC, attached to
+  `virbr0` with 100.64.0.1/24; it owns 8.8.8.8, 1.1.1.1, 9.9.9.9 and 208.67.222.222 on its loopback and answers
+  ping / traceroute even without a real Internet connection. In CML it is the `INTERNET` node: an
+  `external_connector` in **System Bridge** mode (= CML `bridge0` = host `virbr0`), CML tag `labdesk-cloud`
+  (that tag is what makes LabDesk draw it as the Internet cloud). Health: `/run/labdesk-cloud/status`.
+* **HUB** (`configs/HUB.cfg`): `interface Gi0/1` `ip address 100.64.0.2 255.255.255.0`, and
+  `ip route 0.0.0.0 0.0.0.0 100.64.0.1 name INTERNET`.
+* **Into BGP without `network`** - the same rule as the LANs:
+  ```
+  ip prefix-list DEFAULT-ONLY seq 10 permit 0.0.0.0/0
+  route-map RM-STATIC-TO-BGP permit 10
+   match ip address prefix-list DEFAULT-ONLY
+  route-map RM-STATIC-TO-BGP deny 100          ! any other static route stays out
+  router bgp 65100
+   redistribute static route-map RM-STATIC-TO-BGP
+   default-information originate
+  ip prefix-list HUB-LAN seq 20 permit 0.0.0.0/0   ! the outbound filter to the PE lets it through
+  ```
+  `redistribute static` alone would **not** put 0.0.0.0/0 into BGP: IOS skips a redistributed default unless
+  `default-information originate` is set under `router bgp` (that command does nothing on its own either - it only
+  allows the redistributed default; it is not `neighbor ... default-originate`, which would send a default to a
+  peer whether a default exists or not). The route ends in `?` like the redistributed LANs (`65100 ?` on the PE).
+* **100.64.0.0/24 stays out of BGP**: it is a connected route, and `RM-CONNECTED-TO-BGP` only permits
+  `CONNECTED-TO-BGP` (192.168.10.0/24); `show ip bgp 100.64.0.0 255.255.255.0 longer-prefixes` is empty on all
+  three routers, and the PE has no 100.64.0.0/24.
+* **PE**: prefix-list `DEFAULT` (0.0.0.0/0); term `default` added to `FROM-HUB` (accept it from the HUB) and to
+  `TO-BRANCH` (send it to R1/R2), both before `term rest then reject`. `FROM-BRANCH` / `TO-HUB` are unchanged:
+  the branches never send a default to the PE, and the HUB never gets its own default back.
+* **R1/R2**: `ip prefix-list HUB-IN seq 20 permit 0.0.0.0/0`. `HUB-IN` filters both the eBGP from the PE and the
+  iBGP between R1 and R2 (in and out), so each branch router also learns the other's default over iBGP
+  (`next-hop-self`): when R1's WAN dies, R1 still has `0.0.0.0/0 via 172.16.0.3` (R2) - distance 200 - instead of
+  no default. eBGP (distance 20, via the PE) wins while the WAN is up. `BRANCH-OUT` is unchanged, so a branch
+  never advertises the default back to the PE.
+* **Path symmetry is unchanged**: PCs use their HSRP gateway (DATA -> R1, PHONE -> R2), R1/R2 send everything
+  else to the PE, the PE to the HUB, the HUB to 100.64.0.1. Replies come back the same way: cloud -> 100.64.0.2
+  -> PE, where `TO-PE`'s AS-path prepend still sends 172.16.0.0/24 to R1 and 192.168.20.0/24 to R2.
+* **Why no NAT**: the cloud already routes the lab's private space back. Its user-owned
+  `/var/lib/labdesk-cloud/routes.conf` has `EDGE_GW=100.64.0.2`, and the cloud's root helper installs
+  10/8, 172.16/12 and 192.168/16 `via 100.64.0.2` inside the namespace - so a reply to 172.16.0.10 or
+  192.168.20.10 goes straight to the HUB. (A real Internet edge would need NAT/PAT for private addresses; this
+  simulated one doesn't.) The namespace has `ip_forward=0`: it is the destination, not a router, so a traceroute
+  ends `... 10.1.1.2 (HUB) -> 8.8.8.8`; 100.64.0.1 does not show up as a separate hop (8.8.8.8 *is* that host).
+* **First boot after a wipe**: Gi0/1 is on `virbr0`, where libvirt's dnsmasq answers DHCP, so IOS AutoInstall
+  takes a 192.168.122.x lease on it. `LAB-DAY0-FIX` (now also triggered by `PNP-6-PNP_DISCOVERY_STOPPED`) puts
+  100.64.0.2/24 back on Gi0/1 (and 10.1.1.2/30 on Gi0/0), then saves. Seen live on 2026-11-18: after the wipe
+  `show ip interface brief` showed `Gi0/1 100.64.0.2 YES manual up up`.
 
 ### PE (`configs/PE.set.template`, saved as `PE.conf`)
 
 * `system` - host name, root + admin user (SHA-512 hashes only), SSH, `management-instance`
   (fxp0 in its own table `mgmt_junos`), `delete chassis auto-image-upgrade`.
 * `interfaces ge-0/0/0..2` - one NIC per customer site.
-* `policy-options` - prefix-lists `HUB-LAN`, `BRANCH-LANS` and four policies:
-  `FROM-HUB` (import from HUB: only HUB-LAN), `TO-HUB` (export to HUB: only BRANCH-LANS),
-  `FROM-BRANCH` (import from R1/R2: only BRANCH-LANS), `TO-BRANCH` (export to R1/R2: only HUB-LAN).
+* `policy-options` - prefix-lists `HUB-LAN`, `BRANCH-LANS`, `DEFAULT` and four policies:
+  `FROM-HUB` (import from HUB: HUB-LAN + DEFAULT), `TO-HUB` (export to HUB: only BRANCH-LANS),
+  `FROM-BRANCH` (import from R1/R2: only BRANCH-LANS), `TO-BRANCH` (export to R1/R2: HUB-LAN + DEFAULT).
   Each ends with `term rest then reject`.
 * `routing-instances CUSTOMER` - `instance-type vrf`, `route-distinguisher 65000:100`,
   `vrf-target target:65000:100`, the three interfaces, and BGP groups `HUB` (peer-as 65100) and
@@ -205,9 +268,13 @@ cd ~/cml-labs/labdesk
 .venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --reconfigure R1 # wipe R1, store configs/R1.cfg, start
 .venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --save-day0 HUB R1 R2  # no wipe: make the CML
                                     # day-0 match a live change (running node: CML extract, see below)
+.venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --wipe-hub       # lab from before the Internet edge:
+                                    # adds INTERNET + cable, stop/wipe HUB, day-0 = configs/HUB.cfg, start
 ```
 
-Every run is idempotent: it ensures the 3 isolated libvirt networks, the 3 CML VM NICs (reboot only with
+Every run is idempotent: it ensures the `INTERNET` cloud connector (System Bridge, tag `labdesk-cloud`) and its
+cable to HUB Gi0/1 (a booted HUB needs `--wipe-hub` to wire a new cable; `routes.conf` is written only when it is
+missing), the 3 isolated libvirt networks, the 3 CML VM NICs (reboot only with
 `--restart-cml`), `bridge1..3` on the CML controller + their connector labels, the `BR-PE-*` connector
 configs (a stopped connector is wiped to change it: it has no disk state) and the PE NIC networks
 (moved live with `virsh update-device --live --config`, same MAC, so no PE reboot).
@@ -230,7 +297,12 @@ and run the script once for the PE VM. Stop any other running lab first (5-node 
 | HUB/R1/R2 | `show run \| section router bgp` | `redistribute connected route-map RM-CONNECTED-TO-BGP`, no `network` |
 | HUB | `show ip bgp` | its own 192.168.10.0 (`?`) + the two branch LANs (`65000 65200 ?`) only |
 | HUB/R1/R2 | `show ip bgp 10.0.0.0 255.0.0.0 longer-prefixes` | empty: no WAN /30 in BGP |
-| R1/R2 | `show ip bgp` / `show ip route bgp` | 192.168.10.0/24 only |
+| HUB/R1/R2 | `show ip bgp 100.64.0.0 255.255.255.0 longer-prefixes` | empty: the Internet link is not in BGP |
+| HUB | `show ip route 0.0.0.0`, `ping 8.8.8.8 source Loopback10` | `static ... * 100.64.0.1`, `Advertised by bgp 65100 route-map RM-STATIC-TO-BGP`; 5/5 |
+| PE | `show route table CUSTOMER.inet.0 0.0.0.0/0 exact` | `BGP/170 ... AS path: 65100 ?`, to 10.1.1.2 |
+| R1/R2 | `show ip route 0.0.0.0` | `Known via "bgp 65200", distance 20`, via 10.1.2.1 / 10.1.3.1; `Gateway of last resort` set |
+| PC-DATA / PC-PHONE | `ping -c 3 8.8.8.8`, `ping -c 3 1.1.1.1`, `traceroute -n 8.8.8.8` | 0% loss; 172.16.0.2 / 192.168.20.3 -> 10.1.2.1 / 10.1.3.1 -> 10.1.1.2 -> 8.8.8.8 |
+| R1/R2 | `show ip bgp` / `show ip route bgp` | 192.168.10.0/24 + 0.0.0.0/0 (each also via the iBGP peer) |
 | R1/R2 | `show standby brief` | R1 Active grp 10, R2 Active grp 20 |
 | R1/R2 | `show track brief` | objects 1, 2, 3 Up |
 | PC-DATA | `ping -c 3 192.168.10.1`, `traceroute -n 192.168.10.1` | first hop 172.16.0.2 (R1) |
@@ -241,7 +313,7 @@ and run the script once for the PE VM. Stop any other running lab first (5-node 
 1. R1: `configure terminal` / `interface Gi0/0` / `shutdown`.
 2. R1 `show track brief`: track 2 goes Down at once, track 3 Down -> HSRP 10 priority 90.
 3. R2 `show standby brief`: R2 is now **Active** for group 10 (DATA).
-4. PC-DATA `ping 192.168.10.1` still works; `traceroute -n` now shows 172.16.0.3 (R2) first.
+4. PC-DATA `ping 192.168.10.1` and `ping 8.8.8.8` still work; `traceroute -n` now shows 172.16.0.3 (R2) first.
 5. R1: `no shutdown`. After ~15 s (track up delay) + 15 s (preempt delay) R1 is Active again.
 6. Same for the phone side with R2 Gi0/0, PC-PHONE and group 20.
 
@@ -257,16 +329,29 @@ stays up, so this time the **IP SLA** (track 1) is what notices it (~10-15 s).
 | `configs/PE.set.template` | PE config source (password hashes filled in at push time) |
 | `PE.conf` | PE running config, `display set`, secrets replaced by `<redacted>` |
 | `running/*.txt` | `show running-config` of HUB / R1 / R2 after verification |
-| `verify.py` | the live checks below (`--steps base,filter,fail-r1,fail-r2`), log -> `verification.txt` |
-| `verification.txt` | full run after the switch to redistribute-only BGP (base, filtering, both failovers) |
+| `verify.py` | the live checks below (`--steps base,internet,filter,fail-r1,fail-r2`), log -> `verification.txt` |
+| `verification.txt` | full run after adding the Internet default route (base, internet, filtering, both failovers with 8.8.8.8) |
+| `verification-redistribute-only.txt` | full run after the switch to redistribute-only BGP |
 | `verification-isolated-links.txt` | full run after isolating the PE links (base, filtering, both failovers, isolation proof) |
 | `verification-full-run.txt` | first full run 2026-11-18 morning (links still on virbr0) |
-| `labdesk-overview.png` | LabDesk with this lab (PE drawn as a host-KVM device; SW-DATA shows `iBGP R1↔R2`: the R1-R2 iBGP session crosses that LAN, the switch runs no BGP) |
+| `labdesk-overview.png` | LabDesk with this lab (PE drawn as a host-KVM device, INTERNET cloud linked to HUB; SW-DATA shows `iBGP R1↔R2`: the R1-R2 iBGP session crosses that LAN, the switch runs no BGP) |
 | `build_pe_hub_spoke.py` | builds / repairs the lab (idempotent) |
 | `labcli.py` | run commands on devices from the host |
 | `labdesk_shot.py` | offscreen LabDesk screenshot of this lab |
 
 ## Verified results (2026-11-18)
+
+**After adding the Internet default route (`verification.txt`, 13:42-13:49)** - all passed: HUB Gi0/1
+100.64.0.2 `manual up up` after the wipe (EEM fixed it), `S* 0.0.0.0/0 via 100.64.0.1`, `Advertised by bgp 65100
+route-map RM-STATIC-TO-BGP`, `ping 8.8.8.8 source Loopback10` 5/5; PE `0.0.0.0/0 BGP/170 AS path: 65100 ?` to
+10.1.1.2, sent to R1 and R2, not back to the HUB; R1/R2 `Known via "bgp 65200", distance 20`, Gateway of last resort
+10.1.2.1 / 10.1.3.1, plus the iBGP copy from the peer; `show ip bgp 100.64.0.0 255.255.255.0 longer-prefixes` and
+`10.0.0.0 255.0.0.0 longer-prefixes` empty on HUB/R1/R2; PC-DATA / PC-PHONE `ping 8.8.8.8` and `1.1.1.1` 0% loss,
+traceroute 172.16.0.2 -> 10.1.2.1 -> 10.1.1.2 -> 8.8.8.8 (PHONE: 192.168.20.3 -> 10.1.3.1 -> 10.1.1.2 -> 8.8.8.8);
+filter tests A/B as before; failover R1: R2 Active grp 10 after 27 s, R1's default moved to `172.16.0.3` (iBGP,
+distance 200), PC-DATA still pinged 8.8.8.8 via 172.16.0.3 -> 10.1.3.1 -> 10.1.1.2; R1 back after 56 s;
+failover R2 (PE side): R1 Active grp 20 after 52 s, PC-PHONE pinged 8.8.8.8 via 192.168.20.2 -> 10.1.2.1; R2 back
+after 46 s.
 
 **After the switch to redistribute-only BGP (`verification.txt`)** - all passed: HUB/R1/R2 `router bgp`
 has `redistribute connected route-map RM-CONNECTED-TO-BGP` and no `network`; every BGP path ends in `?`;
