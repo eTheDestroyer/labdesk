@@ -123,9 +123,11 @@ def build_scene_data(data, verified_at: dict | None = None) -> SceneData:
                 glyph = {"OK": "✓", "PARTIAL": "…", "DOWN": "!"}.get(h, "?")
                 hue = T.PROTO_HUES[proto]
                 detail = seg.detail.get(proto) or next((v for k, v in seg.detail.items() if ev(k) == proto), "")
-                spec = T.ChipSpec(proto, hue, T.health_fill(h, hue), T.GLYPH_ICON.get(glyph, ""),
+                text, tip = proto, f"<b>{proto}</b> on this switch segment: {detail or h.lower()}"
+                if proto == "BGP":
+                    text, tip = switch_bgp_chip(getattr(seg, "bgp_sessions", None) or [], labels, detail, h)
+                spec = T.ChipSpec(text, hue, T.health_fill(h, hue), T.GLYPH_ICON.get(glyph, ""),
                                   T.glyph_color(glyph, hue))
-                tip = f"<b>{proto}</b> on this switch segment: {detail or h.lower()}"
                 chips.append((spec, tip, "fhrp" if proto in ("HSRP", "VRRP") else "chips"))
             if chips:
                 sd.switch_chips[seg.switch_node] = chips
@@ -160,6 +162,25 @@ def build_scene_data(data, verified_at: dict | None = None) -> SceneData:
     return sd
 
 
+def switch_bgp_chip(sessions, labels: dict, detail: str = "", health: str = "") -> tuple[str, str]:
+    """(chip text, tooltip) for BGP on a switch: names the routers whose session crosses it
+    ('iBGP R1↔R2', 'eBGP A↔B', 'iBGP ×2') - the switch itself never runs BGP."""
+    from ..facts import _pair_labels, bgp_segment_chip_text, bgp_session_words
+    if not sessions:
+        return "BGP", f"<b>BGP</b> across this switch: {detail or str(health).lower()}"
+    text = bgp_segment_chip_text(sessions, labels)
+    if len(sessions) == 1:
+        a, b = _pair_labels(sessions[0], labels)
+        s = sessions[0]
+        body = (f"{bgp_session_words(s, labels)}.<br>This switch doesn't run BGP: "
+                f"the session between {a} and {b} crosses it.")
+    else:
+        body = (f"{len(sessions)} BGP sessions cross this switch:<br>"
+                + "<br>".join("• " + bgp_session_words(s, labels) for s in sessions)
+                + "<br>This switch doesn't run BGP itself.")
+    return text, f"<b>{text}</b><br>{body}"
+
+
 def lab_vlans(tv) -> dict[int, str]:
     """VLAN id -> name over every managed switch of the lab (for hues and the VLAN picker)."""
     out: dict[int, str] = {}
@@ -183,11 +204,13 @@ def _node_for_name(name, labels: dict) -> str | None:
 
 def _egress_mode_guess(nv) -> str | None:
     cfg = (nv.raw or {}).get("configuration")
+    # same rule as catalog.type_for_cml_node: NAT only when it says so; anything else ('System Bridge',
+    # or a bridge label such as 'PE-HUB') is a bridge
     if isinstance(cfg, str):
-        return "Bridge" if "bridge" in cfg.lower() else "NAT"
+        return "NAT" if "NAT" in cfg else "Bridge"
     if isinstance(cfg, list):
         txt = " ".join(str(c.get("content", "")) for c in cfg if isinstance(c, dict))
-        return "Bridge" if "bridge" in txt.lower() else "NAT"
+        return "NAT" if "NAT" in txt else "Bridge"
     return None
 
 

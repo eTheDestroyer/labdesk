@@ -416,9 +416,12 @@ Clicking the lasso / bead selects the bundle → Inspector EtherChannel page.
 | `protocols` | `{Proto: Health}` |
 | `adjacencies` | `[(nodeA, nodeB, Proto, state)]` |
 | `detail` | `{Proto: 'grp 10: Active R1, Standby R2'}` |
+| `bgp_sessions` | `[SegBgpSession(a, b, kind 'iBGP'\|'eBGP'\|'BGP', as_a, as_b, established)]`: BGP sessions whose peer addresses are on this segment |
 
 On `multi` segments (unmanaged switch), draw adjacencies as **chords between router tiles**,
-never as rails on the router↔switch links. HSRP and VRRP health live here.
+never as rails on the router↔switch links. HSRP and VRRP health live here. The switch's BGP chip names
+the session(s) crossing it (`iBGP R1↔R2`, `eBGP A↔B`, `iBGP ×2`; `facts.bgp_segment_chip_text`): a switch
+never runs BGP itself.
 
 ### `RouteHop` / `DefaultPath` (D5; `TelemetryView.paths[node_key]`, `NodeTelemetry.default_path`)
 

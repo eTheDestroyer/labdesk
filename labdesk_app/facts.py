@@ -816,6 +816,68 @@ class Segment:
     protocols: dict[Proto, Health] = field(default_factory=dict)
     adjacencies: list[tuple[str, str, Proto, str]] = field(default_factory=list)  # (nodeA, nodeB, proto, state)
     detail: dict[Proto, str] = field(default_factory=dict)   # plain-words per protocol
+    bgp_sessions: list["SegBgpSession"] = field(default_factory=list)  # BGP sessions crossing this segment
+
+
+@dataclass
+class SegBgpSession:
+    """One BGP session between two routers whose peer addresses sit on the same switch segment.
+    The switch itself does not run BGP: the session only crosses it."""
+    a: str                       # node key (sorted pair)
+    b: str
+    kind: str                    # 'iBGP' | 'eBGP' | 'BGP' (AS of one end unknown)
+    as_a: Any = None
+    as_b: Any = None
+    established: bool = False
+
+
+def _short(name: str, n: int = 8) -> str:
+    return name if len(name) <= n else name[:n - 1] + "…"
+
+
+def bgp_segment_chip_text(sessions: list[SegBgpSession], label: dict[str, str]) -> str:
+    """Chip on a switch carrying BGP sessions: 'iBGP R1↔R2', 'eBGP A↔B', several -> 'iBGP ×2' / 'BGP ×3'."""
+    if not sessions:
+        return "BGP"
+    kinds = {s.kind for s in sessions}
+    kind = kinds.pop() if len(kinds) == 1 else "BGP"
+    if len(sessions) == 1:
+        a, b = _pair_labels(sessions[0], label)
+        return f"{kind} {_short(a)}↔{_short(b)}"
+    return f"{kind} ×{len(sessions)}"
+
+
+def _pair_labels(s: SegBgpSession, label: dict[str, str]) -> tuple[str, str]:
+    """The two router names in label order (R1↔R2, not node-key order)."""
+    a, b = label.get(s.a, s.a), label.get(s.b, s.b)
+    return (a, b) if a <= b else (b, a)
+
+
+def bgp_session_words(s: SegBgpSession, label: dict[str, str]) -> str:
+    a, b = _pair_labels(s, label)
+    flip = (a, b) != (label.get(s.a, s.a), label.get(s.b, s.b))
+    as_a, as_b = (s.as_b, s.as_a) if flip else (s.as_a, s.as_b)
+    if s.kind == "iBGP":
+        asn = f" (AS {as_a})"
+    elif s.kind == "eBGP":
+        asn = f" (AS {as_a} ↔ AS {as_b})"
+    else:
+        asn = ""
+    return f"{s.kind} {a} ↔ {b}{asn}: {'established' if s.established else 'not established'}"
+
+
+def bgp_segment_sentence(sessions: list[SegBgpSession], label: dict[str, str]) -> str:
+    """Plain words for the switch's BGP chip / inspector: the switch does not run BGP itself."""
+    if not sessions:
+        return ""
+    if len(sessions) == 1:
+        s = sessions[0]
+        a, b = _pair_labels(s, label)
+        return (f"{bgp_session_words(s, label)}. The switch itself doesn't run BGP; "
+                f"the session between {a} and {b} crosses it.")
+    return (f"{len(sessions)} BGP sessions cross this switch: "
+            + "; ".join(bgp_session_words(s, label) for s in sessions)
+            + ". The switch itself doesn't run BGP.")
 
 
 @dataclass
@@ -2527,6 +2589,7 @@ def _segment_protocols(seg: Segment, topo: Topology, facts, ip_owner, rid_map, l
         if f and f.ip:
             seg_ips[f.ip] = nk
     bgp_states = []
+    sessions: dict[tuple[str, str], SegBgpSession] = {}
     for nk, _ in routers:
         nf = facts.get(nk)
         if not nf or not nf.bgp or not nf.bgp.value.active:
@@ -2537,9 +2600,23 @@ def _segment_protocols(seg: Segment, topo: Topology, facts, ip_owner, rid_map, l
                 if not any(a == pair[0] and b == pair[1] and pr == Proto.BGP for a, b, pr, _ in seg.adjacencies):
                     seg.adjacencies.append((pair[0], pair[1], Proto.BGP, p.state))
                 bgp_states.append(p.established)
+                mine, theirs = nf.bgp.value.local_as, p.remote_as
+                s = sessions.get(pair)
+                if s is None:
+                    s = sessions[pair] = SegBgpSession(pair[0], pair[1], "BGP", established=p.established)
+                else:
+                    s.established = s.established and p.established
+                if mine not in (None, ""):
+                    setattr(s, "as_a" if nk == pair[0] else "as_b", mine)
+                if theirs not in (None, ""):
+                    setattr(s, "as_b" if nk == pair[0] else "as_a", theirs)
+                if s.as_a not in (None, "") and s.as_b not in (None, ""):
+                    s.kind = "iBGP" if str(s.as_a) == str(s.as_b) else "eBGP"
     if bgp_states:
         seg.protocols[Proto.BGP] = Health.OK if all(bgp_states) else (Health.PARTIAL if any(bgp_states) else Health.DOWN)
-        seg.detail[Proto.BGP] = f"{sum(bgp_states)}/{len(bgp_states)} session ends established"
+        seg.bgp_sessions = list(sessions.values())
+        seg.detail[Proto.BGP] = (f"{bgp_segment_sentence(seg.bgp_sessions, label)} "
+                                 f"({sum(bgp_states)}/{len(bgp_states)} session ends established)")
     # -------- FHRP
     for proto in (Proto.HSRP, Proto.VRRP):
         groups: dict[int, list[tuple[str, FhrpGroup]]] = {}

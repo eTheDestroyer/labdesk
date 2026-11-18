@@ -1245,8 +1245,9 @@ class Inspector(QWidget):
             seg = (data.telemetry.segments.get(tele.segment_id) if data.telemetry and tele.segment_id else None)
             if seg is not None and ev(seg.kind) == "multi":
                 for proto, detail in seg.detail.items():
+                    where = "across this switch" if ev(proto) == "BGP" else "on this switch segment"
                     lines.append(f"<span style='color:{T.text_hex(T.PROTO_HUES.get(ev(proto), T.NEUTRAL))}'>"
-                                 f"<b>{ev(proto)}</b></span> on this switch segment: {html.escape(detail)}")
+                                 f"<b>{ev(proto)}</b></span> {where}: {html.escape(detail)}")
         if lv.default_hop is not None:
             d = getattr(tele, "default_direction", None)
             frm, to = (lv.a, lv.b) if d != "b2a" else (lv.b, lv.a)

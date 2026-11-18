@@ -356,7 +356,11 @@ SECTIONS = {
         ("bead:BCAST", "OSPF broadcast (DR/BDR)", _bead("BCAST"), "p2p", ""),
         ("chip:OSPF", "OSPF up, neighbours FULL", _chip("OSPF", "OSPF"), "chips",
          "✓ FULL · … converging · ! no neighbour"),
-        ("chip:BGP", "BGP sessions established", _chip("BGP", "BGP"), "chips", ""),
+        ("chip:BGP", "BGP sessions established", _chip("BGP", "BGP"), "chips",
+         "on a router: BGP <its AS> ✓ = all of its BGP sessions are up"),
+        ("chip:BGPSW", "BGP session crossing a switch", _chip("iBGP R1↔R2", "BGP"), "chips",
+         "on a switch: the switch runs no BGP - the session between those routers (iBGP: same AS, "
+         "eBGP: different AS) crosses its LAN; 'iBGP ×2' = several, hover for the list"),
         ("fhrp", "HSRP/VRRP active · master", _fhrp("HSRP", "Active", True), "fhrp", ""),
         ("fhrp", "HSRP/VRRP standby · backup", _fhrp("VRRP", "Backup", False), "fhrp", ""),
         ("rail:OSPF", "OSPF adjacency rail (✓ full)", _rail("OSPF", "up"), "ospf", ""),
@@ -527,6 +531,10 @@ def scene_presence(scene) -> set[str]:
             keys.add("paused")
     if ctx is not None and ctx.switch_chips:
         keys.add("chip:STP")
+        for chips in ctx.switch_chips.values():
+            for item in chips:
+                if str(getattr(item[0], "text", "")).split(" ")[0] in ("iBGP", "eBGP", "BGP"):
+                    keys.add("chip:BGPSW")
     return keys
 
 
