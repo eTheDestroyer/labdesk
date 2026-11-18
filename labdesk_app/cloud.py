@@ -111,7 +111,7 @@ def parse_conf(text: str) -> CloudConf:
 
 def load_conf(path: Path | None = None) -> CloudConf:
     try:
-        return parse_conf(Path(path or CONF_PATH).read_text())
+        return parse_conf(Path(path or CONF_PATH).read_text(encoding="utf-8"))
     except OSError:
         return CloudConf()
 
@@ -283,7 +283,7 @@ def check_health(conf: CloudConf | None = None) -> CloudHealth:
     installed = UP_SCRIPT.exists() or CONF_PATH.exists()
     ns_exists = Path(f"/run/netns/{conf.ns}").exists()
     try:
-        status = STATUS_PATH.read_text()
+        status = STATUS_PATH.read_text(encoding="utf-8")
     except OSError:
         status = None
     host_ping = _ping(conf.cloud_ip) if installed and ns_exists else None
@@ -507,7 +507,7 @@ def plan_routes(current_text: str | None, router_ip: str, lans, conf: CloudConf 
 
 def read_routes_file(path: Path | None = None) -> str | None:
     try:
-        return Path(path or ROUTES_PATH).read_text()
+        return Path(path or ROUTES_PATH).read_text(encoding="utf-8")
     except OSError:
         return None
 
@@ -517,7 +517,7 @@ def write_routes_file(text: str, path: Path | None = None) -> None:
     when the directory is not writable (cloud not installed for this user)."""
     p = Path(path or ROUTES_PATH)
     tmp = p.with_name(f".{p.name}.{os.getpid()}.tmp")
-    tmp.write_text(text)
+    tmp.write_text(text, encoding="utf-8")
     os.chmod(tmp, 0o644)
     os.replace(tmp, p)
 
@@ -527,7 +527,7 @@ def manual_routes_command(text: str, path: Path | None = None) -> str:
     body = text.strip().splitlines()
     body = [l for l in body if not l.startswith("#")]
     esc = "\\n".join(body)
-    return f"printf '{esc}\\n' | sudo tee {path or ROUTES_PATH} >/dev/null"
+    return f"printf '{esc}\\n' | sudo tee {Path(path or ROUTES_PATH).as_posix()} >/dev/null"
 
 
 # ============================================================================ CML node helpers

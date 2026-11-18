@@ -89,7 +89,7 @@ def test_no_literal_point_sizes_or_monospace_family_outside_theme():
     for f in UI.glob("*.py"):
         if f.name == "theme.py":
             continue
-        for n, line in enumerate(f.read_text().splitlines(), 1):
+        for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
             if re.search(r"setPointSizeF?\(", line) or re.search(r"QFont\(\s*['\"]monospace", line):
                 bad.append(f"{f.name}:{n}: {line.strip()}")
     assert not bad, "\n".join(bad)
@@ -124,7 +124,7 @@ def test_selection_ring_never_touches_the_name(app, placement):
 
 def test_lod_tiers_are_three_constants():
     assert (T.LOD_TIER1, T.LOD_TIER2, T.LOD_GRID) == (0.6, 0.9, 0.5)
-    src = (UI / "graphics.py").read_text()
+    src = (UI / "graphics.py").read_text(encoding="utf-8")
     assert not re.search(r"lod\s*[<>]=?\s*0\.(45|55|8)\b", src)
 
 
@@ -144,7 +144,7 @@ def test_icons_recolour_and_cache(app):
     pm = icons.render("document-open", 16, 2.0)
     assert not pm.isNull() and pm.width() == 32
     assert icons.render("document-open", 16, 2.0) is pm
-    svg = icons.recolour((icons.ICON_DIR / "document-open-16.svg").read_text(), T.build_tokens(True).N(12))
+    svg = icons.recolour((icons.ICON_DIR / "document-open-16.svg").read_text(encoding="utf-8"), T.build_tokens(True).N(12))
     assert T.N_DARK[11].lower() in svg.lower()
 
 

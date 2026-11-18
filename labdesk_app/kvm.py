@@ -142,7 +142,7 @@ def parse_domifaddr(text: str) -> str | None:
 def mem_available_mb(meminfo: str | None = None) -> int:
     if meminfo is None:
         try:
-            meminfo = Path("/proc/meminfo").read_text()
+            meminfo = Path("/proc/meminfo").read_text(encoding="utf-8")
         except OSError:
             return 0
     m = re.search(r"^MemAvailable:\s+(\d+)\s+kB", meminfo, re.M)

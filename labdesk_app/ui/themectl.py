@@ -56,8 +56,8 @@ def _asset_dir() -> Path:
 
 def _write_svg(name: str, body: str) -> str:
     p = _asset_dir() / name
-    if not p.exists() or p.read_text() != body:
-        p.write_text(body)
+    if not p.exists() or p.read_text(encoding="utf-8") != body:
+        p.write_text(body, encoding="utf-8")
     return p.as_posix()
 
 

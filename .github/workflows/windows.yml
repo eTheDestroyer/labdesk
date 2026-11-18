@@ -53,6 +53,7 @@ jobs:
       - name: Run the tests that apply to Windows
         env:
           QT_QPA_PLATFORM: offscreen
+          PYTHONUTF8: "1"            # LabDesk.exe runs in Python UTF-8 mode (labdesk.spec): test the same way
         run: python -m pytest -q tests
 
       - name: Build LabDesk.exe

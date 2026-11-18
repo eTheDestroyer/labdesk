@@ -193,8 +193,8 @@ def ensure_profile() -> Path:
     d.mkdir(parents=True, exist_ok=True)
     p = d / f"{PROFILE_NAME}.profile"
     text = profile_text()
-    if not p.exists() or p.read_text() != text:
-        p.write_text(text)
+    if not p.exists() or p.read_text(encoding="utf-8") != text:
+        p.write_text(text, encoding="utf-8")
     return p
 
 

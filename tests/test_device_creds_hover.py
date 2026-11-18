@@ -1,6 +1,7 @@
 """Per-device credentials (probe.creds writer), on-device account parsing (accounts.py), the engine's handling of
 plain-text device passwords (redaction) and the hover card content builder (ui/hovercard_model.py)."""
 import os
+import sys
 import stat
 import time
 from pathlib import Path
@@ -255,7 +256,7 @@ def test_use_defaults_drops_node_keys_and_writes_defaults(cfile):
     d = C.load_detail("R1")
     assert d.uses_defaults and d.creds.enable == "cisco" and d.source("ENABLE") == "default"
     assert C.load("SW2").enable == "e2" and C.load("SW2").username == "admin"
-    assert _mode(cfile) == 0o600
+    assert sys.platform == "win32" or _mode(cfile) == 0o600
 
 
 @pytest.mark.linux_only

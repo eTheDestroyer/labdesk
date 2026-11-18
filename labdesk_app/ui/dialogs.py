@@ -226,7 +226,7 @@ def template_info(p: Path) -> dict:
     out = {"path": str(p), "title": p.stem, "description": "", "nodes": None}
     try:
         import yaml
-        d = yaml.safe_load(p.read_text()) or {}
+        d = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
         lab = d.get("lab", {}) or {}
         out["title"] = lab.get("title", p.stem)
         out["description"] = (lab.get("description") or "").strip()

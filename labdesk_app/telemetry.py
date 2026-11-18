@@ -1411,13 +1411,13 @@ class TelemetryEngine:
             os.chmod(d, 0o700)
             p = d / f"{re.sub(r'[^A-Za-z0-9._-]', '_', label)}.log"
             sep = "\n=====LDK-BURST=====\n"
-            old = p.read_text(errors="replace").split(sep) if p.exists() else []
+            old = p.read_text(encoding="utf-8", errors="replace").split(sep) if p.exists() else []
             head = (f"{time.strftime('%Y-%m-%d %H:%M:%S')} status={res.status} reason={res.reason!r} "
                     f"mode={res.mode_found} secs={res.seconds:.1f} cmds={cmds}\n")
             body = redact_values(redact(res.transcript.replace("\r", ""), "cisco"), self._secret_values())
             blocks = [b for b in old if b.strip()][-49:] + [head + body]
             fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-            with os.fdopen(fd, "w") as fh:
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 fh.write(sep.join(blocks))
             os.chmod(p, 0o600)
         except OSError:

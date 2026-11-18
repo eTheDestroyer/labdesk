@@ -1,4 +1,5 @@
 import json
+import sys
 
 import pytest
 
@@ -60,7 +61,8 @@ def test_ssh_and_telnet_to_device():
     s = launchers.ssh_to_device("R1", "192.168.122.50", "admin")
     assert s.argv[-3:] == ["-l", "admin", "192.168.122.50"]
     assert "HostKeyAlgorithms=+ssh-rsa" in s.argv
-    assert launchers.telnet_to_device("R1", "10.0.0.1").argv == ["telnet", "10.0.0.1"]
+    if sys.platform != "win32":                  # Windows: needs the optional Telnet Client (test_windows_port)
+        assert launchers.telnet_to_device("R1", "10.0.0.1").argv == ["telnet", "10.0.0.1"]
     with pytest.raises(ValidationError):
         launchers.ssh_to_device("R1", "-oProxyCommand=evil", "admin")
 

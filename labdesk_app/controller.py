@@ -186,7 +186,7 @@ class LabController:
         return lab_id
 
     def export_yaml(self, path: str | Path) -> None:
-        Path(path).write_text(self.client.download(self._lab()))
+        Path(path).write_text(self.client.download(self._lab()), encoding="utf-8")
 
     def delete_lab(self) -> None:
         lab_id = self._lab()

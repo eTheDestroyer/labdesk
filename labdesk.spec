@@ -52,7 +52,7 @@ exe = EXE(
     a.scripts,
     a.binaries,
     a.datas,
-    [],
+    [("X utf8", None, "OPTION")],      # Python UTF-8 mode: files are UTF-8 whatever the Windows code page is
     name="LabDesk",
     icon=os.path.join(ROOT, "packaging", "labdesk.ico"),
     console=False,              # windowed app: no console window behind LabDesk

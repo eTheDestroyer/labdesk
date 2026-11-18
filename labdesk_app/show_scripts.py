@@ -106,7 +106,7 @@ def parse(text: str) -> list[str]:
 def _read(path: Path | None = None) -> dict:
     p = Path(path) if path else scripts_path()
     try:
-        data = json.loads(p.read_text())
+        data = json.loads(p.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
     dev = data.get("devices") if isinstance(data, dict) else None
@@ -145,7 +145,7 @@ def save(label: str, script: ShowScript | None, path: Path | None = None) -> Non
     p.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=str(p.parent), prefix=".show-scripts.")
     try:
-        with os.fdopen(fd, "w") as fh:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
             json.dump({"version": VERSION, "devices": devices}, fh, indent=2, sort_keys=True)
             fh.write("\n")
         os.replace(tmp, p)
