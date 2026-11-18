@@ -10,6 +10,8 @@ A small "service provider + customer" lab:
   * DATA (computers) `172.16.0.0/24` - **R1 is primary**
   * PHONE (telephony) `192.168.20.0/24` - **R2 is primary**
 * **BGP** carries the routes, and **only prefix-lists** decide what is sent and accepted.
+* The Cisco routers put their LANs into BGP **only with `redistribute connected` + a route-map** - there
+  is no `network` statement anywhere in BGP (see "Redistribute instead of network").
 
 ## Diagram
 
@@ -141,6 +143,9 @@ PE console: `virsh -c qemu:///system console PE --force`.
 * **BGP** - eBGP to the PE (`timers 5 15`, so a dead WAN is noticed within 15 s), plus on R1/R2 an
   **iBGP** session between them over the DATA LAN with `next-hop-self`: if R1's WAN is down R1 can
   still reach the hub through R2 (and the other way round).
+* **Redistribution into BGP** - `redistribute connected route-map RM-CONNECTED-TO-BGP` (no `network`
+  statements). The route-map permits only `prefix-list CONNECTED-TO-BGP` (HUB: 192.168.10.0/24; R1/R2:
+  172.16.0.0/24 + 192.168.20.0/24); `deny 100` keeps every other connected subnet (the WAN /30 ...) out.
 * **Prefix-list filtering (requirement 2)**
   * Spokes: `prefix-list BRANCH-OUT` (only 172.16.0.0/24 and 192.168.20.0/24) out to the PE,
     `prefix-list HUB-IN` (only 192.168.10.0/24) in from the PE and on the iBGP session.
@@ -148,6 +153,30 @@ PE console: `virsh -c qemu:///system console PE --force`.
 * **Path symmetry** - `route-map TO-PE`: R1 advertises DATA normally and PHONE with
   `as-path prepend 65200 65200`; R2 does the opposite. So the PE (and the HUB) send traffic for each
   LAN back to the router that is HSRP-active for it: no asymmetric routing.
+
+### Redistribute instead of `network`
+
+* `network 192.168.10.0 mask 255.255.255.0` puts **one exact prefix** into BGP, and only while that exact
+  prefix is in the routing table. BGP origin code **`i`** (IGP).
+* `redistribute connected` puts **every connected subnet** of the router into BGP - here also the WAN /30
+  (10.1.x.0/30) and anything you add later (a test loopback, a new interface). That is why it is always
+  paired with a **route-map**: `route-map RM-CONNECTED-TO-BGP permit 10` + `match ip address prefix-list
+  CONNECTED-TO-BGP` lets in only the listed LANs, and `route-map RM-CONNECTED-TO-BGP deny 100` (or the
+  implicit deny at the end of every route-map) drops the rest **before** it reaches the BGP table.
+  So the WAN /30 is not even in `show ip bgp`, not only filtered on the way out.
+* Redistributed routes get BGP origin **`?` (incomplete)** instead of `i`: in `show ip bgp` the path ends
+  in `?` (`65000 65200 ?` on the HUB, `65200 ?` on the PE). Origin is a best-path step (IGP `i` < EGP `e` <
+  incomplete `?`), but it comes **after** AS-path length; R1 and R2 both redistribute, so both copies of a
+  LAN have origin `?` and AS-path length still decides: the PE keeps 172.16.0.0/24 via R1 (`65200 ?`, R2's
+  copy is `65200 65200 65200 ?`) and 192.168.20.0/24 via R2. Same MED (0) and weight (32768 for the
+  local copy) as with `network`.
+* Nothing else changes: the outbound `prefix-list BRANCH-OUT` / `HUB-LAN` and inbound lists stay (two
+  independent layers: what enters BGP, what is sent), the `TO-PE` prepend route-maps match by prefix, not
+  by origin, and the R1-R2 iBGP only carries 192.168.10.0/24 (`HUB-IN` both ways), so the redistributed
+  LANs never loop through it. The PE policies match prefixes (`from prefix-list`), not origin, so the PE
+  accepts the `?` routes unchanged.
+* To add another LAN later: add the interface **and** a line to `CONNECTED-TO-BGP` (and to the
+  outbound list `BRANCH-OUT` / `HUB-LAN` and the PE prefix-list, or it is still filtered).
 
 ### PE (`configs/PE.set.template`, saved as `PE.conf`)
 
@@ -174,6 +203,8 @@ cd ~/cml-labs/labdesk
 .venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --pe-config      # first PE config (serial console)
 .venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --pe-config --ssh   # re-push PE config over SSH
 .venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --reconfigure R1 # wipe R1, store configs/R1.cfg, start
+.venv/bin/python ../pe-hub-spoke/build_pe_hub_spoke.py --save-day0 HUB R1 R2  # no wipe: make the CML
+                                    # day-0 match a live change (running node: CML extract, see below)
 ```
 
 Every run is idempotent: it ensures the 3 isolated libvirt networks, the 3 CML VM NICs (reboot only with
@@ -193,9 +224,12 @@ and run the script once for the PE VM. Stop any other running lab first (5-node 
 | Where | Command | Expect |
 |---|---|---|
 | PE | `show bgp summary instance CUSTOMER` | 3 peers `Establ` |
-| PE | `show route table CUSTOMER.inet.0 protocol bgp` | 192.168.10.0/24 via HUB, 172.16.0.0/24 best via R1 (10.1.2.2), 192.168.20.0/24 best via R2 (10.1.3.2) |
+| PE | `show route table CUSTOMER.inet.0 protocol bgp` | 192.168.10.0/24 via HUB, 172.16.0.0/24 best via R1 (10.1.2.2), 192.168.20.0/24 best via R2 (10.1.3.2); AS paths end in `?` |
+| PE | `show route receive-protocol bgp 10.1.1.2 table CUSTOMER.inet.0 all` | only 192.168.10.0/24 (no /30, nothing hidden) |
 | PE | `show route receive-protocol bgp 10.1.2.2 table CUSTOMER.inet.0` | what R1 sent (PHONE prepended) |
-| HUB | `show ip bgp` | the two branch LANs only |
+| HUB/R1/R2 | `show run \| section router bgp` | `redistribute connected route-map RM-CONNECTED-TO-BGP`, no `network` |
+| HUB | `show ip bgp` | its own 192.168.10.0 (`?`) + the two branch LANs (`65000 65200 ?`) only |
+| HUB/R1/R2 | `show ip bgp 10.0.0.0 255.0.0.0 longer-prefixes` | empty: no WAN /30 in BGP |
 | R1/R2 | `show ip bgp` / `show ip route bgp` | 192.168.10.0/24 only |
 | R1/R2 | `show standby brief` | R1 Active grp 10, R2 Active grp 20 |
 | R1/R2 | `show track brief` | objects 1, 2, 3 Up |
@@ -224,7 +258,8 @@ stays up, so this time the **IP SLA** (track 1) is what notices it (~10-15 s).
 | `PE.conf` | PE running config, `display set`, secrets replaced by `<redacted>` |
 | `running/*.txt` | `show running-config` of HUB / R1 / R2 after verification |
 | `verify.py` | the live checks below (`--steps base,filter,fail-r1,fail-r2`), log -> `verification.txt` |
-| `verification.txt` | full run after isolating the PE links (base, filtering, both failovers, isolation proof) |
+| `verification.txt` | full run after the switch to redistribute-only BGP (base, filtering, both failovers) |
+| `verification-isolated-links.txt` | full run after isolating the PE links (base, filtering, both failovers, isolation proof) |
 | `verification-full-run.txt` | first full run 2026-11-18 morning (links still on virbr0) |
 | `labdesk-overview.png` | LabDesk with this lab (PE drawn as a host-KVM device; SW-DATA shows `iBGP R1↔R2`: the R1-R2 iBGP session crosses that LAN, the switch runs no BGP) |
 | `build_pe_hub_spoke.py` | builds / repairs the lab (idempotent) |
@@ -233,7 +268,7 @@ stays up, so this time the **IP SLA** (track 1) is what notices it (~10-15 s).
 
 ## Verified results (2026-11-18)
 
-**After isolating the PE links (afternoon, `verification.txt`)** - everything below passed again:
+**After isolating the PE links (afternoon, `verification-isolated-links.txt`)** - everything below passed again:
 PE 3/3 `Establ`; HUB only the two branch LANs; R1 Active grp 10 / R2 Active grp 20, all tracks Up;
 PC-DATA / PC-PHONE ping 192.168.10.1 0% loss, first hop 172.16.0.2 / 192.168.20.3; filter test A
 ("Not advertised to any peer") and B ("Rejected by import policy", HUB never had it); failover R1
@@ -263,6 +298,12 @@ Earlier run (links still on virbr0):
 
 ## Deviations from the first plan
 
+* **Redistribute-only BGP (2026-11-18, live, no wipe)**: CML 2.10 refuses a config change on a BOOTED
+  node, so the CML day-0 configs of HUB/R1/R2 were updated with CML's `extract_configuration` (the running
+  config, no comments; `configs/*.cfg` and the YAML export hold the commented version). The extraction
+  left `no logging console` and VTY `exec-timeout 0 0` in the running config (not in startup); both were
+  put back. `build_pe_hub_spoke.py --save-day0` does the same steps. A wipe now boots straight into the
+  redistribute config; `--reconfigure X` stores the commented file instead.
 * **Isolated links (2026-11-18 afternoon)**: the PE NICs were moved with `virsh update-device --live --config`
   (same MAC), so the PE did not need a reboot. Changing a connector's bridge in CML 2.10 is only allowed on a
   wiped connector node (they hold no state). Careful on the CML controller: re-activating a bridge

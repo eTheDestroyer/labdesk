@@ -28,10 +28,22 @@ nodes:
           ip prefix-list BRANCH-LANS seq 10 permit 172.16.0.0/24
           ip prefix-list BRANCH-LANS seq 20 permit 192.168.20.0/24
           !
+          ! --- which connected networks go into BGP (redistribute only, no "network" statements) ---
+          ! "redistribute connected" would inject EVERY connected subnet (also the WAN /30 to the PE), so the
+          ! route-map lets in only what CONNECTED-TO-BGP lists; seq 100 denies the rest (the WAN /30, ...).
+          ! Redistributed routes carry BGP origin "incomplete" (shown as "?" instead of "i").
+          ip prefix-list CONNECTED-TO-BGP description HUB LAN (Loopback10) only - nothing else connected may enter BGP
+          ip prefix-list CONNECTED-TO-BGP seq 10 permit 192.168.10.0/24
+          route-map RM-CONNECTED-TO-BGP permit 10
+           description inject the HUB LAN into BGP
+           match ip address prefix-list CONNECTED-TO-BGP
+          route-map RM-CONNECTED-TO-BGP deny 100
+           description everything else connected (WAN /30, ...) stays out of BGP
+          !
           router bgp 65100
            bgp router-id 192.168.10.1
            bgp log-neighbor-changes
-           network 192.168.10.0 mask 255.255.255.0
+           redistribute connected route-map RM-CONNECTED-TO-BGP
            neighbor 10.1.1.1 remote-as 65000
            neighbor 10.1.1.1 description PE (vrf CUSTOMER)
            neighbor 10.1.1.1 timers 5 15
@@ -253,6 +265,19 @@ nodes:
           ip prefix-list DATA-LAN seq 10 permit 172.16.0.0/24
           ip prefix-list PHONE-LAN seq 10 permit 192.168.20.0/24
           !
+          ! --- which connected networks go into BGP (redistribute only, no "network" statements) ---
+          ! "redistribute connected" would inject EVERY connected subnet (also the WAN /30 to the PE), so the
+          ! route-map lets in only what CONNECTED-TO-BGP lists; seq 100 denies the rest (the WAN /30, ...).
+          ! Redistributed routes carry BGP origin "incomplete" (shown as "?" instead of "i").
+          ip prefix-list CONNECTED-TO-BGP description branch LANs only (DATA + PHONE) - never the WAN /30
+          ip prefix-list CONNECTED-TO-BGP seq 10 permit 172.16.0.0/24
+          ip prefix-list CONNECTED-TO-BGP seq 20 permit 192.168.20.0/24
+          route-map RM-CONNECTED-TO-BGP permit 10
+           description inject the DATA and PHONE LANs into BGP
+           match ip address prefix-list CONNECTED-TO-BGP
+          route-map RM-CONNECTED-TO-BGP deny 100
+           description everything else connected (WAN /30, ...) stays out of BGP
+          !
           ! Path symmetry: R1 is HSRP primary for DATA, so it makes the other LAN look longer (AS-path prepend)
           ! and the PE / HUB send return traffic for each LAN to the router that is HSRP active for it.
           route-map TO-PE permit 10
@@ -264,8 +289,7 @@ nodes:
           router bgp 65200
            bgp router-id 172.16.0.2
            bgp log-neighbor-changes
-           network 172.16.0.0 mask 255.255.255.0
-           network 192.168.20.0 mask 255.255.255.0
+           redistribute connected route-map RM-CONNECTED-TO-BGP
            neighbor 10.1.2.1 remote-as 65000
            neighbor 10.1.2.1 description PE (vrf CUSTOMER)
            neighbor 10.1.2.1 timers 5 15
@@ -411,6 +435,19 @@ nodes:
           ip prefix-list DATA-LAN seq 10 permit 172.16.0.0/24
           ip prefix-list PHONE-LAN seq 10 permit 192.168.20.0/24
           !
+          ! --- which connected networks go into BGP (redistribute only, no "network" statements) ---
+          ! "redistribute connected" would inject EVERY connected subnet (also the WAN /30 to the PE), so the
+          ! route-map lets in only what CONNECTED-TO-BGP lists; seq 100 denies the rest (the WAN /30, ...).
+          ! Redistributed routes carry BGP origin "incomplete" (shown as "?" instead of "i").
+          ip prefix-list CONNECTED-TO-BGP description branch LANs only (DATA + PHONE) - never the WAN /30
+          ip prefix-list CONNECTED-TO-BGP seq 10 permit 172.16.0.0/24
+          ip prefix-list CONNECTED-TO-BGP seq 20 permit 192.168.20.0/24
+          route-map RM-CONNECTED-TO-BGP permit 10
+           description inject the DATA and PHONE LANs into BGP
+           match ip address prefix-list CONNECTED-TO-BGP
+          route-map RM-CONNECTED-TO-BGP deny 100
+           description everything else connected (WAN /30, ...) stays out of BGP
+          !
           ! Path symmetry: R2 is HSRP primary for PHONE, so it makes the other LAN look longer (AS-path prepend)
           ! and the PE / HUB send return traffic for each LAN to the router that is HSRP active for it.
           route-map TO-PE permit 10
@@ -422,8 +459,7 @@ nodes:
           router bgp 65200
            bgp router-id 172.16.0.3
            bgp log-neighbor-changes
-           network 172.16.0.0 mask 255.255.255.0
-           network 192.168.20.0 mask 255.255.255.0
+           redistribute connected route-map RM-CONNECTED-TO-BGP
            neighbor 10.1.3.1 remote-as 65000
            neighbor 10.1.3.1 description PE (vrf CUSTOMER)
            neighbor 10.1.3.1 timers 5 15
