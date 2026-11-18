@@ -539,7 +539,9 @@ class LabController:
                           "new NICs appear in the guest after a VM reboot)")
 
     def _link_vm_cml(self, vm: str, cml_node_id: str, log=print) -> LinkResult:
-        """VM <-> CML node: through a CML 'System Bridge' external connector (host virbr0)."""
+        """VM <-> CML node: through a CML 'System Bridge' external connector (host virbr0).
+        (A lab can instead give a link its own isolated network + CML bridge, see docs/pe-hub-spoke-hsrp.md;
+        the state.json entry then names that network in "net".)"""
         lab_id = self._lab()
         lab = self.state.lab(lab_id)
         meta = lab["kvm"][vm]
@@ -592,7 +594,14 @@ class LabController:
                 except kvm.KvmError:
                     pass
         if l.get("net", "").startswith("labdesk-"):
-            kvm.delete_network(l["net"])
+            # keep a network other VMs still use (e.g. the CML VM's NIC on a per-link isolated network)
+            mine = {l[e][4:] for e in ("a", "b") if l[e].startswith("kvm:")}
+            try:
+                others = kvm.network_users(l["net"]) - mine
+            except kvm.KvmError:
+                others = {"?"}
+            if not others:
+                kvm.delete_network(l["net"])
 
     # ------------------------------------------------------------- Internet cloud
     def cloud_nodes(self) -> list[dict]:

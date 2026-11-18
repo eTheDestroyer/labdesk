@@ -106,7 +106,9 @@ down, the status bar shows **Start CML VM**, which runs `virsh start cml` and wa
 * **OSPF / BGP / HSRP / VRRP** - a column of chips beside each router (`OSPF ✓`, `BGP 65000 ✓`; `…`
   converging, `!` configured but no neighbour; `0/0 ✕` = no default route), HSRP/VRRP role badges in the
   same column (filled = Active/Master),
-  and `HSRP ✓` / `VRRP ✓` chips on the switch of that segment. *View ▸ Layers* adds OSPF/BGP
+  and `HSRP ✓` / `VRRP ✓` chips on the switch of that segment. A BGP chip on a **switch** names the
+  routers whose session crosses that LAN - `iBGP R1↔R2` (same AS), `eBGP A↔B` (different AS), several
+  sessions `iBGP ×2` (hover lists them): the switch itself never runs BGP. *View ▸ Layers* adds OSPF/BGP
   adjacency rails, BGP session arcs and live traffic.
 * **Default route to the internet = BLUE**: every hop of each router's default path, with `›`
   chevrons in the forwarding direction, ending at the `NAT egress` tile. A red ✕ marks where a
@@ -224,6 +226,10 @@ prints how each account is stored (seen live: R1 IOSv `type 9 scrypt`, SW1 IOSvL
 * VM ↔ CML node link: LabDesk creates a CML **System Bridge** external connector `BR-<vm>`, links
   the CML node to it, and adds a VM NIC on libvirt `default` (virbr0). All System-Bridge links
   share **one L2 segment** (192.168.122.0/24).
+  For a link that must be its own cable (no DHCP, nothing else on it), give it an isolated libvirt
+  network + an extra CML VM NIC + a CML controller bridge used by that connector; the PE Hub-Spoke HSRP
+  lab does this for its three PE links (`docs/pe-hub-spoke-hsrp.md`, "How it's wired"). Deleting such a
+  link in LabDesk keeps the `labdesk-*` network while another VM (e.g. `cml`) still has a NIC on it.
 * New NICs usually appear in the guest only after a VM reboot.
 * These devices are stored per lab in `~/.config/labdesk/state.json`, along with the management IPs.
 
@@ -571,7 +577,10 @@ for that node is open; meanwhile interface addresses typed in that console are r
 ## PE Hub-Spoke HSRP lab (Juniper PE + Cisco hub / HSRP spokes)
 
 `templates/pe-hub-spoke-hsrp.yaml` is the CML export of the "PE Hub-Spoke HSRP" lab: HUB, R1, R2 (IOSv),
-PC-DATA, PC-PHONE (alpine) and three System-Bridge connectors `BR-PE-HUB/R1/R2`. The PE is the host-KVM
+PC-DATA, PC-PHONE (alpine) and three external connectors `BR-PE-HUB/R1/R2`, each on its own CML bridge
+(`PE-HUB` / `PE-R1` / `PE-R2` = controller `bridge1..3`) and its own isolated host network
+(`labdesk-pe-hub/-r1/-r2`): every PE link is a separate L2 segment. Importing the YAML on another CML needs
+those bridges first (`build_pe_hub_spoke.py --restart-cml` creates them). The PE is the host-KVM
 vJunos VM `PE` (routing-instance CUSTOMER), placed on the lab canvas in `state.json` with one link per
 connector. Build script, device configs, verification and the full write-up live in `~/cml-labs/pe-hub-spoke`
 (copy of the guide: `docs/pe-hub-spoke-hsrp.md`).

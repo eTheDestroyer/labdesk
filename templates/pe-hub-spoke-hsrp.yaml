@@ -6,7 +6,7 @@ nodes:
       - name: ios_config.txt
         content: |-
           hostname HUB
-          ! no service config: don't try to load configs over TFTP (Gi0/0 is on virbr0)
+          ! no service config: don't try to load configs over TFTP (belt-and-braces: Gi0/0 is an isolated link now)
           no service config
           no ip domain lookup
           ip domain name lab.local
@@ -18,7 +18,7 @@ nodes:
            ip address 192.168.10.1 255.255.255.0
           !
           interface GigabitEthernet0/0
-           description WAN to PE ge-0/0/0 (via CML System Bridge BR-PE-HUB; PE routing-instance CUSTOMER)
+           description WAN to PE ge-0/0/0 (via CML connector BR-PE-HUB, isolated link; PE routing-instance CUSTOMER)
            ip address 10.1.1.2 255.255.255.252
            no ip proxy-arp
            no shutdown
@@ -38,7 +38,8 @@ nodes:
            neighbor 10.1.1.1 prefix-list BRANCH-LANS in
            neighbor 10.1.1.1 prefix-list HUB-LAN out
           !
-          ! First boot after a wipe (empty NVRAM): IOS AutoInstall takes a DHCP lease from virbr0 on Gi0/0
+          ! Belt-and-braces (written when Gi0/0 sat on virbr0 with libvirt DHCP; the link is isolated now):
+          ! first boot after a wipe (empty NVRAM): IOS AutoInstall could take a DHCP lease on Gi0/0
           ! and replaces the WAN address, and the SSH key does not exist yet. When CML's day-0 loader logs
           ! CVAC-4-CONFIG_DONE (AutoInstall is over by then), this applet puts the WAN address back,
           ! creates the RSA key for SSH (answers "no" if one already exists) and saves.
@@ -111,7 +112,7 @@ nodes:
   - boot_disk_size: null
     configuration:
       - name: default
-        content: System Bridge
+        content: PE-HUB
     cpu_limit: null
     cpus: null
     data_volume: null
@@ -139,7 +140,7 @@ nodes:
   - boot_disk_size: null
     configuration:
       - name: default
-        content: System Bridge
+        content: PE-R1
     cpu_limit: null
     cpus: null
     data_volume: null
@@ -167,7 +168,7 @@ nodes:
   - boot_disk_size: null
     configuration:
       - name: default
-        content: System Bridge
+        content: PE-R2
     cpu_limit: null
     cpus: null
     data_volume: null
@@ -197,7 +198,7 @@ nodes:
       - name: ios_config.txt
         content: |-
           hostname R1
-          ! no service config: don't try to load configs over TFTP (Gi0/0 is on virbr0)
+          ! no service config: don't try to load configs over TFTP (belt-and-braces: Gi0/0 is an isolated link now)
           no service config
           no ip domain lookup
           ip domain name lab.local
@@ -219,7 +220,7 @@ nodes:
            object 2
           !
           interface GigabitEthernet0/0
-           description WAN to PE ge-0/0/1 (via CML System Bridge BR-PE-R1; PE routing-instance CUSTOMER)
+           description WAN to PE ge-0/0/1 (via CML connector BR-PE-R1, isolated link; PE routing-instance CUSTOMER)
            ip address 10.1.2.2 255.255.255.252
            no ip proxy-arp
            no shutdown
@@ -279,7 +280,8 @@ nodes:
            neighbor 172.16.0.3 prefix-list HUB-IN in
            neighbor 172.16.0.3 prefix-list HUB-IN out
           !
-          ! First boot after a wipe (empty NVRAM): IOS AutoInstall takes a DHCP lease from virbr0 on Gi0/0
+          ! Belt-and-braces (written when Gi0/0 sat on virbr0 with libvirt DHCP; the link is isolated now):
+          ! first boot after a wipe (empty NVRAM): IOS AutoInstall could take a DHCP lease on Gi0/0
           ! and replaces the WAN address, and the SSH key does not exist yet. When CML's day-0 loader logs
           ! CVAC-4-CONFIG_DONE (AutoInstall is over by then), this applet puts the WAN address back,
           ! creates the RSA key for SSH (answers "no" if one already exists) and saves.
@@ -354,7 +356,7 @@ nodes:
       - name: ios_config.txt
         content: |-
           hostname R2
-          ! no service config: don't try to load configs over TFTP (Gi0/0 is on virbr0)
+          ! no service config: don't try to load configs over TFTP (belt-and-braces: Gi0/0 is an isolated link now)
           no service config
           no ip domain lookup
           ip domain name lab.local
@@ -376,7 +378,7 @@ nodes:
            object 2
           !
           interface GigabitEthernet0/0
-           description WAN to PE ge-0/0/2 (via CML System Bridge BR-PE-R2; PE routing-instance CUSTOMER)
+           description WAN to PE ge-0/0/2 (via CML connector BR-PE-R2, isolated link; PE routing-instance CUSTOMER)
            ip address 10.1.3.2 255.255.255.252
            no ip proxy-arp
            no shutdown
@@ -436,7 +438,8 @@ nodes:
            neighbor 172.16.0.2 prefix-list HUB-IN in
            neighbor 172.16.0.2 prefix-list HUB-IN out
           !
-          ! First boot after a wipe (empty NVRAM): IOS AutoInstall takes a DHCP lease from virbr0 on Gi0/0
+          ! Belt-and-braces (written when Gi0/0 sat on virbr0 with libvirt DHCP; the link is isolated now):
+          ! first boot after a wipe (empty NVRAM): IOS AutoInstall could take a DHCP lease on Gi0/0
           ! and replaces the WAN address, and the SSH key does not exist yet. When CML's day-0 loader logs
           ! CVAC-4-CONFIG_DONE (AutoInstall is over by then), this applet puts the WAN address back,
           ! creates the RSA key for SSH (answers "no" if one already exists) and saves.

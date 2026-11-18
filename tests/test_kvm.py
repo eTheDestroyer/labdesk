@@ -85,3 +85,17 @@ def test_console_and_lifecycle_cmds():
     assert kvm.build_console_cmd("JR1")[-3:] == ["console", "JR1", "--force"]
     assert kvm.build_undefine_cmd("JR1")[-3:] == ["JR1", "--remove-all-storage", "--nvram"]
     assert kvm.build_stop_cmd("JR1", force=True)[-2:] == ["destroy", "JR1"]
+
+
+def test_domiflist_networks_and_shared_network_kept(monkeypatch):
+    text = (" Interface   Type      Source           Model    MAC\n"
+            "--------------------------------------------------------------------\n"
+            " vnet5       network   default          virtio   52:54:00:0d:b1:8b\n"
+            " -           network   labdesk-pe-hub   virtio   52:54:00:07:fb:fc\n")
+    assert kvm.parse_domiflist_networks(text) == {"default", "labdesk-pe-hub"}
+    out = {("list", "--all", "--name"): "cml\nPE\n",
+           ("domiflist", "cml", "--inactive"): text,
+           ("domiflist", "PE", "--inactive"): text.replace("vnet5", "vnet1")}
+    monkeypatch.setattr(kvm, "run", lambda cmd, timeout=0, input_text=None: out[tuple(cmd[3:])])
+    assert kvm.network_users("labdesk-pe-hub") == {"cml", "PE"}
+    assert kvm.network_users("labdesk-other") == set()

@@ -284,6 +284,23 @@ def delete_network(name: str) -> None:
             pass
 
 
+def parse_domiflist_networks(text: str) -> set[str]:
+    """Libvirt network names in ``virsh domiflist`` output."""
+    return set(re.findall(r"^\s*\S+\s+network\s+(\S+)\s", text or "", re.M))
+
+
+def network_users(name: str) -> set[str]:
+    """Domains (running or not) with a NIC on libvirt network ``name``."""
+    users = set()
+    for vm in run(virsh("list", "--all", "--name"), timeout=15).split():
+        try:
+            if name in parse_domiflist_networks(run(virsh("domiflist", vm, "--inactive"), timeout=15)):
+                users.add(vm)
+        except KvmError:
+            pass
+    return users
+
+
 def attach_nic(vm: str, network: str) -> None:
     run(build_attach_nic_cmd(vm, network, live=domstate(vm) == "running"), timeout=30)
 
