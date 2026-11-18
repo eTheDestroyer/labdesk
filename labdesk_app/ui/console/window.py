@@ -168,6 +168,7 @@ class ConsoleWindow(QWidget):
         view.switch_tab.connect(self.step_tab)
         view.zoom.connect(self.prefs.zoom)
         view.menu_requested.connect(self.show_menu)
+        view.scrolled.connect(self._refresh_right)       # "N lines up" follows wheel / keys / handle at once
         session.start(list(cmd.argv), dict(cmd.env))
         self.select(i)
         return i

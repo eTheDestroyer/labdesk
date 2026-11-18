@@ -79,7 +79,7 @@ cat > "$DESKTOP_FILE" <<EOF
 Type=Application
 Name=LabDesk
 GenericName=Network Lab Desktop
-Comment=Build and run Cisco CML labs; real serial consoles in Konsole
+Comment=Build and run Cisco CML labs; real serial consoles in LabDesk's own tabbed console window
 Exec=$HERE/labdesk
 Icon=$HERE/labdesk.svg
 Terminal=false

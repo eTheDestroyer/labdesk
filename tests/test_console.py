@@ -1202,6 +1202,11 @@ def test_a_real_mouse_selection_copies_and_the_console_menu_opens(app, tmp_path,
     _pump(app, 0.1)
     top = v.top_id()
     assert top + 3 < scr.first_id + len(scr.history) and v.scrolled_back == 20
+    assert win.status.right.startswith("20 lines up")          # the status line follows the scroll at once...
+    v.scroll_to_bottom()
+    assert "lines up" not in win.status.right                  # ...and back at the live end, without device output
+    v.scroll_lines(20)
+    assert win.status.right.startswith("20 lines up") and v.top_id() == top
     words = scr.line(top + 1)[0].split(" ")
     QTest.mouseDClick(h, Qt.LeftButton, Qt.NoModifier, at(top + 1, 1))
     _pump(app, 0.05)

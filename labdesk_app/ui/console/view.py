@@ -283,6 +283,7 @@ class TerminalView(QWidget):
     switch_tab = Signal(int)             # +1 / -1
     zoom = Signal(int)                   # +1 / -1 / 0 (reset)
     menu_requested = Signal(QPoint)      # global position
+    scrolled = Signal()                  # the scrollback position changed (wheel, keys, handle)
 
     def __init__(self, session, pal: ConsolePalette = PHOSPHOR, pt: float = T.CONSOLE_PT,
                  node_definition: str | None = None, highlight: bool = True, parent=None):
@@ -397,11 +398,13 @@ class TerminalView(QWidget):
         top = max(self.screen.first_id, min(self.top_id() - delta, follow))
         self._scroll_top = None if top >= follow else top
         self.update()
+        self.scrolled.emit()
 
     def scroll_to_bottom(self) -> None:
         if self._scroll_top is not None:
             self._scroll_top = None
             self.update()
+            self.scrolled.emit()
 
     @property
     def scrolled_back(self) -> int:
@@ -705,6 +708,7 @@ class TerminalView(QWidget):
         top = scr.first_id + round(max(0.0, min(1.0, frac)) * (follow - scr.first_id))
         self._scroll_top = None if top >= follow else top
         self.update()
+        self.scrolled.emit()
 
     def wheelEvent(self, ev):
         dy = ev.angleDelta().y()
