@@ -77,11 +77,15 @@ def build_scene_data(data, verified_at: dict | None = None) -> SceneData:
         sd.path_marks[lk] = (icon, col, "<br>".join(dict.fromkeys(t for _, _, t in items)))
 
     # ---------------------------------------------------------------- egress tiles
+    # a connector LabDesk wired to a host-KVM VM is a bridge to that VM (a cable), not an exit
+    kvm_bridged = {e for l in data.links if str(l.key).startswith("kvm:") for e in (l.a, l.b)}
     for n in data.nodes:
         nt = n.tele
         if nt is None or ev(nt.role) != "egress":
             continue
         users = egress_users.get(n.key, [])
+        if n.key in kvm_bridged and not users:
+            continue
         mode = next((p.egress_mode for _, p in users if p.egress_mode), None) or _egress_mode_guess(n)
         addr = None
         for _, p in users:

@@ -2489,15 +2489,14 @@ def join_facts(topo: Topology, facts: dict[str, NodeFacts], link_history: dict, 
         for h in p.hops:
             if not h.ok:
                 continue
-            for i, lk in enumerate(h.link_keys):
-                lf = links.get(lk)
-                if lf is None or lf.default_hop is not None:
-                    continue
+            src = h.from_node
+            for lk in h.link_keys:
                 l = topo.links[lk]
-                src = h.from_node if i == 0 else (topo.links[h.link_keys[0]].b if topo.links[h.link_keys[0]].a == h.from_node
-                                                   else topo.links[h.link_keys[0]].a)
-                lf.default_hop = h
-                lf.default_direction = "a2b" if l.a == src else "b2a"
+                lf = links.get(lk)
+                if lf is not None and lf.default_hop is None:
+                    lf.default_hop = h
+                    lf.default_direction = "a2b" if l.a == src else "b2a"
+                src = l.b if l.a == src else l.a           # walk along the chain (switch / bridge hops)
     bundles = build_bundles(topo, facts, links, now, fresh_s, label)
     for lf in links.values():
         lf.tooltip = link_tooltip(lf, topo, label, bundles.get(lf.bundle) if lf.bundle else None)
@@ -2650,51 +2649,93 @@ def _segment_protocols(seg: Segment, topo: Topology, facts, ip_owner, rid_map, l
 
 
 # ======================================================================= default path (D5)
-def _links_between(a: str, a_if: str | None, b: str, b_if: str | None, topo: Topology, segs, link_seg) -> list[str] | None:
-    """Link key(s) from node a (iface a_if) to node b (iface b_if): direct, or via one switch segment."""
-    for lk, l in topo.links.items():
-        for x, xi, y, yi in ((l.a, l.iface_a, l.b, l.iface_b), (l.b, l.iface_b, l.a, l.iface_a)):
-            if x == a and y == b and (a_if is None or iface_key(xi) == iface_key(a_if)) and \
-                    (b_if is None or iface_key(yi) == iface_key(b_if)):
-                return [lk]
-    # via a switch segment
-    for seg in segs.values():
-        if seg.switch_node is None:
+def _kvm_bridge(nk: str, topo: Topology) -> bool:
+    """A CML external connector that LabDesk wired to a host-KVM VM (a host bridge both sides plug into):
+    on the data path it is a piece of cable, not an exit.  The INTERNET cloud / NAT never is."""
+    n = topo.nodes.get(nk)
+    if n is None or n.role != NodeRole.EGRESS or n.egress_mode in ("Cloud", "NAT"):
+        return False
+    return any(l.kvm and nk in (l.a, l.b) for l in topo.links.values())
+
+
+def _l2_transparent(nk: str, topo: Topology) -> bool:
+    n = topo.nodes.get(nk)
+    return n is not None and (n.role == NodeRole.SWITCH or _kvm_bridge(nk, topo))
+
+
+def _l2_reach(a: str, a_if: str | None, topo: Topology) -> list[tuple[str, str, list[str]]]:
+    """Everything reachable from node ``a`` (interface ``a_if``, any when None) over cables, crossing
+    switches and host-KVM bridge connectors as transparent L2 hops: [(node, its iface, link keys)],
+    shortest first (BFS).  Only the cabling (CML links + LabDesk's host-KVM links) is used."""
+    def ends(nk):
+        for lk, l in topo.links.items():
+            if l.a == nk:
+                yield lk, l.iface_a, l.b, l.iface_b
+            if l.b == nk:
+                yield lk, l.iface_b, l.a, l.iface_a
+
+    out: list[tuple[str, str, list[str]]] = []
+    seen_links: set[str] = set()
+    seen_nodes = {a}
+    queue: list[tuple[str, list[str]]] = []
+    for lk, xi, y, yi in ends(a):
+        if a_if is not None and iface_key(xi) != iface_key(a_if):
             continue
-        mem = {(nk, iface_key(i)) for nk, i in seg.members}
-        if (a_if is None and any(nk == a for nk, _ in mem) or (a, iface_key(a_if or "")) in mem) and \
-                (b_if is None and any(nk == b for nk, _ in mem) or (b, iface_key(b_if or "")) in mem):
-            la = next((lk for lk in seg.link_keys if a in (topo.links[lk].a, topo.links[lk].b) and
-                       (a_if is None or iface_key(topo.links[lk].iface_a if topo.links[lk].a == a
-                                                  else topo.links[lk].iface_b) == iface_key(a_if))), None)
-            lb = next((lk for lk in seg.link_keys if b in (topo.links[lk].a, topo.links[lk].b) and
-                       (b_if is None or iface_key(topo.links[lk].iface_a if topo.links[lk].a == b
-                                                  else topo.links[lk].iface_b) == iface_key(b_if))), None)
-            if la and lb:
-                return [la, lb]
+        seen_links.add(lk)
+        queue.append((y, [lk]))
+        out.append((y, yi, [lk]))
+    while queue:
+        nk, path = queue.pop(0)
+        if nk in seen_nodes or not _l2_transparent(nk, topo) or len(path) > 8:
+            continue
+        seen_nodes.add(nk)
+        for lk, _xi, y, yi in ends(nk):
+            if lk in seen_links or y == a:
+                continue
+            seen_links.add(lk)
+            out.append((y, yi, path + [lk]))
+            queue.append((y, path + [lk]))
+    return out
+
+
+def _links_between(a: str, a_if: str | None, b: str, b_if: str | None, topo: Topology, segs, link_seg) -> list[str] | None:
+    """Link key(s) from node a (iface a_if) to node b (iface b_if): direct, or through switches and
+    host-KVM bridge connectors (R1 Gi0/0 - BR-PE-R1 connector - host link - PE ge-0/0/1)."""
+    for y, yi, path in _l2_reach(a, a_if, topo):
+        if y == b and (b_if is None or iface_key(yi) == iface_key(b_if)):
+            return path
     return None
 
 
 def _egress_from_iface(node: str, iface: str | None, topo: Topology, segs, link_seg) -> tuple[list[str], str] | None:
-    """If ``iface`` of ``node`` leads (directly or via a switch) to an external connector:
-    (link keys, egress node key)."""
+    """If ``iface`` of ``node`` leads (directly or via switches) to an external connector that is a real
+    exit (not a host-KVM bridge): (link keys, egress node key)."""
     if iface is None:
         return None
-    for lk, l in topo.links.items():
-        for x, xi, y in ((l.a, l.iface_a, l.b), (l.b, l.iface_b, l.a)):
-            if x != node or iface_key(xi) != iface_key(iface):
-                continue
-            yn = topo.nodes.get(y)
-            if yn and yn.role == NodeRole.EGRESS:
-                return [lk], y
-            if yn and yn.role == NodeRole.SWITCH:
-                seg = segs.get(link_seg.get(lk))
-                for nk, _ in (seg.members if seg else []):
-                    if topo.nodes.get(nk) and topo.nodes[nk].role == NodeRole.EGRESS:
-                        l2 = next((k for k in seg.link_keys if nk in (topo.links[k].a, topo.links[k].b)), None)
-                        if l2:
-                            return [lk, l2], nk
+    for y, _yi, path in _l2_reach(node, iface, topo):
+        yn = topo.nodes.get(y)
+        if yn and yn.role == NodeRole.EGRESS and not _kvm_bridge(y, topo):
+            return path, y
     return None
+
+
+def _unread_routers_behind(node: str, iface: str | None, topo: Topology, facts: dict[str, NodeFacts],
+                           now: float, fresh_s: float) -> tuple[list[str], list[str]]:
+    """Routers cabled to ``iface`` of ``node`` (through transparent L2) whose live interface addresses
+    LabDesk has not read (first list) or only has stale (second list)."""
+    unread, stale = [], []
+    if iface is None:
+        return unread, stale
+    for y, _yi, _path in _l2_reach(node, iface, topo):
+        yn = topo.nodes.get(y)
+        if yn is None or yn.role != NodeRole.ROUTER or y in unread or y in stale:
+            continue
+        nf = facts.get(y)
+        if nf is None or nf.ifaces is None:
+            unread.append(y)
+        elif not nf.ifaces.fresh(now, fresh_s):
+            stale.append(y)
+    return unread, stale
 
 
 def _out_iface_for(nf: NodeFacts, ip: str) -> str | None:
@@ -2753,7 +2794,8 @@ def resolve_default_path(origin: str, topo: Topology, facts: dict[str, NodeFacts
             if out_if is None:
                 out_if = _out_iface_for(nf, via)
             lks = _links_between(cur, out_if, nxt, nxt_name, topo, segs, link_seg) or \
-                _links_between(cur, None, nxt, nxt_name, topo, segs, link_seg)
+                _links_between(cur, None, nxt, nxt_name, topo, segs, link_seg) or \
+                (_links_between(cur, out_if, nxt, None, topo, segs, link_seg) if out_if else None)
             if not lks:
                 return DefaultPath(origin, PathState.UNRESOLVED, hops,
                                    detail=f"via {via}: no cable from {label.get(cur)} to {label.get(nxt)} found")
@@ -2762,6 +2804,12 @@ def resolve_default_path(origin: str, topo: Topology, facts: dict[str, NodeFacts
             if bad:
                 hop.ok = False
                 hops.append(hop)
+                old_end = next((k for k in (nxt, cur) if facts.get(k) is None or facts[k].ifaces is None
+                                or not facts[k].ifaces.fresh(now, fresh_s)), None)
+                if links[bad].status.kind == LinkKind.UNKNOWN and old_end is not None:
+                    # the cable is 'unknown' only because one end's live data is old: stale, not broken
+                    return DefaultPath(origin, PathState.STALE, hops, broken_at=bad,
+                                       detail=f"via {via}: data from {label.get(old_end)} is stale", ecmp=ecmp)
                 return DefaultPath(origin, PathState.BROKEN_AT, hops, broken_at=bad,
                                    broken_kind=links[bad].status.kind,
                                    detail=f"blocked at {links[bad].status.text or bad} "
@@ -2799,6 +2847,14 @@ def resolve_default_path(origin: str, topo: Topology, facts: dict[str, NodeFacts
             path_names = " → ".join(label.get(h.from_node, "?") for h in hops) + f" → {label.get(egn)}"
             return DefaultPath(origin, state, hops, egress_node=egn, egress_mode=topo.nodes[egn].egress_mode,
                                detail=f"exits via {path_names}", ecmp=ecmp)
+        unread, stale = _unread_routers_behind(cur, out_if, topo, facts, now, fresh_s)
+        if unread or stale:
+            # the next hop sits on a cable to a router LabDesk has no (fresh) live addresses for: not an exit,
+            # and not a lost path either - we simply do not know yet
+            who = ", ".join(label.get(k, k) for k in unread + stale)
+            return DefaultPath(origin, PathState.UNKNOWN if unread else PathState.STALE, hops,
+                               detail=f"via {via or '?'}: {who} " + ("not read yet" if unread else "data is stale"),
+                               ecmp=ecmp)
         if waiting:
             return DefaultPath(origin, PathState.UNKNOWN, hops, detail="waiting for data from "
                                + ", ".join(label.get(k, k) for k in waiting), ecmp=ecmp)
