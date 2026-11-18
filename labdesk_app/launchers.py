@@ -188,14 +188,71 @@ def profile_text(python: str = "/usr/bin/python3") -> str:
             "\n[Keyboard]\nKeyBindings=default\n")
 
 
-def ensure_profile() -> Path:
-    d = Path(os.path.expanduser("~/.local/share/konsole"))
-    d.mkdir(parents=True, exist_ok=True)
-    p = d / f"{PROFILE_NAME}.profile"
-    text = profile_text()
+# The LabDesk console look: neon green on black.  It is a second Konsole profile (LabDeskNeon) next to the
+# plain one, so switching the look also works for the next tab of a console window that is already open
+# (Konsole caches a profile it has loaded; a profile with another name is read from disk).
+NEON_PROFILE_NAME = "LabDeskNeon"
+NEON_SCHEME_NAME = "LabDeskNeon"
+NEON_GREEN = (57, 255, 20)             # #39FF14
+NEON_COLOURS = {                       # ANSI 0-7: (normal, intense).  Errors stay red, the rest glows green-ish
+    0: ((6, 12, 6), (40, 70, 40)),
+    1: ((255, 49, 49), (255, 110, 110)),
+    2: (NEON_GREEN, (140, 255, 120)),
+    3: ((204, 255, 0), (230, 255, 100)),
+    4: ((0, 200, 255), (110, 225, 255)),
+    5: ((255, 60, 200), (255, 130, 225)),
+    6: ((0, 255, 200), (130, 255, 225)),
+    7: ((170, 255, 150), (225, 255, 215)),
+}
+NEON_BACKGROUND = (3, 8, 3)
+
+
+def neon_colorscheme_text() -> str:
+    """Konsole colour scheme 'LabDeskNeon': neon green text on near-black."""
+    def rgb(c):
+        return ",".join(str(v) for v in c)
+
+    def faint(c):
+        return tuple(int(v * 0.55) for v in c)
+    out = [f"[Background]\nColor={rgb(NEON_BACKGROUND)}\n",
+           f"[BackgroundFaint]\nColor={rgb(NEON_BACKGROUND)}\n",
+           f"[BackgroundIntense]\nColor={rgb(NEON_BACKGROUND)}\n"]
+    for i, (normal, intense) in NEON_COLOURS.items():
+        out += [f"[Color{i}]\nColor={rgb(normal)}\n", f"[Color{i}Faint]\nColor={rgb(faint(normal))}\n",
+                f"[Color{i}Intense]\nColor={rgb(intense)}\n"]
+    out += [f"[Foreground]\nColor={rgb(NEON_GREEN)}\n", f"[ForegroundFaint]\nColor={rgb(faint(NEON_GREEN))}\n",
+            f"[ForegroundIntense]\nBold=true\nColor={rgb(NEON_COLOURS[2][1])}\n",
+            "[General]\nAnchor=0.5,0.5\nBlur=false\nColorRandomization=false\nDescription=LabDesk Neon\n"
+            "FillStyle=Tile\nOpacity=1\nWallpaper=\n"]
+    return "\n".join(out)
+
+
+def neon_profile_text(python: str = "/usr/bin/python3") -> str:
+    """The plain LabDesk profile plus the neon colour scheme and a solid green block cursor."""
+    base = profile_text(python).replace(f"Name={PROFILE_NAME}\n", f"Name={NEON_PROFILE_NAME}\n", 1)
+    return (base + f"\n[Appearance]\nColorScheme={NEON_SCHEME_NAME}\nBoldIntense=true\n"
+            f"\n[Cursor Options]\nCursorShape=0\nUseCustomCursorColor=true\n"
+            f"CustomCursorColor={','.join(str(v) for v in NEON_GREEN)}\nCustomCursorTextColor=0,0,0\n")
+
+
+def _write_if_changed(p: Path, text: str) -> None:
     if not p.exists() or p.read_text(encoding="utf-8") != text:
         p.write_text(text, encoding="utf-8")
-    return p
+
+
+def ensure_profile(neon: bool = False, directory: Path | None = None) -> Path:
+    """Write the Konsole profile LabDesk tabs use (and, for the neon look, its colour scheme).  Returns the
+    profile file; its stem is the profile name."""
+    d = Path(directory) if directory else Path(os.path.expanduser("~/.local/share/konsole"))
+    d.mkdir(parents=True, exist_ok=True)
+    _write_if_changed(d / f"{PROFILE_NAME}.profile", profile_text())
+    if not neon:
+        return d / f"{PROFILE_NAME}.profile"
+    scheme = d / f"{NEON_SCHEME_NAME}.colorscheme"
+    if not scheme.exists():              # created once: the user may tune the colours (delete it to reset)
+        scheme.write_text(neon_colorscheme_text(), encoding="utf-8")
+    _write_if_changed(d / f"{NEON_PROFILE_NAME}.profile", neon_profile_text())
+    return d / f"{NEON_PROFILE_NAME}.profile"
 
 
 def _pid_is_labdesk_konsole(pid: int) -> bool:
@@ -203,7 +260,8 @@ def _pid_is_labdesk_konsole(pid: int) -> bool:
         cmd = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
     except OSError:
         return False
-    return bool(cmd) and cmd[0].endswith(b"konsole") and b"--separate" in cmd and PROFILE_NAME.encode() in cmd
+    return bool(cmd) and cmd[0].endswith(b"konsole") and b"--separate" in cmd and \
+        (PROFILE_NAME.encode() in cmd or NEON_PROFILE_NAME.encode() in cmd)
 
 
 class KonsoleLauncher:
@@ -212,9 +270,10 @@ class KonsoleLauncher:
     IFACE_WIN = "org.kde.konsole.Window"
     IFACE_SES = "org.kde.konsole.Session"
 
-    def __init__(self):
+    def __init__(self, neon: bool = True):
         self.service: str | None = None
         self.proc: subprocess.Popen | None = None
+        self.neon = neon                 # neon green on black (View > Neon green console)
 
     def _find_existing(self) -> str | None:
         if self.service:
@@ -246,12 +305,12 @@ class KonsoleLauncher:
         """Open a tab running ``cmd``. Returns a description of what was done."""
         if not shutil.which("konsole"):
             return self._fallback(cmd)
-        ensure_profile()
+        profile = ensure_profile(self.neon).stem
         svc = self._find_existing()
         if svc is None:
             env = dict(os.environ)
             self.proc = subprocess.Popen(
-                ["konsole", "--separate", "--profile", PROFILE_NAME, "--hide-menubar",
+                ["konsole", "--separate", "--profile", profile, "--hide-menubar",
                  "--title", "LabDesk consoles"],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env, start_new_session=True)
             svc = f"org.kde.konsole-{self.proc.pid}"
@@ -259,7 +318,7 @@ class KonsoleLauncher:
                 return self._fallback(cmd)
             sid = int(dbus_call(svc, "/Windows/1", self.IFACE_WIN, "currentSession"))
         else:
-            sid = int(dbus_call(svc, "/Windows/1", self.IFACE_WIN, "newSession", PROFILE_NAME))
+            sid = int(dbus_call(svc, "/Windows/1", self.IFACE_WIN, "newSession", profile))
         self.service = svc
         spath = f"/Sessions/{sid}"
         for ctx in (0, 1):

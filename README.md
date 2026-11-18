@@ -444,6 +444,26 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/cloud_shots.py [--verify] [--da
   shell history. If the command fails, the tab stays open and shows the error. Without D-Bus, LabDesk
   falls back to a new `konsole -e …` window, or xterm.
 
+### The console window: neon green, one tab per device
+
+Every console opens as a **tab in one window** called *LabDesk consoles*: the first console creates the window,
+each later one adds a tab named after the device (R1, R2, HUB…). Close a tab with its ✕ or leave the console
+with **Ctrl-]**.
+
+The window has LabDesk's own look: **neon green text (#39FF14) on black**, with a solid green block cursor.
+Device errors printed in colour stay red; bold text is a brighter green.
+
+* **Turn it off / on:** menu **View → Neon green console**. Off means your normal Konsole colours. The choice is
+  remembered and applies to the next console you open (tabs already open keep their look).
+* **Change the colours yourself:** the look is an ordinary Konsole colour scheme called *LabDesk Neon*. Edit
+  `~/.local/share/konsole/LabDeskNeon.colorscheme` (or Konsole's colour scheme editor). LabDesk creates that file
+  once and never overwrites it; delete it to get LabDesk's colours back. The profile file itself is managed by
+  LabDesk and is rewritten.
+* Files: `~/.local/share/konsole/LabDeskNeon.profile` + `LabDeskNeon.colorscheme` (neon), `LabDesk.profile` (plain).
+  Your own Konsole profiles and windows are not touched.
+* Windows (LabDesk.exe): consoles are tabs in a Windows Terminal window named *LabDesk*; the neon look is not
+  applied there yet.
+
 ### Show script per device (what LabDesk types when you open a console)
 
 Each Cisco router and managed switch can have its own **show script**: a short list of commands LabDesk types

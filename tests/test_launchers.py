@@ -94,3 +94,94 @@ def test_profile_runs_tabexec():
     t = launchers.profile_text()
     assert "Name=LabDesk" in t
     assert f"Command=/usr/bin/python3 -I -S {launchers.TABEXEC}" in t
+
+
+# ----------------------------------------------------------------------------- neon green console look
+def test_neon_profile_is_the_plain_profile_plus_colours():
+    plain, neon = launchers.profile_text(), launchers.neon_profile_text()
+    assert "Name=LabDeskNeon\n" in neon and "Name=LabDesk\n" in plain and "ColorScheme" not in plain
+    assert f"Command=/usr/bin/python3 -I -S {launchers.TABEXEC}" in neon          # same tab bootstrap
+    assert "ColorScheme=LabDeskNeon" in neon and "CustomCursorColor=57,255,20" in neon
+    assert neon.startswith(plain.replace("Name=LabDesk\n", "Name=LabDeskNeon\n"))
+
+
+def test_neon_scheme_is_neon_green_on_black():
+    import configparser
+    cp = configparser.ConfigParser()
+    cp.optionxform = str
+    cp.read_string(launchers.neon_colorscheme_text())
+    assert cp["Foreground"]["Color"] == "57,255,20" and cp["Color2"]["Color"] == "57,255,20"
+    assert max(int(v) for v in cp["Background"]["Color"].split(",")) < 16           # near black
+    assert cp["General"]["Description"] == "LabDesk Neon"
+    for i in range(8):                                                            # every ANSI colour, 3 shades
+        for suffix in ("", "Faint", "Intense"):
+            assert len(cp[f"Color{i}{suffix}"]["Color"].split(",")) == 3
+    r, g, b = (int(v) for v in cp["Color1"]["Color"].split(","))
+    assert r > 200 and g < 100                                                    # errors stay red
+
+
+def test_ensure_profile_writes_scheme_only_for_neon(tmp_path):
+    p = launchers.ensure_profile(False, tmp_path)
+    assert p.stem == "LabDesk" and sorted(f.name for f in tmp_path.iterdir()) == ["LabDesk.profile"]
+    p = launchers.ensure_profile(True, tmp_path)
+    assert p.stem == "LabDeskNeon"
+    assert sorted(f.name for f in tmp_path.iterdir()) == ["LabDesk.profile", "LabDeskNeon.colorscheme",
+                                                          "LabDeskNeon.profile"]
+    before = (tmp_path / "LabDeskNeon.profile").stat().st_mtime_ns
+    launchers.ensure_profile(True, tmp_path)                                      # unchanged -> not rewritten
+    assert (tmp_path / "LabDeskNeon.profile").stat().st_mtime_ns == before
+    scheme = tmp_path / "LabDeskNeon.colorscheme"                                 # the user's own colours are kept
+    scheme.write_text("[Foreground]\nColor=255,0,255\n", encoding="utf-8")
+    launchers.ensure_profile(True, tmp_path)
+    assert "255,0,255" in scheme.read_text(encoding="utf-8")
+    scheme.unlink()                                                               # deleted -> LabDesk's look is back
+    launchers.ensure_profile(True, tmp_path)
+    assert "57,255,20" in scheme.read_text(encoding="utf-8")
+
+
+@pytest.mark.linux_only
+def test_konsole_tabs_use_the_chosen_look(tmp_path, monkeypatch):
+    """First console: a new window with the profile; every later console: a new TAB in that window."""
+    calls, popen = [], []
+
+    class _P:
+        pid = 4242
+
+    monkeypatch.setattr(launchers.shutil, "which", lambda name: "/usr/bin/" + name)
+    monkeypatch.setattr(launchers, "ensure_profile",
+                        lambda neon=False, directory=None: tmp_path / ("LabDeskNeon.profile" if neon else "LabDesk.profile"))
+    monkeypatch.setattr(launchers.subprocess, "Popen", lambda argv, **kw: popen.append(argv) or _P())
+    state = {"running": False}
+    monkeypatch.setattr(launchers.KonsoleLauncher, "_find_existing",
+                        lambda self: "org.kde.konsole-4242" if state["running"] else None)
+    monkeypatch.setattr(launchers.KonsoleLauncher, "_wait_service", lambda self, svc, timeout=8.0: True)
+
+    def dbus(service, path, iface, method, *args, timeout=5.0):
+        calls.append((method, args))
+        return "7"
+    monkeypatch.setattr(launchers, "dbus_call", dbus)
+    k = launchers.KonsoleLauncher()
+    assert k.neon                                                                  # neon is the default look
+    k.open(launchers.ConsoleCommand("R1", ["ssh", "x"]))
+    assert popen[0][:4] == ["konsole", "--separate", "--profile", "LabDeskNeon"] and len(popen) == 1
+    state["running"] = True
+    k.open(launchers.ConsoleCommand("R2", ["ssh", "x"]))
+    assert len(popen) == 1                                                         # no second window
+    assert ("newSession", ("LabDeskNeon",)) in calls
+    k.neon = False                                                                 # View > Neon green console off
+    k.open(launchers.ConsoleCommand("HUB", ["ssh", "x"]))
+    assert ("newSession", ("LabDesk",)) in calls and len(popen) == 1
+
+
+def test_a_neon_console_window_is_recognised_as_labdesks(monkeypatch):
+    class _F:
+        def __init__(self, data):
+            self.data = data
+
+        def read_bytes(self):
+            return self.data
+    cmd = b"/usr/bin/konsole\0--separate\0--profile\0LabDeskNeon\0--hide-menubar\0"
+    monkeypatch.setattr(launchers, "Path", lambda p: _F(cmd))
+    assert launchers._pid_is_labdesk_konsole(1)
+    monkeypatch.setattr(launchers, "Path", lambda p: _F(b"/usr/bin/konsole\0"))
+    assert not launchers._pid_is_labdesk_konsole(1)                                # the user's own Konsole

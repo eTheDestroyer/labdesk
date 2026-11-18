@@ -538,6 +538,15 @@ class MainWindow(QMainWindow):
                                    checkable=True)
         self.a_show_pw.setChecked(as_bool(self.settings.value("ui/hover_show_passwords", True), True))
         vm.addAction(self.a_show_pw)
+        self.a_neon = self._act("Neon green console", self._set_console_neon, None,
+                                "Device consoles: neon green text on black (off: your normal Konsole colours). "
+                                "Applies to the next console you open",
+                                checkable=True)
+        self.a_neon.setChecked(as_bool(self.settings.value("console/neon", True), True))
+        self.a_neon.setVisible(hasattr(self.launcher, "neon"))
+        if hasattr(self.launcher, "neon"):
+            self.launcher.neon = self.a_neon.isChecked()
+        vm.addAction(self.a_neon)
         vm.addSeparator()
         tm = vm.addMenu("Theme")
         from .themectl import MODES
@@ -1824,6 +1833,13 @@ class MainWindow(QMainWindow):
                 pass
         self.update_inspector()
         self.view.refresh_hover_card()
+
+    def _set_console_neon(self, on: bool):
+        self.settings.setValue("console/neon", bool(on))
+        if hasattr(self.launcher, "neon"):
+            self.launcher.neon = bool(on)
+        self.log("console look: " + ("neon green" if on else "normal Konsole colours")
+                 + " - applies to the next console you open", "info")
 
     def _set_show_passwords(self, on: bool):
         self.settings.setValue("ui/hover_show_passwords", bool(on))
