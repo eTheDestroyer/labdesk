@@ -26,6 +26,8 @@ right-click management, light/dark/KDE themes, a 300+ test suite built on real c
 > Requires Linux (KDE recommended; Konsole is the fallback console), libvirt/KVM and a CML-Free VM. Device images (IOSv, IOSvL2, vJunos, FortiOS) are
 > **not** included. Get them from the vendors under their licences.
 
+**Download with git (Linux and Windows):** [DOWNLOAD.md](DOWNLOAD.md) - clone, install, open, step by step.
+
 **Windows 10/11:** download **LabDesk.exe** from the GitHub *Releases* page and run it; a first-run dialog asks for the
 CML address and login ([INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows)). It needs a CML VM that
 Windows can reach (for example CML in VMware Workstation). Consoles open as tabs in Windows Terminal (or a console

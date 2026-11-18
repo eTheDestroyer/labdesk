@@ -56,6 +56,27 @@ jobs:
           PYTHONUTF8: "1"            # LabDesk.exe runs in Python UTF-8 mode (labdesk.spec): test the same way
         run: python -m pytest -q tests
 
+      - name: Run from a git clone the way DOWNLOAD.md says (install.bat, then the app for 10 s)
+        shell: pwsh
+        run: |
+          $env:LABDESK_NO_PAUSE = "1"
+          $env:LABDESK_PYTHON = "python"
+          cmd /c install.bat
+          if ($LASTEXITCODE -ne 0) { throw "install.bat failed with code $LASTEXITCODE" }
+          if (-not (Test-Path .venv\Scripts\pythonw.exe)) { throw "install.bat made no .venv" }
+          $cred = Join-Path $env:RUNNER_TEMP "src-cml-credentials.env"
+          "CML_HOST=192.0.2.1`nCML_ADMIN_USER=admin`nCML_ADMIN_PASS=not-a-real-password" | Out-File -Encoding ascii $cred
+          $env:CML_CRED_FILE = $cred
+          $env:QT_QPA_PLATFORM = "offscreen"
+          $env:LABDESK_SMOKE_EXIT_MS = "10000"
+          $env:LABDESK_SMOKE_FILE = Join-Path $env:RUNNER_TEMP "src-smoke.txt"
+          $p = Start-Process -FilePath .venv\Scripts\python.exe -ArgumentList "-m", "labdesk_app" -PassThru
+          $null = $p.Handle
+          if (-not $p.WaitForExit(120000)) { Stop-Process -Id $p.Id -Force; throw "LabDesk from source did not quit" }
+          if ($p.ExitCode -ne 0) { throw "LabDesk from source exited with code $($p.ExitCode)" }
+          if (-not (Test-Path $env:LABDESK_SMOKE_FILE)) { throw "the main window never came up (from source)" }
+          Get-Content $env:LABDESK_SMOKE_FILE
+
       - name: Build LabDesk.exe
         shell: pwsh
         run: |

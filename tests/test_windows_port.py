@@ -427,3 +427,26 @@ def test_no_tracked_file_has_a_name_windows_cannot_check_out():
     bad = [f for f in files if f and any(reserved.match(part) or re.search(r'[<>:"|?*]', part) or part.endswith((".", " "))
                                          for part in f.split("/"))]
     assert not bad, f"rename these (invalid on Windows): {bad}"
+
+
+def test_download_guide_and_windows_batch_files_agree():
+    """DOWNLOAD.md names files that exist; the .bat files are ASCII with CRLF (cmd.exe labels need it) and
+    .gitattributes keeps them that way in every checkout."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    guide = (root / "DOWNLOAD.md").read_text(encoding="utf-8")
+    for name in ("install.sh", "install.bat", "labdesk.bat", "INSTALL.md", "requirements.txt"):
+        assert (root / name).exists(), name
+    for needle in ("git clone https://github.com/eTheDestroyer/labdesk.git", "./install.sh", ".\\install.bat",
+                   ".\\labdesk.bat", "~/labdesk/labdesk", "git pull", "## Linux", "## Windows"):
+        assert needle in guide, needle
+    assert "*.bat text eol=crlf" in (root / ".gitattributes").read_text(encoding="utf-8")
+    for name in ("install.bat", "labdesk.bat"):
+        raw = (root / name).read_bytes()
+        raw.decode("ascii")
+        if b"\r\n" in raw:                                    # a Linux checkout may hold LF: both are fine here
+            assert b"\n" not in raw.replace(b"\r\n", b"")
+    install = (root / "install.bat").read_text(encoding="ascii")
+    assert "requirements.txt" in install and ":nopython" in install and "LABDESK_NO_PAUSE" in install
+    assert "-m labdesk_app" in (root / "labdesk.bat").read_text(encoding="ascii")
+    assert (root / "INSTALL.md").read_text(encoding="utf-8").count("DOWNLOAD.md") >= 1

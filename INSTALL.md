@@ -2,6 +2,8 @@
 
 This guide takes you from nothing to a running LabDesk window. Do the steps in order.
 
+* **Just want the git commands?** [DOWNLOAD.md](DOWNLOAD.md) is the short version: download with `git`, install and
+  open, for Linux and for Windows.
 * **On Windows 10 / 11?** Follow [LabDesk for Windows](#labdesk-for-windows) right below. No terminal needed.
 * **On Linux?** Skip to [What you need first](#what-you-need-first). Commands go in a terminal (Konsole).
   Copy one block at a time.
