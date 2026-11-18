@@ -460,12 +460,16 @@ recoloured terminal program: no toolbar and no menu bar, just three parts.
   output; a solid dot = live; a ring with a slash = ended (red only when it failed). A tab whose device printed
   something while you were elsewhere gets a brighter label. Close a tab with its ✕ (a live one asks first), switch
   with **Ctrl+PgUp / Ctrl+PgDn** or **Ctrl+Tab**. The window title is `R1 - <lab> - LabDesk console`.
+  With more tabs than fit, the tabs first shrink (long names are shortened in the middle; the tooltip and the
+  window title have the full name), then the strip scrolls one whole tab at a time: mouse wheel over the strip,
+  or click the `‹` / `›` at its ends.
 * **The terminal.** **Neon green text (#39FF14) on green-black**, in the bundled *Hack* font at 11 pt on an exact
   9 × 21 px cell with 16 / 12 px padding; 110 × 42 characters by default. It is a real terminal on a real pty:
   Tab completion, `?`, Ctrl-C, Ctrl-Shift-6, the arrow keys, `--More--` paging and **Ctrl-]** (leave the console)
   reach the device exactly as typed. Only what the device sends is shown here - LabDesk never writes into it.
   Scrollback is 50 000 lines (mouse wheel, Shift+PgUp / PgDn, or drag the thin bar at the right).
-  Select with the mouse; **Ctrl+Shift+C** copies, **Ctrl+Shift+V** or the middle button pastes.
+  Select with the mouse (drag, or double-click a word); **Ctrl+Shift+C** copies, **Ctrl+Shift+V** or the middle
+  button pastes.
 * **Status line.** LabDesk speaks here: the session state, "LabDesk is running N show commands on this console"
   while a show script types, the size (`110 × 42`), and a red row when a session failed
   (`session ended (status 255) - open the device again to reconnect`; reopening restarts it in the same tab and

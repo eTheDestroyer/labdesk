@@ -9,7 +9,11 @@ from pathlib import Path
 
 import pytest
 
-from labdesk_app import launchers
+# never on the desktop: also when this file runs alone, no window is shown and the user's clipboard is
+# not touched (the offscreen platform has a clipboard of its own)
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+from labdesk_app import launchers  # noqa: E402
 from labdesk_app.ui import console
 from labdesk_app.ui.console import boxdraw, keymap, lens
 from labdesk_app.ui.console import palette as P
@@ -397,6 +401,150 @@ def test_lens_colours_only_default_foreground_cells(app):
     assert fg[4] == P.PHOSPHOR.faint(P.PHOSPHOR.body) and bg[4] is None
 
 
+class _Model:
+    """What a TerminalView needs of a session, without a pty: a screen to feed and a size to follow."""
+
+    def __new__(cls, columns=110, lines=42):
+        from PySide6.QtCore import QObject, Signal
+
+        class FakeSession(QObject):
+            updated = Signal()
+            alive, slices_pending = True, False
+
+            def __init__(self):
+                super().__init__()
+                self.term = Terminal(columns, lines)
+                self.screen = self.term.screen
+                self.sent = []
+
+            def write(self, data):
+                self.sent.append(data)
+
+            def resize(self, cols, rows):
+                self.screen.resize(rows, cols)
+                self.updated.emit()
+
+            def feed(self, data):
+                self.term.feed(data)
+                self.updated.emit()
+
+        return FakeSession()
+
+
+@pytest.mark.linux_only
+def test_a_more_pill_is_round_at_both_ends(app):
+    """The '--More--' pill reaches 5 px past its cells: the line image has room for both round ends, also
+    for a pill that starts in column 0."""
+    from PySide6.QtGui import QColor
+    from labdesk_app.ui.console import view as V
+    m = V.metrics(11, 1.0)
+    lp = V.LinePainter(P.PHOSPHOR, m)
+    muted, well = QColor(P.PHOSPHOR.muted).rgb(), QColor(P.PHOSPHOR.well).rgb()
+    assert V.LinePainter.bleed(()) == 0 and V.LinePainter.bleed(((0, 2, lens.PROMPT),)) == 0
+    for text in (" --More--", "--More--"):
+        spans = tuple(lens.classify(text, set()))
+        start, length = next((a, n) for a, n, cls in spans if cls == lens.MORE)
+        assert V.LinePainter.bleed(spans) == V.PILL_BLEED
+        img = lp.render((text, (), False), spans).toImage()
+        assert img.width() == len(text) * m.cw + 2 * V.PILL_BLEED and img.height() == m.ch
+        mid = m.ch // 2
+        xs = [x for x in range(img.width()) if img.pixel(x, mid) == muted]
+        left, right = V.PILL_BLEED + start * m.cw - 5, V.PILL_BLEED + (start + length) * m.cw + 4
+        assert (xs[0], xs[-1]) == (left, right), text               # the whole pill is inside the image
+        assert 0 < left and right < img.width() - 1
+        for x in (left, right):                                      # both ends: a full side, round corners
+            assert img.pixel(x, 1) != muted and img.pixel(x, m.ch - 2) != muted, (text, x)
+        assert img.pixel(left - 1, mid) == well and img.pixel(right + 1, mid) == well
+    # in the view the image is drawn that much further left: the text stays on its column
+    s = _Model(110, 12)
+    v = V.TerminalView(s, P.PHOSPHOR, 11, "iosv")
+    v.resize(*console.window_size(110, 12, (m.cw, m.ch - 0)))
+    v.show()
+    s.feed(b"R1#show run\r\nhostname R1\r\n --More-- ")
+    _pump(app, 0.3)
+    img = v.grab().toImage()
+    y = console.PAD_Y + 2 * m.ch + m.ch // 2
+    xs = [x for x in range(img.width()) if img.pixel(x, y) == muted]
+    assert (xs[0], xs[-1]) == (console.PAD_X + m.cw - 5, console.PAD_X + 9 * m.cw + 4)
+    plain = V.LinePainter(P.PHOSPHOR, m).render(("hostname R1", (), False)).toImage()
+    row = img.copy(console.PAD_X, console.PAD_Y + m.ch, plain.width(), m.ch)
+    assert row == plain.convertToFormat(row.format())                # an ordinary row: unchanged, on the grid
+    v.close()
+    v.deleteLater()
+
+
+@pytest.mark.linux_only
+def test_the_clip_mark_and_the_scroll_handle_never_share_a_pixel(app):
+    from PySide6.QtGui import QColor
+    from labdesk_app.ui.console import view as V
+    cw, ch = V.cell_metrics(11, 1.0)
+    s = _Model(110, 12)
+    v = V.TerminalView(s, P.PHOSPHOR, 11, None)
+    v.resize(2 * console.PAD_X + 110 * cw, 2 * console.PAD_Y + 12 * ch)
+    v.show()
+    _pump(app, 0.3)
+    s.feed(b"".join(b"%03d " % i + b"x" * 96 + b"\r\n" for i in range(60)))     # 100 characters a line
+    msgs = []
+    v.message.connect(lambda text, ms: msgs.append(text))
+    v.resize(2 * console.PAD_X + 84 * cw + 4, v.height())           # 84 columns and 4 leftover pixels
+    _pump(app, 0.4)
+    assert (v.view_columns(), v.screen.columns) == (84, 110) and msgs[-1] == "showing 84 of 110 columns"
+    g = v._bar_geometry()
+    assert g is not None                                             # there is scrollback: a handle
+    clip = console.PAD_X + 84 * cw
+    mark = range(clip + V.CLIP_MARK_X - 1, clip + V.CLIP_MARK_X + V.CLIP_MARK_W + 1)
+    bar = range(v.width() - V.BAR_RIGHT - V.BAR_W, v.width() - V.BAR_RIGHT)
+    assert mark[-1] < bar[0] - 1 and bar[-1] < v.width()             # separate x ranges, a gap between them
+    # ... also in the narrowest right padding there can be (16 px, no leftover pixel)
+    assert V.CLIP_MARK_X + V.CLIP_MARK_W + 1 < console.PAD_X - V.BAR_RIGHT - V.BAR_W - 1
+    img = v.grab().toImage()
+    well, muted = QColor(P.PHOSPHOR.well).rgb(), QColor(P.PHOSPHOR.muted).rgb()
+
+    def ink(r):                                                      # the mark's pixels in view row r
+        y0 = console.PAD_Y + r * ch
+        return [(x - clip, y - y0) for x in mark for y in range(y0, y0 + ch) if img.pixel(x, y) != well]
+
+    rows = range(v.view_rows() - 1)                                  # every row but the empty cursor row
+    under = [r for r in rows if g[2] <= console.PAD_Y + r * ch and console.PAD_Y + (r + 1) * ch <= g[2] + g[3]]
+    free = [r for r in rows if console.PAD_Y + (r + 1) * ch <= g[2]]
+    assert under and free
+    assert len(ink(free[0])) >= 8 and all(ink(r) == ink(free[0]) for r in rows)   # the same whole mark on all
+    for r in under:                                                  # ... and the handle beside it, whole
+        y = console.PAD_Y + r * ch + ch // 2
+        assert all(img.pixel(x, y) == muted for x in bar)
+        assert all(img.pixel(x, y) == well for x in range(mark[-1] + 1, bar[0]))
+    # a row that fits has no mark
+    s.feed(b"\r\nshort\r\n")
+    _pump(app, 0.2)
+    img = v.grab().toImage()
+    assert not ink(v.view_rows() - 2)
+    v.close()
+    v.deleteLater()
+
+
+@pytest.mark.linux_only
+def test_mouse_positions_become_whole_cells(app):
+    """A mouse event's position is a QPointF: the cell under it must still be (int, int)."""
+    from PySide6.QtCore import QPointF
+    from labdesk_app.ui.console import view as V
+    cw, ch = V.cell_metrics(11, 1.0)
+    s = _Model(110, 12)
+    v = V.TerminalView(s, P.PHOSPHOR, 11, None)
+    v.resize(2 * console.PAD_X + 110 * cw, 2 * console.PAD_Y + 12 * ch)
+    s.feed(b"".join(b"line %d\r\n" % i for i in range(30)))
+    for pos, snap in ((QPointF(16.0, 12.0), True), (QPointF(57.5, 40.25), True), (QPointF(57.5, 40.25), False),
+                      (QPointF(-5.0, -9.0), True), (QPointF(5000.0, 5000.0), True)):
+        lid, col = v._cell_at(pos, snap)
+        assert type(lid) is int and type(col) is int, (pos, lid, col)
+    top = v.top_id()
+    assert v._cell_at(QPointF(16.0, 12.0)) == (top, 0)
+    assert v._cell_at(QPointF(16.0 + 4 * cw + cw / 2 + 0.5, 12.0 + ch + 0.9)) == (top + 1, 5)    # snaps
+    assert v._cell_at(QPointF(16.0 + 4 * cw + cw / 2 + 0.5, 12.0 + ch + 0.9), snap=False) == (top + 1, 4)
+    assert v._cell_at(QPointF(5000.0, 5000.0)) == (top + 11, 110)
+    v.deleteLater()
+
+
+
 # ---------------------------------------------------------------------------- C6 tab strip
 def test_tab_strip_paints_its_own_chrome_in_every_app_theme(app):
     from labdesk_app.ui import themectl
@@ -468,6 +616,116 @@ def test_tab_strip_layout_states_and_overflow(app):
     assert strip.tabs[0].bell_until > time.monotonic()
     strip.grab()
     strip.deleteLater()
+
+
+
+def test_a_scrolled_tab_strip_starts_with_a_whole_tab(app):
+    """Overflow scrolls a whole tab at a time: no tab (and no session dot) is ever cut by a chevron."""
+    from PySide6.QtCore import QPoint, Qt
+    from PySide6.QtTest import QTest
+    from labdesk_app.ui.console import tabstrip as TS
+    strip = TS.ConsoleTabStrip(P.PHOSPHOR)
+    strip.resize(700, 38)
+    strip.show()
+    for i in range(12):
+        strip.add_tab(f"PE-CORE-{i}")
+        strip.set_state(i, TS.LIVE)                                  # a solid dot
+    strip.set_current(0)
+    area = strip._tabs_area()
+    widths = strip._widths()
+    assert set(widths) == {TS.TAB_MIN} and strip._overflow() == 12 * 96 - area.width()
+    stops = strip._stops()
+    assert stops[0] == 0 and stops == sorted(set(stops)) and stops[-1] >= strip._overflow()
+    assert all(p == k * 96 - TS.CHEVRON_W for k, p in enumerate(stops) if k)     # a tab boundary each
+    got = []
+    strip.selected.connect(got.append)
+
+    def check():
+        vis = strip._visible_area()
+        rects = strip.tab_rects()
+        shown = [i for i, r in enumerate(rects) if strip._shown(r)]
+        assert shown and strip._scroll in stops
+        first = rects[shown[0]]
+        assert first.left() == vis.left() == area.left() + (TS.CHEVRON_W if strip._scroll else 0)
+        for i in shown:                                              # every painted dot is whole
+            d = strip._dot_rect(rects[i])
+            assert vis.left() <= d.left() and d.right() <= vis.right() + 1, (strip._scroll, i)
+        for i, r in enumerate(rects):                                # what is not painted cannot be clicked
+            if i not in shown and area.contains(r.center()):
+                assert strip._hit(r.center())[0] < 0
+        return shown
+
+    # not scrolled: no left chevron, a right one
+    assert check()[0] == 0 and strip._visible_area().right() == area.right() - TS.CHEVRON_W
+    cut = next(i for i, r in enumerate(strip.tab_rects()) if strip._shown(r) and r.right() > area.right())
+    strip._hover = cut                                               # the tab the right chevron cuts:
+    r = strip.tab_rects()[cut]                                       # no cross is painted, none is hit
+    assert strip._hit(QPoint(r.left() + 20, 10)) == (cut, False)
+    assert strip._hit(strip._close_rect(r).center())[1] is False
+    strip._hover = -1
+    assert strip._hit(QPoint(area.left() + 5, 10)) == (0, False)
+    assert strip._hit(QPoint(area.right() - 5, 10)) == (TS.RIGHT_CHEVRON, False)
+    # the wheel and the chevrons move one stop
+    for k in range(1, len(stops)):
+        QTest.mouseClick(strip, Qt.LeftButton, Qt.NoModifier, QPoint(area.right() - 5, 10))
+        assert strip._scroll == stops[k]
+        assert check()[0] == k
+    assert strip._visible_area().right() == area.right()            # the end: no right chevron
+    last = strip.tab_rects()[-1]
+    assert last.right() <= area.right() and strip._shown(last)
+    assert strip._hit(QPoint(area.left() + 5, 10)) == (TS.LEFT_CHEVRON, False)
+    QTest.mouseClick(strip, Qt.LeftButton, Qt.NoModifier, QPoint(area.left() + 5, 10))
+    assert strip._scroll == stops[-2] and not got                   # a chevron scrolls, it selects nothing
+    strip._step_scroll(-99)
+    assert strip._scroll == 0
+    # selecting a tab scrolls it into view, whole, on a stop
+    for i in (11, 0, 7, 3, 11, 5):
+        strip.set_current(i)
+        r = strip.tab_rects()[i]
+        vis = strip._visible_area()
+        assert vis.left() <= r.left() and r.right() <= vis.right() and i in check(), i
+    # the scrolled strip, painted: nothing but chrome between the chevron and the first whole tab's dot
+    strip.set_current(11)
+    _pump(app, 0.05)
+    img = strip.grab().toImage()
+    vis = strip._visible_area()
+    first = next(r for r in strip.tab_rects() if strip._shown(r))
+    dot = strip._dot_rect(first)
+    assert img.pixelColor(int(dot.center().x()), int(dot.center().y())).name().upper() == P.PHOSPHOR.body
+    for x in range(vis.left(), int(dot.left())):
+        assert img.pixelColor(x, 19).name().upper() == P.PHOSPHOR.chrome, x
+    # removing tabs keeps the scroll on a stop
+    for _ in range(6):
+        strip.remove_tab(0)
+    assert strip._scroll in strip._stops()
+    strip.close()
+    strip.deleteLater()
+
+
+def test_a_tab_without_a_close_cross_gives_its_room_to_the_label(app):
+    from PySide6.QtCore import QRect
+    from PySide6.QtGui import QFontMetricsF
+    from labdesk_app.ui.console import tabstrip as TS
+    strip = TS.ConsoleTabStrip(P.PHOSPHOR)
+    r = QRect(100, 0, TS.TAB_MIN, 38)
+    with_cross, without = strip._label_rect(r, True), strip._label_rect(r, False)
+    assert with_cross.left() == without.left() == 100 + 12 + 8 + 8
+    assert with_cross.width() == 44 and without.width() == 56        # 96 px tab: 12 px more for the label
+    assert with_cross.right() < strip._close_rect(r).left()          # the label never runs under the cross
+    assert without.right() == r.right() - TS.PAD                     # 12 px padding at the right
+    fm = QFontMetricsF(strip._fonts()[0])
+    narrow = fm.elidedText("PE-CORE-1", Qt_ElideMiddle(), with_cross.width())
+    wide = fm.elidedText("PE-CORE-1", Qt_ElideMiddle(), without.width())
+    assert len(wide) > len(narrow)                                   # more of the name is readable
+    # a tab at its natural width shows the whole label either way
+    full = QRect(0, 0, TS.TAB_MAX, 38)
+    assert strip._label_rect(full, True).width() == TS.TAB_MAX - TS.TAB_EXTRA + 8
+    strip.deleteLater()
+
+
+def Qt_ElideMiddle():
+    from PySide6.QtCore import Qt
+    return Qt.ElideMiddle
 
 
 def test_status_line_is_26_px_and_turns_into_the_ended_banner(app):
@@ -852,6 +1110,143 @@ def test_window_look_grid_and_close_with_live_tabs(app, tmp_path, console_window
     win.close()
     assert not win.tabs and not win.isVisible()
     assert _until(app, lambda: not any(os.path.exists(f"/proc/{p}") for p in pids), 5.0)
+
+
+@pytest.mark.linux_only
+def test_a_real_mouse_selection_copies_and_the_console_menu_opens(app, tmp_path, console_window):
+    """Selection driven by real mouse events through the window (their positions are floats), never by
+    setting the selection by hand: drag, Ctrl+Shift+C, the console menu, double click, scrollback."""
+    from PySide6.QtCore import QPoint, Qt
+    from PySide6.QtTest import QTest
+    from labdesk_app.ui.console import session as S
+    L = console_window
+    L.open(_cmd(tmp_path, "R1"))
+    _pump(app, 0.1)
+    win = L.window
+    cw, ch = win.cell()
+    win.resize(*console.window_size(110, 14, (cw, ch)))
+    _pump(app, 0.4)
+    v = win.tabs[0].view
+    scr = v.screen
+    assert _until(app, lambda: win.tabs[0].session.state == S.LIVE)
+    for i in range(30):                                              # one at a time: no type-ahead echo
+        v.send(b"line %02d alpha\r" % i)
+        assert _until(app, lambda: scr.line(scr.cursor_line_id() - 1)[0] == f"got line {i:02d} alpha"
+                      and scr.cursor_row_text() == "R1#")
+    assert len(scr.history) > 20
+    h = win.windowHandle()
+    off = v.mapTo(win, QPoint(0, 0))
+
+    def at(lid, col, dx=2):
+        return off + QPoint(console.PAD_X + col * cw + dx, console.PAD_Y + (lid - v.top_id()) * ch + ch // 2)
+
+    def drag(a, b):
+        QTest.mousePress(h, Qt.LeftButton, Qt.NoModifier, a)
+        _pump(app, 0.03)
+        QTest.mouseMove(h, b)
+        _pump(app, 0.03)
+        QTest.mouseRelease(h, Qt.LeftButton, Qt.NoModifier, b)
+        _pump(app, 0.05)
+
+    lid = scr.cursor_line_id() - 1
+    cb = app.clipboard()
+    cb.setText("BEFORE")
+    drag(at(lid, 0), at(lid, 11))                                    # within one line
+    assert v._sel == ((lid, 0), (lid, 11))
+    assert all(type(x) is int for end in v._sel for x in end)
+    assert v.selected_text() == "got line 29"
+    assert cb.text() == "BEFORE"                                     # selecting alone does not copy
+    if cb.supportsSelection():
+        assert cb.text(cb.Mode.Selection) == "got line 29"           # ... but fills the middle-click buffer
+    v.setFocus()
+    QTest.keyClick(h, Qt.Key_C, Qt.ControlModifier | Qt.ShiftModifier)
+    _pump(app, 0.05)
+    assert cb.text() == "got line 29"
+    # the console menu (three dots, right click) opens while there is a selection; its Copy copies
+    menu = win.build_menu(v)
+    copy = menu.actions()[0]
+    assert copy.text().startswith("Copy") and copy.isEnabled()
+    cb.setText("BEFORE")
+    copy.trigger()
+    assert cb.text() == "got line 29"
+    menu.deleteLater()
+    got = []
+    v.menu_requested.disconnect(win.show_menu)                       # (a real menu would block the test)
+    v.menu_requested.connect(got.append)
+    QTest.mouseClick(h, Qt.RightButton, Qt.NoModifier, at(lid, 3))
+    _pump(app, 0.05)
+    assert len(got) == 1 and v.selected_text() == "got line 29"      # a right click keeps the selection
+    v.menu_requested.connect(win.show_menu)
+    # over two lines: the device's text with the line break
+    drag(at(lid - 1, 3), at(lid, 3))
+    assert v._sel == ((lid - 1, 3), (lid, 3)) and v.selected_text() == "line 29 alpha\ngot"
+    drag(at(lid, 8), at(lid - 1, 3))                                 # dragged backwards
+    assert v.selected_text() == "line 29 alpha\ngot line"
+    v.copy()
+    assert cb.text() == "line 29 alpha\ngot line"
+    # a click without a drag clears the selection: Copy is then disabled
+    QTest.mouseClick(h, Qt.LeftButton, Qt.NoModifier, at(lid, 5))
+    _pump(app, 0.05)
+    assert v._sel is None and v.selected_text() == ""
+    menu = win.build_menu(v)
+    assert not menu.actions()[0].isEnabled()
+    menu.deleteLater()
+    # double click: the word
+    QTest.mouseDClick(h, Qt.LeftButton, Qt.NoModifier, at(lid, 5))
+    _pump(app, 0.05)
+    assert v._sel == ((lid, 4), (lid, 8)) and v.selected_text() == "line"
+    QTest.keyClick(h, Qt.Key_C, Qt.ControlModifier | Qt.ShiftModifier)
+    assert cb.text() == "line"
+    # ... also on a line that lives in the scrollback, and a drag across scrollback lines
+    v.scroll_lines(20)
+    _pump(app, 0.1)
+    top = v.top_id()
+    assert top + 3 < scr.first_id + len(scr.history) and v.scrolled_back == 20
+    words = scr.line(top + 1)[0].split(" ")
+    QTest.mouseDClick(h, Qt.LeftButton, Qt.NoModifier, at(top + 1, 1))
+    _pump(app, 0.05)
+    assert v._sel == ((top + 1, 0), (top + 1, len(words[0]))) and v.selected_text() == words[0]
+    drag(at(top, 0), at(top + 3, 0))
+    assert v.selected_text() == "".join(scr.line(top + k)[0] + "\n" for k in range(3))
+    win.grab()                                                       # paints with the selection
+    assert win.build_menu(v).actions()[0].isEnabled()
+
+
+@pytest.mark.linux_only
+def test_a_new_text_size_is_not_unseen_output(app, tmp_path, console_window):
+    """Only bytes of the device flag a background tab; resizing (text size, window) and the look do not."""
+    from labdesk_app.ui.console import session as S
+    L = console_window
+    for label in ("R1", "R2", "HUB"):
+        L.open(_cmd(tmp_path, label, extra=(label,)))
+        _pump(app, 0.1)
+    win = L.window
+    assert _until(app, lambda: all(t.session.state == S.LIVE for t in win.tabs))
+    assert _until(app, lambda: all(t.session.screen.cursor_row_text() == "R1#" for t in win.tabs))
+    for i in (0, 1, 2):
+        win.select(i)
+        _pump(app, 0.25)                                             # the tab takes the window size
+    assert [t.unseen for t in win.strip.tabs] == [False, False, False]
+    outputs = []
+    for t in win.tabs:
+        t.session.output.connect(lambda t=t: outputs.append(t.label))
+    L.prefs.zoom(1)
+    _pump(app, 0.4)
+    assert win.tabs[0].view.pt == 12 == win.tabs[2].view.pt
+    L.prefs.zoom(0)
+    L.prefs.set("soft", True)
+    L.prefs.set("soft", False)
+    L.prefs.set("highlight", False)
+    L.prefs.set("highlight", True)
+    win.resize(win.width() + 40, win.height() - 60)
+    _pump(app, 0.4)
+    assert [t.unseen for t in win.strip.tabs] == [False, False, False] and not outputs
+    # the device says something on a background tab: that is unseen output, until the tab is visited
+    win.tabs[0].view.send(b"show clock\r")
+    assert _until(app, lambda: win.strip.tabs[0].unseen)
+    assert [t.unseen for t in win.strip.tabs] == [True, False, False] and set(outputs) == {"R1"}
+    win.select(0)
+    assert not win.strip.tabs[0].unseen
 
 
 @pytest.mark.linux_only

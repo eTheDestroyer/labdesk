@@ -160,7 +160,8 @@ class ConsoleWindow(QWidget):
         self.stack.addWidget(view)
         i = self.strip.add_tab(cmd.title)
         session.state_changed.connect(lambda _s, s=session: self._session_state(s))
-        session.updated.connect(lambda s=session: self._session_output(s))
+        # 'output', not 'updated': a resize (text size, window size) is not news from the device
+        session.output.connect(lambda s=session: self._session_output(s))
         session.bell.connect(lambda s=session: self.strip.ring_bell(self.tab_of(s)))
         view.message.connect(self.status.show_message)
         view.grid_changed.connect(lambda *_a: self._refresh_status())

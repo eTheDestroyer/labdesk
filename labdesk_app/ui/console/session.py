@@ -43,7 +43,8 @@ def set_winsize(fd: int, lines: int, columns: int) -> None:
 
 
 class PtySession(QObject):
-    updated = Signal()               # the screen changed
+    updated = Signal()               # the screen changed (device output, or a resize): repaint
+    output = Signal()                # bytes of the device were parsed (never emitted for a resize)
     state_changed = Signal(str)      # STARTED / LIVE / ENDED
     bell = Signal()
 
@@ -155,6 +156,7 @@ class PtySession(QObject):
         t0 = time.perf_counter()
         pend = self._pending
         feed = self.term.feed
+        fed = bool(pend)
         while pend:
             chunk = bytes(pend[:FEED_CHUNK])
             del pend[:FEED_CHUNK]
@@ -173,6 +175,8 @@ class PtySession(QObject):
             self._bells = self.screen.bells
             self.bell.emit()
         self.updated.emit()
+        if fed:
+            self.output.emit()
 
     # ------------------------------------------------------------------ input for the child
     def write(self, data: bytes) -> None:

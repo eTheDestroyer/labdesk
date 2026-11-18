@@ -24,6 +24,11 @@ from .screen import BOLD, FAINT, MIN_COLUMNS, REVERSE, STRIKE, UNDERLINE, WIDE_S
 LINE_HEIGHT = 1.2
 CACHE_LINES = 400
 WHEEL_LINES = 3
+PILL_BLEED = 6               # px a '--More--' pill reaches past its cells; the line image grows by it
+# the right padding (16 px or more) holds two things on separate pixels: the dim mark of a clipped row
+# right after the text, and the scroll handle at the window edge
+CLIP_MARK_X, CLIP_MARK_W = 2, 5          # mark: 2..6 px after the last visible column (ink 1..7)
+BAR_W, BAR_RIGHT = 4, 2                  # handle: the 4 px that end 2 px before the edge
 
 
 # ============================================================================ the grid
@@ -144,7 +149,14 @@ class LinePainter:
                 fg[x], bg[x] = pal.sel_fg, pal.sel_bg
         return fg, bg, bold, deco, pills
 
+    @staticmethod
+    def bleed(spans) -> int:
+        """Px the image of a line reaches past its cells on each side: room for the round ends of a pill."""
+        return PILL_BLEED if any(cls == lens.MORE for _s, _n, cls in spans) else 0
+
     def render(self, line: tuple, spans=(), sel: tuple | None = None, dpr: float = 1.0) -> QPixmap | None:
+        """The image of a line: ``cells x cell_w`` px wide, plus ``bleed(spans)`` px on each side (the
+        caller draws it that many px further left)."""
         text = line[0]
         fg, bg, bold, deco, pills = self.cells(line, spans, sel)
         n = len(fg)
@@ -152,11 +164,13 @@ class LinePainter:
             return None
         m = self.m
         cw, ch = m.cw, m.ch
-        pm = QPixmap(round(n * cw * dpr), round(ch * dpr))
+        bleed = self.bleed(spans)
+        pm = QPixmap(round((n * cw + 2 * bleed) * dpr), round(ch * dpr))
         pm.setDevicePixelRatio(dpr)
         pm.fill(self.color(self.pal.well))
         p = QPainter(pm)
         p.setRenderHint(QPainter.Antialiasing, False)
+        p.translate(bleed, 0)
         # backgrounds: whole-pixel rects
         x = 0
         while x < n:
@@ -172,7 +186,8 @@ class LinePainter:
             p.setRenderHint(QPainter.Antialiasing, True)
             p.setPen(Qt.NoPen)
             p.setBrush(self.color(self.pal.muted))
-            p.drawRoundedRect(QRectF(start * cw - 5, 1, length * cw + 10, ch - 2), 3, 3)
+            p.drawRoundedRect(QRectF(start * cw - (PILL_BLEED - 1), 1, length * cw + 2 * (PILL_BLEED - 1),
+                                     ch - 2), 3, 3)
             p.setRenderHint(QPainter.Antialiasing, False)
         # text: one glyph run per stretch of equal (colour, weight), every glyph placed on its cell
         x = 0
@@ -445,22 +460,35 @@ class TerminalView(QWidget):
             if sel is not None:
                 # a selected line break shows as one selected cell behind the text
                 sel = (sel[0], min(sel[1], max(len(line[0]) + 1, sel[0] + 1)))
-            pm = self._image(line, self._spans(lid, line), sel)
+            spans = self._spans(lid, line)
+            pm = self._image(line, spans, sel)
             if pm is None:
                 continue
             y = PAD_Y + r * ch
-            w = round(pm.width() / pm.devicePixelRatio())
+            dpr = pm.devicePixelRatio()
+            bleed = LinePainter.bleed(spans)               # the image starts that many px left of column 0
+            w = round(pm.width() / dpr) - 2 * bleed
             if w > clip_w:
-                p.drawPixmap(PAD_X, y, pm, 0, 0, round(clip_w * pm.devicePixelRatio()), pm.height())
+                p.drawPixmap(PAD_X - bleed, y, pm, 0, 0, round((bleed + clip_w) * dpr), pm.height())
                 if len(line[0]) > cols:                    # clipped content: a dim mark in the padding
-                    p.setPen(self._painter.color(pal.dim))
-                    p.setFont(T.console_font(self.pt))
-                    p.drawText(QPointF(PAD_X + clip_w + 3, y + m.baseline), "›")
+                    self._paint_clip_mark(p, PAD_X + clip_w, y)
             else:
-                p.drawPixmap(PAD_X, y, pm)
+                p.drawPixmap(PAD_X - bleed, y, pm)
         self._paint_cursor(p, top, rows, cols)
         self._paint_scrollbar(p)
         p.end()
+
+    def _paint_clip_mark(self, p: QPainter, x: int, y: int) -> None:
+        """A dim '›' right after the last visible column of a row whose text continues (painted, 5 px
+        wide: it never reaches the scroll handle at the window edge)."""
+        m = self._m
+        half = max(3.0, min(5.0, m.ch * 0.2))
+        x0, mid = x + CLIP_MARK_X + 0.5, y + m.ch / 2
+        p.save()
+        p.setRenderHint(QPainter.Antialiasing, True)
+        p.setPen(QPen(self._painter.color(self.pal.dim), 1.5, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        p.drawPolyline([QPointF(x0, mid - half), QPointF(x0 + CLIP_MARK_W - 1, mid), QPointF(x0, mid + half)])
+        p.restore()
 
     def _paint_cursor(self, p: QPainter, top: int, rows: int, cols: int) -> None:
         scr = self.screen
@@ -512,7 +540,7 @@ class TerminalView(QWidget):
         p.setRenderHint(QPainter.Antialiasing, True)
         p.setPen(Qt.NoPen)
         p.setBrush(self._painter.color(self.pal.muted))
-        p.drawRoundedRect(QRectF(self.width() - 9, top, 4, h), 2, 2)
+        p.drawRoundedRect(QRectF(self.width() - BAR_RIGHT - BAR_W, top, BAR_W, h), 2, 2)
         p.setRenderHint(QPainter.Antialiasing, False)
 
     # ------------------------------------------------------------------ keyboard
@@ -600,13 +628,14 @@ class TerminalView(QWidget):
             self.update()
 
     # ------------------------------------------------------------------ mouse
-    def _cell_at(self, pos, snap: bool = True) -> tuple:
-        """(line id, column) under a point; ``snap`` rounds to the nearest cell boundary (selection)."""
+    def _cell_at(self, pos, snap: bool = True) -> tuple[int, int]:
+        """(line id, column) under a point, both whole numbers (a mouse position is a QPointF: its
+        coordinates are floats); ``snap`` rounds to the nearest cell boundary (selection)."""
         m = self._m
-        x = pos.x() - PAD_X + (m.cw // 2 if snap else 0)
+        x = int(pos.x()) - PAD_X + (m.cw // 2 if snap else 0)
         col = max(0, min(self.screen.columns, x // m.cw))
-        row = max(0, min(self.view_rows() - 1, (pos.y() - PAD_Y) // m.ch))
-        return self.top_id() + row, int(col)
+        row = max(0, min(self.view_rows() - 1, (int(pos.y()) - PAD_Y) // m.ch))
+        return int(self.top_id() + row), int(col)
 
     def mousePressEvent(self, ev):
         self.setFocus(Qt.MouseFocusReason)

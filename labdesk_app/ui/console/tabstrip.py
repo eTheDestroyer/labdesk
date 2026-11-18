@@ -8,6 +8,11 @@ The dot of a tab shows the SESSION state only, coded by shape:
 * hollow ring           session started - waiting for output
 * solid dot             session live - output received
 * ring with a slash     session ended (red only when the exit status is not 0)
+
+Overflow: tabs first shrink to 96 px, then the strip scrolls a whole tab at a time (wheel, or a click on a
+chevron).  A scrolled strip always starts with a whole tab right of the left chevron, and a tab that would
+show less than its dot and a first character before the right chevron is not painted at all - no tab is
+ever cut through its dot.
 """
 from __future__ import annotations
 
@@ -29,6 +34,9 @@ TAB_MIN, TAB_MAX = 96, 220
 TAB_EXTRA = 60                 # 12 pad + 8 dot + 8 gap + label + 8 gap + 16 cross + 8 pad
 DOT, CROSS = 8, 16
 CHEVRON_W = 18
+PAD = 12                       # left and right padding inside a tab
+TAB_PEEK = PAD + DOT + 8 + 12  # a tab cut by the right chevron is painted only when at least this shows
+LEFT_CHEVRON, RIGHT_CHEVRON = -3, -4            # hit codes (-2 = menu button, -1 = nothing)
 BELL_S = 0.3
 FONT_PT = 11
 
@@ -166,8 +174,48 @@ class ConsoleTabStrip(QWidget):
     def _overflow(self) -> int:
         return max(0, sum(self._widths()) - self._tabs_area().width())
 
+    def _stops(self) -> list[int]:
+        """The scroll positions, ascending: 0, then one per tab that can be the first whole tab right of
+        the left chevron, up to the first position that shows the last tab completely."""
+        over = self._overflow()
+        stops = [0]
+        if over <= 0:
+            return stops
+        x = 0
+        for w in self._widths()[:-1]:
+            x += w
+            stops.append(x - CHEVRON_W)
+            if stops[-1] >= over:
+                break
+        return stops
+
+    def _max_scroll(self) -> int:
+        return self._stops()[-1]
+
     def _clamp_scroll(self) -> None:
-        self._scroll = max(0, min(self._scroll, self._overflow()))
+        """Keep the scroll on a stop (the nearest one at or before it)."""
+        stops = self._stops()
+        self._scroll = max((p for p in stops if p <= self._scroll), default=0)
+
+    def _step_scroll(self, step: int) -> None:
+        stops = self._stops()
+        self._clamp_scroll()
+        i = stops.index(self._scroll)
+        self._scroll = stops[max(0, min(len(stops) - 1, i + step))]
+        self.update()
+
+    def _visible_area(self) -> QRect:
+        """The part of the tabs area that is not under a chevron."""
+        a = self._tabs_area()
+        left = CHEVRON_W if self._scroll > 0 else 0
+        right = CHEVRON_W if self._scroll < self._max_scroll() else 0
+        return QRect(a.left() + left, 0, max(0, a.width() - left - right), HEIGHT)
+
+    def _shown(self, r: QRect) -> bool:
+        """A tab is painted (and clickable) when it starts in the visible area and shows at least its dot
+        and a first character there."""
+        v = self._visible_area()
+        return r.left() >= v.left() and min(r.right(), v.right()) - r.left() + 1 >= min(TAB_PEEK, r.width())
 
     def tab_rects(self) -> list[QRect]:
         self._clamp_scroll()
@@ -182,29 +230,53 @@ class ConsoleTabStrip(QWidget):
         return QRect(r.right() - 8 - CROSS + 1, (HEIGHT - CROSS) // 2, CROSS, CROSS)
 
     def _dot_rect(self, r: QRect) -> QRectF:
-        return QRectF(r.x() + 12, (HEIGHT - DOT) / 2, DOT, DOT)
+        return QRectF(r.x() + PAD, (HEIGHT - DOT) / 2, DOT, DOT)
+
+    def _label_rect(self, r: QRect, cross: bool) -> QRect:
+        """Where the label goes.  A tab that shows no close cross (not active, not hovered) lets its label
+        use the cross's room as well."""
+        x = r.x() + PAD + DOT + 8
+        right = r.right() + 1 - (8 + CROSS if cross else PAD)
+        return QRect(x, 0, max(0, right - x), HEIGHT - 1)
 
     def _reveal(self, i: int) -> None:
-        rects = self.tab_rects()
-        if not (0 <= i < len(rects)):
-            return
-        area = self._tabs_area()
-        r = rects[i]
-        if r.left() < area.left():
-            self._scroll -= area.left() - r.left()
-        elif r.right() > area.right():
-            self._scroll += r.right() - area.right()
+        """Scroll (to a stop) so that tab ``i`` is completely visible."""
         self._clamp_scroll()
+        widths = self._widths()
+        if not (0 <= i < len(widths)):
+            return
+        stops = self._stops()
+        area = self._tabs_area()
+        left, right = sum(widths[:i]), sum(widths[:i + 1])        # the tab, in unscrolled strip px
+
+        def whole(p: int) -> bool:
+            lo = p + (CHEVRON_W if p > 0 else 0)
+            hi = p + area.width() - (CHEVRON_W if p < stops[-1] else 0)
+            return lo <= left and right <= hi
+
+        if whole(self._scroll):
+            return
+        fits = [p for p in stops if whole(p)]
+        if fits:                                             # the nearest stop that shows it whole
+            self._scroll = min(fits, key=lambda p: abs(p - self._scroll))
+        else:                                                # a strip narrower than one tab
+            self._scroll = max((p for p in stops if p + (CHEVRON_W if p > 0 else 0) <= left), default=0)
 
     def _hit(self, pos) -> tuple[int, bool]:
-        """(tab index | -2 menu | -1 nothing, on the close cross)."""
+        """(tab index | -1 nothing | -2 menu | -3 / -4 left / right chevron, on the close cross)."""
         if self._menu_rect().contains(pos):
             return -2, False
-        if not self._tabs_area().contains(pos):
+        area = self._tabs_area()
+        if not area.contains(pos):
             return -1, False
+        vis = self._visible_area()
+        if pos.x() < vis.left():
+            return LEFT_CHEVRON, False
+        if pos.x() > vis.right():
+            return RIGHT_CHEVRON, False
         for i, r in enumerate(self.tab_rects()):
-            if r.contains(pos):
-                shown = i == self.current or i == self._hover
+            if r.contains(pos) and self._shown(r):
+                shown = (i == self.current or i == self._hover) and self._close_rect(r).right() <= vis.right()
                 return i, shown and self._close_rect(r).adjusted(-3, -3, 3, 3).contains(pos)
         return -1, False
 
@@ -220,13 +292,13 @@ class ConsoleTabStrip(QWidget):
         p.setFont(bold)
         p.setPen(QColor(pal.body))
         p.drawText(QRect(0, 0, LOGO_W, HEIGHT - 1), Qt.AlignCenter, ">_")
-        area = self._tabs_area()
+        area, vis = self._tabs_area(), self._visible_area()
         p.save()
-        p.setClipRect(area)
+        p.setClipRect(vis)
         rects = self.tab_rects()
         now = time.monotonic()
         for i, (tab, r) in enumerate(zip(self.tabs, rects)):
-            if r.right() < area.left() or r.left() > area.right():
+            if not self._shown(r):
                 continue
             active, hover = i == self.current, i == self._hover
             if active:
@@ -245,18 +317,22 @@ class ConsoleTabStrip(QWidget):
             font = bold if active else regular
             p.setFont(font)
             p.setPen(label)
-            text_rect = QRect(r.x() + 12 + DOT + 8, 0, r.width() - TAB_EXTRA + 8, HEIGHT - 1)
+            text_rect = self._label_rect(r, active or hover)
             fm = QFontMetricsF(font)
+            if r.right() > vis.right():                                      # cut by the right chevron:
+                text_rect.setRight(min(text_rect.right(), vis.right() - 4))  # elide to what shows
+                if text_rect.width() < 3 * fm.horizontalAdvance("M"):
+                    continue                                                 # too little: the dot alone
             p.drawText(text_rect, Qt.AlignVCenter | Qt.AlignLeft,
                        fm.elidedText(tab.label, Qt.ElideMiddle, text_rect.width()))
-            if active or hover:
+            if (active or hover) and self._close_rect(r).right() <= vis.right():
                 self._paint_cross(p, self._close_rect(r), hover and self._hover_close)
         p.restore()
-        # overflow chevrons at the clipped ends
-        if self._scroll > 0:
-            self._paint_chevron(p, area.left(), True)
-        if self._overflow() - self._scroll > 0:
-            self._paint_chevron(p, area.right() - CHEVRON_W + 1, False)
+        # overflow chevrons at the clipped ends (the tabs never reach under them)
+        if vis.left() > area.left():
+            self._paint_chevron(p, area.left(), True, self._hover == LEFT_CHEVRON)
+        if vis.right() < area.right():
+            self._paint_chevron(p, area.right() - CHEVRON_W + 1, False, self._hover == RIGHT_CHEVRON)
         # menu button: three painted dots
         mr = self._menu_rect()
         if self._hover == -2:
@@ -301,11 +377,12 @@ class ConsoleTabStrip(QWidget):
         p.drawLine(c.topRight(), c.bottomLeft())
         p.restore()
 
-    def _paint_chevron(self, p: QPainter, x: int, left: bool) -> None:
+    def _paint_chevron(self, p: QPainter, x: int, left: bool, hot: bool = False) -> None:
         p.save()
-        p.fillRect(x, 0, CHEVRON_W, HEIGHT - 1, QColor(self.pal.chrome))
+        p.fillRect(x, 0, CHEVRON_W, HEIGHT - 1, QColor(self.pal.raised if hot else self.pal.chrome))
         p.setRenderHint(QPainter.Antialiasing, True)
-        p.setPen(QPen(QColor(self.pal.body), 1.5, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        p.setPen(QPen(QColor(self.pal.bright if hot else self.pal.body), 1.5, Qt.SolidLine, Qt.RoundCap,
+                      Qt.RoundJoin))
         cx, cy = x + CHEVRON_W / 2, (HEIGHT - 1) / 2
         d = 3 if left else -3
         p.drawLine(QPointF(cx + d / 2, cy - 4), QPointF(cx - d / 2 - (1 if left else -1), cy))
@@ -331,6 +408,8 @@ class ConsoleTabStrip(QWidget):
         if i == -2:
             mr = self._menu_rect()
             self.menu_requested.emit(self.mapToGlobal(QPoint(mr.right() + 1, mr.bottom())))
+        elif i in (LEFT_CHEVRON, RIGHT_CHEVRON):
+            self._step_scroll(-1 if i == LEFT_CHEVRON else 1)
         elif i >= 0 and on_close:
             self.close_requested.emit(i)
         elif i >= 0:
@@ -339,9 +418,9 @@ class ConsoleTabStrip(QWidget):
     def wheelEvent(self, ev):
         if self._overflow() > 0:
             d = ev.angleDelta()
-            self._scroll -= int((d.y() or d.x()) / 120 * 60)
-            self._clamp_scroll()
-            self.update()
+            delta = d.y() or d.x()
+            if delta:
+                self._step_scroll(-1 if delta > 0 else 1)             # one whole tab per notch
         ev.accept()
 
     def resizeEvent(self, ev):
@@ -356,6 +435,8 @@ class ConsoleTabStrip(QWidget):
             i, on_close = self._hit(pos)
             if i == -2:
                 QToolTip.showText(ev.globalPos(), "Console menu", self)
+            elif i in (LEFT_CHEVRON, RIGHT_CHEVRON):
+                QToolTip.showText(ev.globalPos(), "More consoles - scroll or click", self)
             elif i >= 0 and on_close:
                 QToolTip.showText(ev.globalPos(), "Close this console", self)
             elif i >= 0:
