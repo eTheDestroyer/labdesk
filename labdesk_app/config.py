@@ -15,7 +15,6 @@ PKG_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = APP_DIR / "templates"
 ICON_PATH = APP_DIR / "labdesk.svg"
 
-CML_HOST = os.environ.get("CML_HOST", "192.168.122.60")
 CML_VM_NAME = os.environ.get("LABDESK_CML_VM", "cml")
 LIBVIRT_URI = os.environ.get("LABDESK_LIBVIRT_URI", "qemu:///system")
 CRED_FILE = Path(os.path.expanduser(os.environ.get("CML_CRED_FILE", "~/cml-labs/cml-credentials.env")))
@@ -48,6 +47,19 @@ def load_env_file(path: Path | str = CRED_FILE) -> dict[str, str]:
             k, v = line.split("=", 1)
             vals[k.strip()] = v.strip().strip('"').strip("'")
     return vals
+
+
+def _cml_host() -> str:
+    """$CML_HOST, else CML_HOST= in the credentials file (written by install.sh), else the default."""
+    if os.environ.get("CML_HOST"):
+        return os.environ["CML_HOST"]
+    try:
+        return load_env_file(CRED_FILE).get("CML_HOST") or "192.168.122.60"
+    except OSError:
+        return "192.168.122.60"
+
+
+CML_HOST = _cml_host()
 
 
 class State:

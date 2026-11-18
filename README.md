@@ -28,14 +28,13 @@ right-click management, light/dark/KDE themes, a 300+ test suite built on real c
 
 ### Quick start
 
-```bash
-git clone <this repo> labdesk && cd labdesk
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-export CML_HOST=192.168.122.60          # your CML controller
-./labdesk
-```
+**New here? Follow [INSTALL.md](INSTALL.md)**: a step-by-step guide from `git clone` to a running window.
 
-CML credentials are read from `~/cml-labs/cml-credentials.env` (`CML_ADMIN_USER=` / `CML_ADMIN_PASS=`; override the path with `CML_CRED_FILE`). It lives outside the repo, so keep it out of git.
+```bash
+git clone https://github.com/eTheDestroyer/labdesk.git ~/labdesk
+cd ~/labdesk && ./install.sh     # checks packages, installs, asks your CML login once, adds a menu entry
+~/labdesk/labdesk                # or open "LabDesk" from the application menu
+```
 
 ---
 

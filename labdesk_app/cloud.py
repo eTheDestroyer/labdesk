@@ -38,7 +38,7 @@ ROUTES_PATH = Path(os.environ.get("LABDESK_CLOUD_ROUTES", "/var/lib/labdesk-clou
 STATUS_PATH = Path(os.environ.get("LABDESK_CLOUD_STATUS", "/run/labdesk-cloud/status"))
 UP_SCRIPT = Path("/usr/local/libexec/labdesk-cloud/up")
 FIX_HINT = "sudo systemctl start labdesk-cloud"
-INSTALL_HINT = "sudo ~/cml-labs/labdesk/host/labdesk-cloud/install.sh"
+INSTALL_HINT = f"sudo {Path(__file__).resolve().parent.parent}/host/labdesk-cloud/install.sh"
 STATUS_MAX_AGE_S = 45.0                 # the check timer writes every 10 s
 HEALTH_INTERVAL_MS = 10_000
 
