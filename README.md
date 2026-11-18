@@ -404,7 +404,8 @@ labdesk_app/
   accounts.py           on-device accounts from IOS / Junos / FortiOS configs: encrypted (scheme) or plain text (pure)
   probe/creds.py        device-creds file: per-node / default login, atomic 0600 writer
   ui/                   main_window, canvas, graphics (vector vendor icons), dialogs, hovercard (+ hovercard_model), worker (thread pool)
-templates/              3-router-hsrp.yaml, hub-spoke-hsrp-bgp.yaml, switching-lab-etherchannel.yaml
+templates/              3-router-hsrp.yaml, hub-spoke-hsrp-bgp.yaml, switching-lab-etherchannel.yaml,
+                        pe-hub-spoke-hsrp.yaml (Juniper PE + Cisco hub/spokes, docs/pe-hub-spoke-hsrp.md)
 host/labdesk-cloud/     the Internet cloud's host side: install.sh / uninstall.sh, libexec scripts, systemd units
 tests/                  pytest: API wrapper with a fake HTTP transport, command builders, helpers
                         (@pytest.mark.linux_only tests are skipped on Windows)
@@ -566,3 +567,11 @@ Probing uses short read-only bursts on the CML console line. Probing pauses whil
 for that node is open; meanwhile interface addresses typed in that console are read from CML's console log
 (REST, passive) so the subnet labels stay live. Optional logins and enable secrets go in
 `~/.config/labdesk/device-creds` (mode 0600; right-click ▸ *Credentials…* writes it).
+
+## PE Hub-Spoke HSRP lab (Juniper PE + Cisco hub / HSRP spokes)
+
+`templates/pe-hub-spoke-hsrp.yaml` is the CML export of the "PE Hub-Spoke HSRP" lab: HUB, R1, R2 (IOSv),
+PC-DATA, PC-PHONE (alpine) and three System-Bridge connectors `BR-PE-HUB/R1/R2`. The PE is the host-KVM
+vJunos VM `PE` (routing-instance CUSTOMER), placed on the lab canvas in `state.json` with one link per
+connector. Build script, device configs, verification and the full write-up live in `~/cml-labs/pe-hub-spoke`
+(copy of the guide: `docs/pe-hub-spoke-hsrp.md`).
