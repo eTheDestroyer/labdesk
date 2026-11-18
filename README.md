@@ -1,6 +1,6 @@
 # LabDesk
 
-**A native Linux desktop app for designing, running and watching Cisco CML network labs, with real-tty consoles and a live protocol map.**
+**A native desktop app for Linux and Windows for designing, running and watching Cisco CML network labs, with real-tty consoles and a live protocol map.**
 
 LabDesk is a Python 3.13 + PySide6 front end for **Cisco Modeling Labs (CML-Free 2.10)** running on KVM. It also handles
 host-KVM **Juniper vJunos** and **Fortinet FortiOS** VMs. Drag routers and switches onto a canvas, cable them up and boot them.
@@ -25,6 +25,14 @@ right-click management, light/dark/KDE themes, a 300+ test suite built on real c
 
 > Requires Linux (KDE/Konsole recommended), libvirt/KVM and a CML-Free VM. Device images (IOSv, IOSvL2, vJunos, FortiOS) are
 > **not** included. Get them from the vendors under their licences.
+
+**Windows 10/11:** download **LabDesk.exe** from the GitHub *Releases* page and run it; a first-run dialog asks for the
+CML address and login ([INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows)). It needs a CML VM that
+Windows can reach (for example CML in VMware Workstation). Consoles open as tabs in Windows Terminal (or a console
+window) with the built-in OpenSSH client; you type the CML password there unless `~/.ssh/labdesk_ed25519` exists.
+**Not on Windows:** host-KVM Juniper/Fortinet VMs and the Internet cloud (Linux only, greyed out); *Start CML VM* works
+only through VMware Workstation's `vmrun` (set the CML `.vmx` under *Lab ▸ CML connection…*). LabDesk.exe is not
+code-signed: SmartScreen → *More info* → *Run anyway*.
 
 ### Quick start
 
@@ -342,6 +350,15 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/cloud_shots.py [--verify] [--da
   carries `SSH_ASKPASS=labdesk_app/askpass.py`, which reads the password from
   `~/cml-labs/cml-credentials.env`. The password never appears on a command line, in Konsole, or in
   logs.
+* **Windows (LabDesk.exe):** the same `ssh -t -e none … connect <console-uuid>` with the built-in OpenSSH client
+  (`C:\Windows\System32\OpenSSH\ssh.exe`), in a tab of one Windows Terminal window named *LabDesk*
+  (`wt -w LabDesk new-tab --title <node> …`), or a new console window when Windows Terminal is missing. There is no
+  askpass helper: without the SSH key, ssh asks for the CML password in the console. Background probes use
+  **paramiko** in-process (same `connect <uuid>` session on a 250×50 pty; SSH key if present, else the saved CML
+  password - never on a command line); open consoles are found with **psutil** so probing pauses for them, as on Linux.
+  Credentials: `%APPDATA%\LabDesk\cml-credentials.env` (`CML_CRED_FILE` overrides), settings
+  `%APPDATA%\LabDesk\LabDesk.ini`, state and device logins in `%APPDATA%\LabDesk`, cache and probe logs in
+  `%LOCALAPPDATA%\LabDesk\cache` (crash log: `labdesk.log` there).
 * **Konsole:** LabDesk starts one `konsole --separate --profile LabDesk` window and adds a tab per
   device over D-Bus (`newSession`, `setTabTitleFormat`, `runCommand`). The `LabDesk` profile
   (`~/.local/share/konsole/LabDesk.profile`) doesn't start a shell. Its command is
@@ -378,7 +395,8 @@ labdesk_app/
   cml_api.py            CML REST wrapper (token auth, re-auth on 401, next free interface, links…)
   controller.py         all lab operations (UI independent, used by the UI and tools/e2e_demo.py)
   kvm.py                virsh / virt-install command builders and runners
-  launchers.py          console / ssh / telnet / http command builders, Konsole D-Bus launcher
+  launchers.py          console / ssh / telnet / http command builders, Konsole D-Bus launcher, Windows Terminal launcher
+  plat.py               platform layer: Linux vs Windows paths, tools (ssh.exe, wt.exe, vmrun) and Linux-only features
   tabexec.py, askpass.py  Konsole tab bootstrap, SSH_ASKPASS helper
   catalog.py, validate.py, config.py
   parsers/ios_l2.py     IOSvL2 switching parsers (VLANs, trunks, STP, MAC, CDP, EtherChannel, LACP, PAgP)
@@ -389,6 +407,9 @@ labdesk_app/
 templates/              3-router-hsrp.yaml, hub-spoke-hsrp-bgp.yaml, switching-lab-etherchannel.yaml
 host/labdesk-cloud/     the Internet cloud's host side: install.sh / uninstall.sh, libexec scripts, systemd units
 tests/                  pytest: API wrapper with a fake HTTP transport, command builders, helpers
+                        (@pytest.mark.linux_only tests are skipped on Windows)
+labdesk.spec, packaging/  PyInstaller build of LabDesk.exe (entry script, labdesk.ico from tools/make_ico.py)
+.github/workflows/windows.yml  CI: Linux + Windows tests, LabDesk.exe build + smoke test, Release on v* tags
 tools/                  e2e_demo.py (live test), screenshots.py / ui_shots.py / switch_shots.py (offscreen QA),
                         build_switching_lab.py, switch_failover.py, telemetry_snapshot.py, cockpit_exec.py,
                         cloud_live_check.py / cloud_shots.py (Internet cloud live check, qa/cloud-*.png)
@@ -402,6 +423,7 @@ Subprocesses always get argv lists (never `shell=True`), and labels/VM names are
 
 ```
 .venv/bin/python -m pytest -q tests
+pyinstaller --noconfirm --clean labdesk.spec       # on Windows: dist\LabDesk.exe (CI does this on every push)
 QT_QPA_PLATFORM=offscreen .venv/bin/python tools/screenshots.py --lab "LabDesk Demo" --select R1 --dialogs
 QT_QPA_PLATFORM=offscreen .venv/bin/python tools/e2e_demo.py      # live: needs CML
 ```
@@ -409,6 +431,8 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/e2e_demo.py      # live: needs 
 ## Limitations
 
 * CML-Free allows only 5 running nodes.
+* LabDesk for Windows: no host-KVM devices and no Internet cloud (Linux only); consoles ask for the CML password
+  unless the SSH key is set up; *Start CML VM* needs VMware Workstation. The .exe is unsigned (SmartScreen warning).
 * Host-VM links via the System Bridge all share one broadcast domain. Removing a host-VM link
   detaches its NIC, but the CML connector node stays in place, so delete it yourself if you want it gone.
 * Host-KVM VMs can't be renamed, because the name is the libvirt domain name.

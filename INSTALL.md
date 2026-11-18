@@ -1,9 +1,108 @@
 # Installing LabDesk: step by step
 
 This guide takes you from nothing to a running LabDesk window. Do the steps in order.
-Commands go in a terminal (Konsole). Copy one block at a time.
+
+* **On Windows 10 / 11?** Follow [LabDesk for Windows](#labdesk-for-windows) right below. No terminal needed.
+* **On Linux?** Skip to [What you need first](#what-you-need-first). Commands go in a terminal (Konsole).
+  Copy one block at a time.
 
 ---
+
+## LabDesk for Windows
+
+LabDesk also runs on Windows as a single program file, **LabDesk.exe**. Nothing to install.
+
+### What you need
+
+| You need | Why | Check it |
+|---|---|---|
+| **Windows 10 or 11** (64-bit) | | |
+| **A running CML-Free VM that this PC can reach**, for example CML in VMware Workstation | LabDesk is a front end for CML. It does not include CML or any router images | open `https://<CML address>` in a browser and log in |
+| **Your CML login** (usually `admin` and the password you set during CML setup) | LabDesk logs in to CML for you | |
+| **Windows Terminal** (recommended; built into Windows 11, free in the Microsoft Store for Windows 10) | device consoles open as tabs in one "LabDesk" window | press Win+R, type `wt`, Enter |
+| **OpenSSH client** (built into Windows 10/11) | consoles use it | press Win+R, type `cmd`, Enter, then type `ssh -V` |
+
+> No Windows Terminal? Consoles still work: each one opens in its own console window instead of a tab.
+> `ssh -V` says "not recognized"? Settings → Apps → Optional features → Add a feature → **OpenSSH Client**.
+
+### Step 1: download LabDesk.exe
+
+1. Open the repository on GitHub → **Releases** (right-hand side) → the newest release.
+2. Under *Assets*, click **LabDesk.exe**. Save it somewhere you will find it again, for example your Desktop.
+
+> Newest test build instead: **Actions** → *Build LabDesk.exe* → the latest green run → *Artifacts* →
+> **LabDesk-windows** (a .zip with LabDesk.exe inside; right-click → *Extract All*).
+
+### Step 2: run it
+
+Double-click **LabDesk.exe**. The first start takes 5 to 10 seconds (it unpacks itself); later starts are faster.
+
+**"Windows protected your PC"?** LabDesk is not code-signed, so SmartScreen warns about it. Click
+**More info**, then **Run anyway**. You only do this once.
+
+### Step 3: tell LabDesk where CML is
+
+The first time, LabDesk asks for your CML login:
+
+```
+CML address:   192.168.80.130    ← the address you open in the browser to reach CML
+Username:      admin
+Password:      ••••••            ← the CML password
+CML VM file:   (optional)        ← Browse… to the CML VM's .vmx file if CML runs in VMware Workstation
+```
+
+Click **Test connection**. When it says **✓ Connected**, click **Save**.
+
+LabDesk saves this in `%APPDATA%\LabDesk\cml-credentials.env`, a file only your Windows account can open.
+You can change it any time: toolbar **Lab** menu → **CML connection…**.
+
+### Step 4: use it
+
+Everything in [Step 5: first steps inside LabDesk](#step-5-first-steps-inside-labdesk) works the same, with two differences:
+
+* **Double-click a device** to open its console: a tab in a Windows Terminal window called *LabDesk*.
+  **The console asks for the CML password** (the same one as above) each time, unless you set up an SSH key
+  (see below). Type it and press Enter; nothing shows while you type, that's normal. Tab, `?`, Ctrl-C and the
+  arrow keys work as on a real router. Leave the console with **Ctrl-]**.
+* **Start CML VM** starts CML in VMware Workstation when you gave the CML VM file in step 3.
+  Otherwise, start the CML VM yourself (VMware, Hyper-V, …), wait about 2 minutes, and LabDesk reconnects by itself.
+
+**No password in consoles (optional):** put an SSH key at `C:\Users\<you>\.ssh\labdesk_ed25519` and register its
+`.pub` part for the CML `admin` user (README → *How consoles work*). LabDesk then uses it for consoles and the
+background probes.
+
+### What does not work on Windows
+
+| Feature | On Windows |
+|---|---|
+| Juniper vJunos / Fortinet VMs (host KVM) | not available: they need Linux KVM. Greyed out in the device list |
+| Internet cloud (always answers 8.8.8.8 / 1.1.1.1) | not available: it is a Linux network namespace. Labs that have one show it as *Linux only* |
+| Start CML VM | only with VMware Workstation (`vmrun`) and the CML VM file set; otherwise start CML yourself |
+| Telnet from the right-click *Management* menu | needs the Windows *Telnet Client* feature (Control Panel → Programs → Turn Windows features on or off) |
+
+Everything else (designing labs, starting/stopping devices, consoles, live routing/switching map, hover cards,
+templates, failure simulation) works the same as on Linux.
+
+### If something goes wrong on Windows
+
+| What you see | What to do |
+|---|---|
+| "Windows protected your PC" | **More info → Run anyway** (LabDesk is not signed) |
+| **CML offline** in the status bar | Is the CML VM running? Can you open `https://<CML address>` in a browser on this PC? |
+| *Test connection* says "No answer" | Wrong address, or CML is off, or the VM network is not reachable from Windows (in VMware, use NAT or Bridged) |
+| *Test connection* says "wrong username or password" | Retype the CML password |
+| A console window opens and closes at once | OpenSSH Client is missing: see *What you need* above |
+| The hover card stays empty | The background reader logs in with the saved CML password (or the SSH key): check **Lab → CML connection…** |
+| LabDesk closes right after starting | Send the file `%LOCALAPPDATA%\LabDesk\cache\labdesk.log` with your bug report |
+
+To remove LabDesk from Windows, delete **LabDesk.exe**, and the folders `%APPDATA%\LabDesk` and `%LOCALAPPDATA%\LabDesk`
+if you also want your saved login and settings gone.
+
+---
+
+## LabDesk for Linux
+
+The rest of this guide is for Linux.
 
 ## What you need first
 
@@ -121,6 +220,8 @@ git pull
 cd ~/labdesk
 ./install.sh --reconfigure
 ```
+
+Or, inside LabDesk: toolbar **Lab** menu → **CML connection…**.
 
 ## Optional extras
 
