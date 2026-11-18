@@ -108,7 +108,7 @@ The rest of this guide is for Linux.
 
 | You need | Why | Check it |
 |---|---|---|
-| **Linux with KDE** (tested on Debian 13) | LabDesk opens device consoles in Konsole | `konsole --version` |
+| **Linux with KDE** (tested on Debian 13) | LabDesk opens device consoles in its own console window; Konsole is the fallback | `konsole --version` |
 | **KVM / libvirt** | CML runs as a virtual machine | `virsh list --all` |
 | **Cisco CML-Free VM**, installed and working | LabDesk is a front end for CML. It does not include CML or any router images | open `https://<CML address>` in a browser and log in |
 | **Your CML login** (usually `admin` and the password you set during CML setup) | LabDesk logs in to CML for you | |
@@ -198,7 +198,8 @@ To pin it to the taskbar, right-click the LabDesk icon in the menu and choose *P
    * `hub-spoke-hsrp-bgp.yaml`: hub and spoke with HSRP, BGP and access lists,
    * `switching-lab-etherchannel.yaml`: switches with VLANs, LACP and PAgP.
 3. Click **Start all**. Routers take 2 to 5 minutes to boot. A green ✓ on a device means it is up.
-4. **Double-click a device** to open its console in Konsole. Leave a console with **Ctrl-]**.
+4. **Double-click a device** to open its console: a tab in the green **LabDesk console** window (one tab per
+   device). Leave a console with **Ctrl-]**.
 5. **Hover over a device** to see its live information, including its **first login** (what to type the first time
    you open its console - LabDesk saves it for you, nothing to set up). Cisco routers and switches: press Enter, then
    `enable` → `cisco` (SSH / telnet: `admin` / `cisco`); Linux PCs: `cisco` / `cisco`. Right-click a device →

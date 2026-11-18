@@ -160,7 +160,7 @@ def test_live_table_updates_cells_in_place(app):
 
 # ----------------------------------------------------------------------------- L9 dialogs
 def test_no_yes_no_questions_or_input_dialogs_left():
-    for p in UI.glob("*.py"):
+    for p in UI.rglob("*.py"):
         src = p.read_text(encoding="utf-8")
         assert "QMessageBox.question" not in src and "QMessageBox.Yes" not in src, p.name
         assert "QInputDialog." not in src and "QInputDialog," not in src, p.name

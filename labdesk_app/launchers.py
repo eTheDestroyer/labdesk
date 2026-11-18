@@ -1,6 +1,7 @@
 """Console / SSH / Telnet / HTTP launchers.
 
-Console commands are argv lists that run on a REAL pty inside Konsole:
+Console commands are argv lists that run on a REAL pty - on Linux inside the LabDesk console window
+(labdesk_app/ui/console, installed by MainWindow; this module stays free of Qt), else inside Konsole:
 
 * CML node  -> ssh -t <admin>@<controller> connect <console-uuid>
                (CML terminal server; pubkey auth with ~/.ssh/labdesk_ed25519, password
@@ -40,6 +41,8 @@ class ConsoleCommand:
     title: str
     argv: list[str]
     env: dict[str, str] = field(default_factory=dict)
+    meta: dict = field(default_factory=dict)      # for the console window only (key, kind, node_definition,
+                                                  # lab_title); never part of as_json()
 
     def as_json(self) -> str:
         return json.dumps({"title": self.title, "argv": self.argv, "env": self.env},
@@ -97,7 +100,7 @@ def ssh_to_device(label: str, ip: str, user: str = "admin") -> ConsoleCommand:
     argv = [plat.ssh_exe(), *_known_hosts_opt(config.DEVICE_KNOWN_HOSTS),
             "-o", "StrictHostKeyChecking=no", "-o", "PubkeyAuthentication=no",
             *LEGACY_SSH_OPTS, "-l", validate.username(user), validate.host(ip)]
-    return ConsoleCommand(f"{label} (ssh)", argv, {})
+    return ConsoleCommand(f"{label} (ssh)", argv, {}, {"kind": "ssh"})
 
 
 def telnet_to_device(label: str, ip: str) -> ConsoleCommand:
@@ -107,8 +110,8 @@ def telnet_to_device(label: str, ip: str) -> ConsoleCommand:
         if not exe:
             raise RuntimeError("the Windows Telnet Client is not installed (Control Panel > Programs > "
                                "Turn Windows features on or off > Telnet Client)")
-        return ConsoleCommand(f"{label} (telnet)", [exe, host], {})
-    return ConsoleCommand(f"{label} (telnet)", ["telnet", host], {})
+        return ConsoleCommand(f"{label} (telnet)", [exe, host], {}, {"kind": "telnet"})
+    return ConsoleCommand(f"{label} (telnet)", ["telnet", host], {}, {"kind": "telnet"})
 
 
 def http_url(ip: str, https: bool) -> str:

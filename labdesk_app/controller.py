@@ -1105,7 +1105,10 @@ class LabController:
     def console_command(self, key: str) -> launchers.ConsoleCommand:
         kind, ident = key.split(":", 1)
         if kind == "kvm":
-            return launchers.kvm_console(ident)
+            cmd = launchers.kvm_console(ident)
+            cmd.meta.update(key=f"{self.lab_id or ''}:{key}", kind="kvm", node_definition="",
+                            lab_title=self.lab_title or "")
+            return cmd
         lab_id = self._lab()
         n = self.client.node(lab_id, ident)
         if n.get("node_definition") in NON_COUNTING_DEFS:
@@ -1114,7 +1117,11 @@ class LabController:
             raise CMLError(f"{n.get('label')} is not running - start it first")
         uuid = self.client.console_key(lab_id, ident)
         user = config.load_env_file(self.client._cred_file).get("CML_ADMIN_USER", "admin")
-        return launchers.cml_console(n.get("label", ident), uuid, user)
+        cmd = launchers.cml_console(n.get("label", ident), uuid, user)
+        # for the LabDesk console window only (tab identity, lens, window title); from the live CML read
+        cmd.meta.update(key=f"{lab_id}:{key}", kind="cml", node_definition=n.get("node_definition") or "",
+                        lab_title=self.lab_title or "")
+        return cmd
 
     def mgmt(self, key: str) -> dict:
         m = dict(self.state.lab(self._lab())["mgmt"].get(key, {}))

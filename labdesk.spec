@@ -23,6 +23,7 @@ if os.path.exists(os.path.join(ROOT, "BUILD_INFO")):
 # Qt / Python modules LabDesk never imports (keeps the exe small)
 excludes = [
     "tkinter", "unittest", "pydoc_data", "pytest", "_pytest", "pexpect", "ptyprocess",
+    "pyte", "wcwidth",          # the LabDesk console window is Linux only (Windows keeps Windows Terminal)
     "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.QtWebEngineQuick", "PySide6.QtWebChannel",
     "PySide6.QtWebSockets", "PySide6.QtQml", "PySide6.QtQuick", "PySide6.QtQuickWidgets", "PySide6.QtQuick3D",
     "PySide6.Qt3DCore", "PySide6.Qt3DRender", "PySide6.QtMultimedia", "PySide6.QtMultimediaWidgets",

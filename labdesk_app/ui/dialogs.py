@@ -37,6 +37,9 @@ class LabDeskDialog(QDialog):
 
     def __init__(self, title: str, parent=None, *, header: tuple | None = None):
         super().__init__(parent)
+        if parent is not None:
+            # modal for its own window only: the LabDesk console window (no parent) stays typeable
+            self.setWindowModality(Qt.WindowModal)
         self.setWindowTitle(title)
         outer = QVBoxLayout(self)
         outer.setContentsMargins(16, 16, 16, 16)

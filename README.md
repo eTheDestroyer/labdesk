@@ -4,8 +4,8 @@
 
 LabDesk is a Python 3.13 + PySide6 front end for **Cisco Modeling Labs (CML-Free 2.10)** running on KVM. It also handles
 host-KVM **Juniper vJunos** and **Fortinet FortiOS** VMs. Drag routers and switches onto a canvas, cable them up and boot them.
-Double-click any device to get a **real console in a Konsole tab**, where Tab completion, `?`, Ctrl-C and the arrow keys work as on
-physical hardware, with no browser or websocket lag.
+Double-click any device to get a **real console as a tab of the LabDesk console window** (neon green on green-black, one tab
+per device), where Tab completion, `?`, Ctrl-C and the arrow keys work as on physical hardware, with no browser or websocket lag.
 
 While the lab runs, LabDesk polls the devices and draws what is actually configured on them:
 
@@ -23,7 +23,7 @@ While the lab runs, LabDesk polls the devices and draws what is actually configu
 Also included: lab templates (3-router HSRP, hub-and-spoke HSRP/BGP/ACL, switching with LACP/PAgP), SSH/Telnet/HTTP
 right-click management, light/dark/KDE themes, a 300+ test suite built on real captured device output, and QA screenshot tools.
 
-> Requires Linux (KDE/Konsole recommended), libvirt/KVM and a CML-Free VM. Device images (IOSv, IOSvL2, vJunos, FortiOS) are
+> Requires Linux (KDE recommended; Konsole is the fallback console), libvirt/KVM and a CML-Free VM. Device images (IOSv, IOSvL2, vJunos, FortiOS) are
 > **not** included. Get them from the vendors under their licences.
 
 **Windows 10/11:** download **LabDesk.exe** from the GitHub *Releases* page and run it; a first-run dialog asks for the
@@ -60,7 +60,7 @@ The last opened lab is reopened automatically.
 | New / open lab, import a template | toolbar **New lab**, **Open…** (Ctrl+O) → *CML labs* tab or *Templates* tab (`templates/*.yaml`, or any YAML file) |
 | Add a device | drag it from the **Devices** palette onto the canvas (or right-click the canvas → *Add device here*). Names are generated automatically (R1, SW1, …) |
 | Link two devices | **Shift-drag** from one device to another, or turn on **Link mode** (L). The next free interface is used on each side, and interfaces are created when needed |
-| Console | **double-click**, **Enter**, or right-click → *Console*. A tab named after the node opens in the dedicated "LabDesk consoles" Konsole window. Leave the console with **Ctrl-]** |
+| Console | **double-click**, **Enter**, or right-click → *Console*. A tab named after the node opens in the **LabDesk console** window (opening the same device again switches to its tab). Leave the console with **Ctrl-]** |
 | SSH / Telnet / HTTP(S) | right-click → *Management* (set the IP in *Properties…*; host VMs auto-detect theirs from the libvirt DHCP lease) |
 | Start / stop / wipe | right-click menu, the inspector buttons, or toolbar *Start all / Stop all / Wipe all* |
 | Startup config | right-click → *Edit startup config…*. It's applied on the first boot after a wipe; *Save, wipe & restart* does all three |
@@ -246,8 +246,8 @@ and the *On the device* accounts work out of the box. Where it shows:
 * **Right-click**: *Copy login* (user name), *Copy password*.
 * **First console of a node in a session**: a toast and an event-log line, e.g.
   `R1 first login: admin / cisco (enable: cisco) · console: no username, press Enter, then 'enable'`. A password
-  that comes from `cml-credentials.env` or that you saved is masked in the event log. The Konsole tab itself is not
-  touched (the password would have to go on the tab's command line).
+  that comes from `cml-credentials.env` or that you saved is masked in the event log. The console tab itself is not
+  touched (the terminal shows device output only).
 * **Credentials… ▸ Reset to default** puts the first-login value back.
 
 The node's own day-0 config wins over the table: `username … secret|password …` / `enable secret|password …` lines
@@ -425,7 +425,7 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/cloud_shots.py [--verify] [--da
 * **Passwordless:** SSH public-key auth is enabled on the CML terminal server, and the key
   `~/.ssh/labdesk_ed25519.pub` is registered for the CML `admin` user. As a fallback, the tab also
   carries `SSH_ASKPASS=labdesk_app/askpass.py`, which reads the password from
-  `~/cml-labs/cml-credentials.env`. The password never appears on a command line, in Konsole, or in
+  `~/cml-labs/cml-credentials.env`. The password never appears on a command line, in the console, or in
   logs.
 * **Windows (LabDesk.exe):** the same `ssh -t -e none … connect <console-uuid>` with the built-in OpenSSH client
   (`C:\Windows\System32\OpenSSH\ssh.exe`), in a tab of one Windows Terminal window named *LabDesk*
@@ -436,7 +436,12 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/cloud_shots.py [--verify] [--da
   Credentials: `%APPDATA%\LabDesk\cml-credentials.env` (`CML_CRED_FILE` overrides), settings
   `%APPDATA%\LabDesk\LabDesk.ini`, state and device logins in `%APPDATA%\LabDesk`, cache and probe logs in
   `%LOCALAPPDATA%\LabDesk\cache` (crash log: `labdesk.log` there).
-* **Konsole:** LabDesk starts one `konsole --separate --profile LabDesk` window and adds a tab per
+* **Linux: the LabDesk console window** runs that same argv as a real child process (`/usr/bin/setsid -c ssh …`)
+  on a real pty inside LabDesk's own window - see the next section. Only `ssh` / `virsh` / `telnet` are accepted,
+  there is no shell and no shell parsing. Because the child is an ordinary `ssh … connect <uuid>` process, LabDesk
+  finds it like any other open console and pauses its background probing of that device.
+* **Konsole (the fallback, or View → Console → Use Konsole instead):** LabDesk starts one
+  `konsole --separate --profile LabDesk` window and adds a tab per
   device over D-Bus (`newSession`, `setTabTitleFormat`, `runCommand`). The `LabDesk` profile
   (`~/.local/share/konsole/LabDesk.profile`) doesn't start a shell. Its command is
   `labdesk_app/tabexec.py`, which reads one JSON line (argv) with echo off and runs that argv on the
@@ -446,23 +451,58 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/cloud_shots.py [--verify] [--da
 
 ### The console window: neon green, one tab per device
 
-Every console opens as a **tab in one window** called *LabDesk consoles*: the first console creates the window,
-each later one adds a tab named after the device (R1, R2, HUB…). Close a tab with its ✕ or leave the console
-with **Ctrl-]**.
+On Linux every console opens as a **tab in one window, the LabDesk console**. It is LabDesk's own window, not a
+recoloured terminal program: no toolbar and no menu bar, just three parts.
 
-The window has LabDesk's own look: **neon green text (#39FF14) on black**, with a solid green block cursor.
-Device errors printed in colour stay red; bold text is a brighter green.
+* **Tab strip (the header).** The first console creates the window, each later one adds a tab at the right, named
+  after the device (R1, R2, HUB…) and focused. Opening a device that already has a live tab switches to that tab.
+  The dot in a tab shows the *session* (not the device's health), by shape: a hollow ring = started, waiting for
+  output; a solid dot = live; a ring with a slash = ended (red only when it failed). A tab whose device printed
+  something while you were elsewhere gets a brighter label. Close a tab with its ✕ (a live one asks first), switch
+  with **Ctrl+PgUp / Ctrl+PgDn** or **Ctrl+Tab**. The window title is `R1 - <lab> - LabDesk console`.
+* **The terminal.** **Neon green text (#39FF14) on green-black**, in the bundled *Hack* font at 11 pt on an exact
+  9 × 21 px cell with 16 / 12 px padding; 110 × 42 characters by default. It is a real terminal on a real pty:
+  Tab completion, `?`, Ctrl-C, Ctrl-Shift-6, the arrow keys, `--More--` paging and **Ctrl-]** (leave the console)
+  reach the device exactly as typed. Only what the device sends is shown here - LabDesk never writes into it.
+  Scrollback is 50 000 lines (mouse wheel, Shift+PgUp / PgDn, or drag the thin bar at the right).
+  Select with the mouse; **Ctrl+Shift+C** copies, **Ctrl+Shift+V** or the middle button pastes.
+* **Status line.** LabDesk speaks here: the session state, "LabDesk is running N show commands on this console"
+  while a show script types, the size (`110 × 42`), and a red row when a session failed
+  (`session ended (status 255) - open the device again to reconnect`; reopening restarts it in the same tab and
+  keeps the scrollback).
 
-* **Turn it off / on:** menu **View → Neon green console**. Off means your normal Konsole colours. The choice is
-  remembered and applies to the next console you open (tabs already open keep their look).
-* **Change the colours yourself:** the look is an ordinary Konsole colour scheme called *LabDesk Neon*. Edit
-  `~/.local/share/konsole/LabDeskNeon.colorscheme` (or Konsole's colour scheme editor). LabDesk creates that file
-  once and never overwrites it; delete it to get LabDesk's colours back. The profile file itself is managed by
-  LabDesk and is rewritten.
-* Files: `~/.local/share/konsole/LabDeskNeon.profile` + `LabDeskNeon.colorscheme` (neon), `LabDesk.profile` (plain).
+On Cisco IOS / IOS-XE consoles LabDesk makes four things stand out (display only - what you copy is the raw text):
+the **prompt** and the command you typed (bright; the `(config…)` part amber), **refused commands**
+(`% Invalid input…`, `% Incomplete command`, `% Ambiguous command`, `% Unknown command` and the `^` marker, red),
+the **severity of syslog messages** (`%LINK-3-UPDOWN` amber, severity 0-2 red, 5-7 untouched) and `--More--`.
+Nothing else is coloured; colours the device itself sends always win.
+
+Switches (menu **View → Console**, or the ⋮ button / right-click in the console; all apply at once and are remembered):
+
+| Switch | What it does |
+|---|---|
+| **Neon green console** | off = a plain light-on-dark console |
+| **Softer green** | a less saturated green (#7DF56A) for long sessions |
+| **Highlight prompts and errors** | the IOS emphasis described above |
+| **Larger / Smaller / Reset text size** | 8 to 20 pt, default 11 (in the console: **Ctrl+Alt+=**, **Ctrl+Alt+-**, **Ctrl+Alt+0**) |
+| **Use Konsole instead** | open consoles as tabs of a Konsole window, as before (applies to the next console) |
+
+Good to know:
+
+* The consoles run inside LabDesk: **closing LabDesk ends them** (it asks first when any is open). LabDesk's own
+  dialogs do not block the console window; the file pickers (import, export, save log, CML .vmx) do while they
+  are open.
+* A narrower window never re-wraps or loses text: it clips on the right (a dim `›` marks clipped rows) and the
+  status line says `showing 90 of 110 columns`; widen the window to see everything again.
+* A bell from the device is silent: the tab's dot brightens for a moment.
+* If `pyte` or `/usr/bin/setsid` is missing, LabDesk uses Konsole automatically.
+* **Konsole fallback:** there the look is the older Konsole colour scheme *LabDesk Neon*
+  (`~/.local/share/konsole/LabDeskNeon.colorscheme`, yours to edit; LabDesk creates it once and never overwrites
+  it) with profiles `LabDeskNeon.profile` / `LabDesk.profile`; *Neon green console* then applies to the next tab.
   Your own Konsole profiles and windows are not touched.
-* Windows (LabDesk.exe): consoles are tabs in a Windows Terminal window named *LabDesk*; the neon look is not
-  applied there yet.
+* Windows (LabDesk.exe): consoles are tabs in a Windows Terminal window named *LabDesk*; the LabDesk console
+  window and its look are Linux only for now.
+* The Hack font is bundled (`labdesk_app/ui/fonts/`, MIT + Bitstream Vera licence, see `LICENSE-Hack.txt`).
 
 ### Show script per device (what LabDesk types when you open a console)
 
@@ -532,6 +572,9 @@ labdesk_app/
   launchers.py          console / ssh / telnet / http command builders, Konsole D-Bus launcher, Windows Terminal launcher
   plat.py               platform layer: Linux vs Windows paths, tools (ssh.exe, wt.exe, vmrun) and Linux-only features
   tabexec.py, askpass.py  Konsole tab bootstrap, SSH_ASKPASS helper
+  ui/console/           the LabDesk console window (Linux): palette, screen (pyte + scrollback), keymap, lens (IOS
+                        emphasis), boxdraw - pure Python; session (ssh child on a pty), view, tabstrip, statusline,
+                        window, launcher
   catalog.py, validate.py, config.py
   parsers/ios_l2.py     IOSvL2 switching parsers (VLANs, trunks, STP, MAC, CDP, EtherChannel, LACP, PAgP)
   etherchannel.py       EtherChannel mode rules, IOS command generation, day-0 patching (pure)

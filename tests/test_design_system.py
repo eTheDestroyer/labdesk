@@ -86,7 +86,7 @@ def test_link_end_glyph_map_never_uses_x():
 # ------------------------------------------------------------------ S4 typography
 def test_no_literal_point_sizes_or_monospace_family_outside_theme():
     bad = []
-    for f in UI.glob("*.py"):
+    for f in UI.rglob("*.py"):
         if f.name == "theme.py":
             continue
         for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):

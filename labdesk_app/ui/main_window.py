@@ -244,7 +244,9 @@ class MainWindow(QMainWindow):
     def __init__(self, controller: LabController | None = None, launcher=None):
         super().__init__()
         self.ctl = controller or LabController()
-        self.launcher = launcher or launchers.default_launcher()
+        self._console_launcher = None             # the LabDesk console window launcher (Linux), once made
+        self._launcher_injected = launcher is not None
+        self.launcher = launcher or self._pick_launcher()
         self.runner = TaskRunner(self)
         self.view_data: LabData | None = None
         self._polling = False
@@ -538,15 +540,7 @@ class MainWindow(QMainWindow):
                                    checkable=True)
         self.a_show_pw.setChecked(as_bool(self.settings.value("ui/hover_show_passwords", True), True))
         vm.addAction(self.a_show_pw)
-        self.a_neon = self._act("Neon green console", self._set_console_neon, None,
-                                "Device consoles: neon green text on black (off: your normal Konsole colours). "
-                                "Applies to the next console you open",
-                                checkable=True)
-        self.a_neon.setChecked(as_bool(self.settings.value("console/neon", True), True))
-        self.a_neon.setVisible(hasattr(self.launcher, "neon"))
-        if hasattr(self.launcher, "neon"):
-            self.launcher.neon = self.a_neon.isChecked()
-        vm.addAction(self.a_neon)
+        self._build_console_menu(vm)
         vm.addSeparator()
         tm = vm.addMenu("Theme")
         from .themectl import MODES
@@ -1834,11 +1828,110 @@ class MainWindow(QMainWindow):
         self.update_inspector()
         self.view.refresh_hover_card()
 
+    # --------------------------------------------------------------- console window (View > Console)
+    def _pick_launcher(self):
+        """The console launcher: LabDesk's own console window on Linux (unless 'Use Konsole instead' is
+        set or it cannot run here), else the platform default (Konsole / Windows Terminal).  Nothing is
+        created on screen before the first console opens."""
+        from . import console
+        if plat.IS_LINUX and str(app_settings().value("console/engine", "labdesk")) != "konsole" \
+                and console.available():
+            return self._labdesk_console()
+        return launchers.default_launcher()
+
+    def _labdesk_console(self):
+        if self._console_launcher is None:
+            from .console.launcher import ConsoleWindowLauncher
+            self._console_launcher = ConsoleWindowLauncher(parent=self)
+            self._console_launcher.notice.connect(lambda text, kind: self.log(text, kind))
+            self._console_launcher.prefs.changed.connect(self._sync_console_menu)
+        return self._console_launcher
+
+    def _build_console_menu(self, vm: QMenu):
+        """View > Console: the console's switches (each applies live to the LabDesk console window)."""
+        from . import console
+        cm = self.console_menu = vm.addMenu("Console")
+        self.a_neon = self._act("Neon green console", self._set_console_neon, None,
+                                "Device consoles: neon green text on green-black (off: plain light-on-dark)",
+                                checkable=True)
+        self.a_neon.setChecked(as_bool(self.settings.value("console/neon", True), True))
+        self.a_soft = self._act("Softer green", lambda on: self._set_console_pref("soft", on), None,
+                                "A less saturated green for long sessions", checkable=True)
+        self.a_highlight = self._act("Highlight prompts and errors",
+                                     lambda on: self._set_console_pref("highlight", on), None,
+                                     "Cisco IOS consoles: prompt, typed command, refused commands and syslog "
+                                     "severity stand out (display only - copied text is unchanged)",
+                                     checkable=True)
+        self.a_text_larger = self._act("Larger text", lambda _c=False: self._zoom_console(1), None,
+                                       "Console text one point larger (in the console: Ctrl+Alt+=)")
+        self.a_text_smaller = self._act("Smaller text", lambda _c=False: self._zoom_console(-1), None,
+                                        "Console text one point smaller (in the console: Ctrl+Alt+-)")
+        self.a_text_reset = self._act("Reset text size", lambda _c=False: self._zoom_console(0), None,
+                                      "Console text back to 11 pt (in the console: Ctrl+Alt+0)")
+        self.a_konsole = self._act("Use Konsole instead", self._set_console_engine, None,
+                                   "Open device consoles as tabs of a Konsole window instead of the LabDesk "
+                                   "console window. Applies to the next console you open",
+                                   checkable=True)
+        self.a_konsole.setChecked(str(self.settings.value("console/engine", "labdesk")) == "konsole")
+        self.a_konsole.setVisible(not self._launcher_injected and console.available())
+        cm.addAction(self.a_neon)
+        cm.addAction(self.a_soft)
+        cm.addAction(self.a_highlight)
+        self._console_sep1 = cm.addSeparator()
+        for a in (self.a_text_larger, self.a_text_smaller, self.a_text_reset):
+            cm.addAction(a)
+        self._console_sep2 = cm.addSeparator()
+        cm.addAction(self.a_konsole)
+        if hasattr(self.launcher, "neon") and not getattr(self.launcher, "supports_look", False):
+            self.launcher.neon = self.a_neon.isChecked()
+        self._sync_console_menu()
+
+    def _sync_console_menu(self):
+        """Show the switches the active launcher has, with the current values."""
+        own = bool(getattr(self.launcher, "supports_look", False))
+        self.console_menu.menuAction().setVisible(hasattr(self.launcher, "neon"))
+        for a in (self.a_soft, self.a_highlight, self.a_text_larger, self.a_text_smaller, self.a_text_reset):
+            a.setVisible(own)
+        self._console_sep1.setVisible(own)
+        self._console_sep2.setVisible(self.a_konsole.isVisible())
+        if own:
+            prefs = self.launcher.prefs
+            for a, v in ((self.a_neon, prefs.neon), (self.a_soft, prefs.soft), (self.a_highlight, prefs.highlight)):
+                a.blockSignals(True)
+                a.setChecked(bool(v))
+                a.blockSignals(False)
+            self.a_soft.setEnabled(prefs.neon)
+
     def _set_console_neon(self, on: bool):
         self.settings.setValue("console/neon", bool(on))
         if hasattr(self.launcher, "neon"):
             self.launcher.neon = bool(on)
-        self.log("console look: " + ("neon green" if on else "normal Konsole colours")
+        if getattr(self.launcher, "supports_look", False):
+            self.log("console look: " + ("neon green" if on else "plain"), "info")
+        else:
+            self.log("console look: " + ("neon green" if on else "normal Konsole colours")
+                     + " - applies to the next console you open", "info")
+
+    def _set_console_pref(self, name: str, on: bool):
+        if getattr(self.launcher, "supports_look", False):
+            self.launcher.prefs.set(name, bool(on))
+
+    def _zoom_console(self, step: int):
+        if getattr(self.launcher, "supports_look", False):
+            self.launcher.prefs.zoom(step)
+            self.log(f"console text size: {self.launcher.prefs.font_pt} pt", "info")
+
+    def _set_console_engine(self, konsole: bool):
+        """View > Console > Use Konsole instead: the off-switch of the LabDesk console window."""
+        self.settings.setValue("console/engine", "konsole" if konsole else "labdesk")
+        if self._launcher_injected:
+            return
+        self.launcher = self._pick_launcher()
+        if hasattr(self.launcher, "neon") and not getattr(self.launcher, "supports_look", False):
+            self.launcher.neon = self.a_neon.isChecked()
+        self._sync_console_menu()
+        own = getattr(self.launcher, "supports_look", False)
+        self.log("consoles open in " + ("the LabDesk console window" if own else "Konsole")
                  + " - applies to the next console you open", "info")
 
     def _set_show_passwords(self, on: bool):
@@ -1991,7 +2084,19 @@ class MainWindow(QMainWindow):
                 self.log(f"{lbl}: show script not run - the device is not running", "warn")
             return
         self.log(f"{lbl}: running its show script ({len(commands)} command(s))…")
-        self._action(f"show script {lbl}", self._tele().run_show_script, key, list(commands))
+        busy = getattr(self.launcher, "set_busy", None)        # the console's status line says who is typing
+        busy_key = f"{self.ctl.lab_id}:{key}"
+        tele = self._tele()
+
+        def work(k, cmds):
+            if busy is not None:
+                busy(busy_key, True, len(cmds))
+            try:
+                return tele.run_show_script(k, cmds)
+            finally:
+                if busy is not None:
+                    busy(busy_key, False)
+        self._action(f"show script {lbl}", work, key, list(commands))
 
     def _open_mgmt(self, key, proto):
         m = self.ctl.state.lab(self.ctl.lab_id)["mgmt"].get(key) or {}
@@ -2615,6 +2720,20 @@ class MainWindow(QMainWindow):
                 w.reposition()
 
     def closeEvent(self, ev):
+        con = self._console_launcher
+        live = con.live_count() if con is not None else 0
+        if live and not confirm(
+                self, "Close LabDesk",
+                f"{live} console{'s are' if live != 1 else ' is'} open - closing LabDesk ends "
+                f"{'them' if live != 1 else 'it'}", "Close LabDesk",
+                detail="The consoles run inside LabDesk: their sessions to the devices end with it."):
+            ev.ignore()
+            return
+        if con is not None:
+            try:
+                con.shutdown()                  # the console window closes first
+            except Exception:  # noqa: BLE001
+                pass
         self._save_layout()
         self._closing = True
         self.timer.stop()

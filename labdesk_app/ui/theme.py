@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import (QBrush, QColor, QFont, QFontDatabase, QFontMetricsF, QPainter, QPainterPath,
@@ -384,6 +385,42 @@ def mono(scale: float = 1.0, role: str = "body", weight: int | None = None) -> Q
         f.setStyleHint(QFont.Monospace)
         f.setPointSizeF(base_pt() * k * scale)
         f.setWeight(_weight(weight or (w if role in ("caption", "micro") else 400)))
+        _FONT_CACHE[key] = f
+    return f
+
+
+CONSOLE_FONT_DIR = Path(__file__).resolve().parent / "fonts"
+CONSOLE_FONT_FILES = ("Hack-Regular.ttf", "Hack-Bold.ttf")
+CONSOLE_PT, CONSOLE_PT_MIN, CONSOLE_PT_MAX = 11, 8, 20
+_CONSOLE_FONTS: list = []    # registration result (once per process)
+
+
+def console_font_registered() -> bool:
+    """Register the bundled Hack Regular / Bold once.  True when both files were loaded."""
+    if not _CONSOLE_FONTS:
+        ok = True
+        for name in CONSOLE_FONT_FILES:
+            f = CONSOLE_FONT_DIR / name
+            ok = ok and f.exists() and QFontDatabase.addApplicationFont(str(f)) >= 0
+        _CONSOLE_FONTS.append(ok)
+    return _CONSOLE_FONTS[0]
+
+
+def console_font(pt: float, bold: bool = False) -> QFont:
+    """The LabDesk console font: bundled Hack (then DejaVu Sans Mono, then the system fixed font), full
+    hinting, no kerning.  The only place that sets the console text size."""
+    key = ("c", round(float(pt), 2), bool(bold))
+    f = _FONT_CACHE.get(key)
+    if f is None:
+        console_font_registered()
+        f = QFont()
+        f.setFamilies(["Hack", "DejaVu Sans Mono", QFontDatabase.systemFont(QFontDatabase.FixedFont).family()])
+        f.setStyleHint(QFont.Monospace)
+        f.setFixedPitch(True)
+        f.setPointSizeF(float(pt))
+        f.setWeight(QFont.Bold if bold else QFont.Normal)
+        f.setHintingPreference(QFont.PreferFullHinting)
+        f.setKerning(False)
         _FONT_CACHE[key] = f
     return f
 
