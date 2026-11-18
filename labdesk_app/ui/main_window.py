@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QDockWidget, QFileDialog, 
 
 from .. import cloud, config, kvm, launchers, plat, validate
 from .. import default_logins as DL
+from .. import show_scripts as SS
 from ..catalog import BY_KEY, DEVICE_TYPES, NON_COUNTING_DEFS
 from ..cml_api import CMLClient, CMLError, CMLUnreachable, NodeLockedError
 from ..controller import LabController, LabView as LabData
@@ -22,7 +23,7 @@ from ..probe import creds as creds_mod
 from ..settings import STATE_VERSION, app_settings, as_bool
 from .canvas import MIME, LabScene, LabView
 from .compact import MODES as LAYOUT_MODES, CompactController
-from .dialogs import (AboutDialog, CloudConfigDialog, ConfigDialog, CredentialsDialog, OpenLabDialog,
+from .dialogs import (AboutDialog, CloudConfigDialog, ConfigDialog, CredentialsDialog, OpenLabDialog, ShowScriptDialog,
                       PropertiesDialog, TextPrompt, confirm, info, validator)
 from .emptystate import EmptyStateCard
 from .eventlog import EventLog
@@ -1902,8 +1903,79 @@ class MainWindow(QMainWindow):
         def work():
             cmd = self.ctl.console_command(key)
             return self.launcher.open(cmd)
-        self.runner.submit(work, on_done=lambda m: self.log(f"console: {m}", "ok"),
-                           on_error=self.on_error(f"console {lbl}", True))
+
+        def opened(m):
+            self.log(f"console: {m}", "ok")
+            script = self.show_script_of(key)
+            if script is not None and script.active:
+                self.run_show_script(key, script.commands, quiet_when_down=True)
+        self.runner.submit(work, on_done=opened, on_error=self.on_error(f"console {lbl}", True))
+
+    # --------------------------------------------------------------- per-device show script
+    IOS_CONSOLE_DEFS = ("iosv", "iosvl2", "iol-xe", "ioll2-xe")
+
+    def has_show_script(self, key: str) -> bool:
+        """Show scripts are typed on a Cisco IOS console of a CML node (routers and managed switches)."""
+        item = self.scene.nodes.get(key)
+        return bool(item and key.startswith("cml:") and item.dtype.node_definition in self.IOS_CONSOLE_DEFS)
+
+    def show_script_of(self, key: str):
+        if not self.has_show_script(key):
+            return None
+        try:
+            return SS.load(self._label(key))
+        except Exception:  # noqa: BLE001  (a broken file must never stop a console from opening)
+            return None
+
+    def _show_script_suggestion(self, key: str) -> list[str]:
+        item = self.scene.nodes.get(key)
+        tele = self._tele()
+        nf = tele.facts.get(key) if tele is not None else None
+        return SS.suggest(nf, is_switch=bool(item and item.dtype.node_definition in ("iosvl2", "ioll2-xe")))
+
+    def edit_show_script(self, key: str):
+        lbl = self._label(key)
+        item = self.scene.nodes.get(key)
+        others = {}
+        try:
+            others = {k: v for k, v in SS.load_all().items() if k != lbl and v.commands}
+        except Exception:  # noqa: BLE001
+            pass
+        live = bool(item and item.state == "BOOTED" and self._tele() is not None)
+        dlg = ShowScriptDialog(lbl, self.show_script_of(key), self._show_script_suggestion(key), others,
+                               can_run=live, parent=self)
+        if dlg.exec() != ShowScriptDialog.Accepted:
+            return
+        try:
+            script = dlg.result_script()
+            SS.save(lbl, script)
+        except (ValueError, OSError) as e:
+            info(self, "Show script", f"Not saved: {e}")
+            return
+        if script is None:
+            self.log(f"{lbl}: show script removed", "ok")
+            return
+        when = "runs when its console opens" if script.on_open else "runs only from the menu"
+        self.log(f"{lbl}: show script saved ({len(script.commands)} command(s), {when})", "ok")
+        if dlg.run_now:
+            self.run_show_script(key, script.commands)
+
+    def run_show_script(self, key: str, commands: list[str] | None = None, quiet_when_down: bool = False):
+        """Type the device's show script on its console now (output appears in the open console window)."""
+        lbl = self._label(key)
+        item = self.scene.nodes.get(key)
+        if commands is None:
+            script = self.show_script_of(key)
+            commands = script.commands if script is not None else []
+        if not commands:
+            self.log(f"{lbl} has no show script yet (right-click ▸ Show script…)", "warn")
+            return
+        if self._tele() is None or not item or item.state != "BOOTED":
+            if not quiet_when_down:
+                self.log(f"{lbl}: show script not run - the device is not running", "warn")
+            return
+        self.log(f"{lbl}: running its show script ({len(commands)} command(s))…")
+        self._action(f"show script {lbl}", self._tele().run_show_script, key, list(commands))
 
     def _open_mgmt(self, key, proto):
         m = self.ctl.state.lab(self.ctl.lab_id)["mgmt"].get(key) or {}
@@ -2253,6 +2325,15 @@ class MainWindow(QMainWindow):
             c.triggered.connect(lambda: self.edit_config(key))
         m.addSeparator()
         m.addAction(icons.icon("edit-rename"), "Rename… (F2)").triggered.connect(lambda: self.rename_node(key))
+        if self.has_show_script(key):
+            script = self.show_script_of(key)
+            n_cmds = len(script.commands) if script is not None else 0
+            m.addAction(icons.icon("document-edit"),
+                        f"Show script… ({n_cmds} command{'s' if n_cmds != 1 else ''})" if n_cmds
+                        else "Show script…").triggered.connect(lambda: self.edit_show_script(key))
+            rs = m.addAction(icons.icon("media-playback-start"), "Run show script now")
+            rs.setEnabled(bool(n_cmds) and item.state == "BOOTED")
+            rs.triggered.connect(lambda: self.run_show_script(key))
         if item.has_card:
             m.addAction(icons.icon("object-locked"), "Credentials…").triggered.connect(
                 lambda: self.edit_credentials(key))

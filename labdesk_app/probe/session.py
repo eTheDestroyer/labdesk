@@ -242,6 +242,18 @@ def _prompt_at_end(buf: str) -> re.Match | None:
     return PROMPT_RE.match(tail)
 
 
+def _plain_body(buf: str, res: "BurstResult") -> str:
+    """Output of a command run without a sentinel: drop the echo line and the closing prompt line."""
+    body = buf.rstrip("\n")
+    body = body[:body.rfind("\n") + 1] if "\n" in body else ""
+    first_nl = body.find("\n")
+    body = body[first_nl + 1:] if first_nl >= 0 else ""
+    clean, logs = split_syslog(body)
+    res.syslog.extend(logs)
+    clean = "\n".join(l.rstrip() for l in clean.split("\n")).strip("\n")
+    return clean + ("\n" if clean else "")
+
+
 CONFIG_KEY = "(configure)"            # BurstResult.outputs key of the config-mode step
 SAVE_KEY = "(write memory)"
 _IOS_ERR_RE = re.compile(r"^\s*% ?(Invalid input|Incomplete command|Ambiguous command|.*[Ee]rror|.*not .*allowed)"
@@ -251,8 +263,14 @@ _IOS_ERR_RE = re.compile(r"^\s*% ?(Invalid input|Incomplete command|Ambiguous co
 def run_burst(transport, dialect: IosDialect, commands: list[str], creds: DeviceCreds | None = None,
               *, timeout: float = 20.0, cmd_timeout: float = 15.0, needs_recovery: bool = False,
               expect_hostname: str | None = None, start: bool = True,
-              config_lines: list[str] | None = None, save_config: bool = False) -> BurstResult:
+              config_lines: list[str] | None = None, save_config: bool = False,
+              plain: bool = False, stay_logged_in: bool = False) -> BurstResult:
     """Run ``commands`` on a console line, leaving the line as it was found.
+
+    ``plain`` (show scripts the user reads in their own console window): no sentinel lines are typed -
+    a command ends when the exec prompt is back and the line has gone quiet - so the console shows
+    only the commands and their output.  ``stay_logged_in``: a line found logged out is left at its
+    exec prompt (the user is about to use that console) instead of being logged out again.
 
     ``config_lines`` (user actions only, e.g. "Auto-configure for Internet cloud"): typed in
     ``configure terminal`` BEFORE ``commands`` (privilege 15 is required: the enable secret comes from
@@ -360,11 +378,30 @@ def run_burst(transport, dialect: IosDialect, commands: list[str], creds: Device
             rd.mark()
             c0 = time.monotonic()
             tag = f"include LDK{nonce}{n}"
-            if cmd.startswith(dialect.no_typeahead_prefixes):
-                transport.write(cmd.encode() + b"\r")
+            interactive = cmd.startswith(dialect.no_typeahead_prefixes)
 
-                def back(b):
-                    return b.count("\n") >= 1 and _prompt_at_end(b) is not None
+            def back(b):
+                return b.count("\n") >= 1 and _prompt_at_end(b) is not None
+            if plain and not interactive:
+                # no sentinel: done = prompt back + line quiet (a prompt-looking line in the middle of an
+                # output is followed by more bytes, so the quiet check rejects it)
+                transport.write(cmd.encode() + b"\r")
+                end = time.monotonic() + ctimeout
+                ok_ = False
+                while time.monotonic() < end:
+                    if not rd.until(back, max(0.2, end - time.monotonic())):
+                        break
+                    seen = len(rd.buf)
+                    rd.quiet(0.35, 1.5)
+                    if len(rd.buf) == seen and back(rd.buf):
+                        ok_ = True
+                        break
+                dt = time.monotonic() - c0
+                if not ok_:
+                    return CmdOutput(cmd, None, dt, "timeout (no prompt)")
+                return CmdOutput(cmd, _plain_body(rd.buf, res), dt, wall=time.time())
+            if interactive:
+                transport.write(cmd.encode() + b"\r")
                 if not rd.until(back, max(1.0, ctimeout - 6.0)):
                     # still running (e.g. a bare user-mode traceroute: 30 hops x 3 probes): abort it with the
                     # IOS escape sequence Ctrl-^ x, kill any stray 'x' with Ctrl-U, then ask for a fresh prompt
@@ -373,6 +410,8 @@ def run_burst(transport, dialect: IosDialect, commands: list[str], creds: Device
                     transport.write(b"\x15\r")
                     if not rd.until(back, 4.0):
                         return CmdOutput(cmd, None, time.monotonic() - c0, "timeout (no prompt)")
+                if plain:
+                    return CmdOutput(cmd, _plain_body(rd.buf, res), time.monotonic() - c0, wall=time.time())
                 transport.write(sent.encode() + b"\r")
             else:
                 transport.write(cmd.encode() + b"\r" + sent.encode() + b"\r")
@@ -435,7 +474,7 @@ def run_burst(transport, dialect: IosDialect, commands: list[str], creds: Device
             rd.mark()
             transport.write(b"disable\r")
             rd.until(lambda b: _prompt_at_end(b) is not None, 3.0)
-        if found_logged_out:
+        if found_logged_out and not stay_logged_in:
             transport.write(b"exit\r")
             rd.quiet(0.3, 1.0)
         res.status = BurstStatus.OK if failed == 0 else BurstStatus.PARTIAL

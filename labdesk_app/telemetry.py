@@ -753,7 +753,8 @@ class TelemetryEngine:
 
     def _burst(self, nk: str, cmds: list[str], *, timeout: float, tiers: list[str],
                user: bool = False, config_lines: list[str] | None = None, save_config: bool = False,
-               enable_fallback: str | None = None) -> BurstResult | None:
+               enable_fallback: str | None = None, plain: bool = False,
+               stay_logged_in: bool = False, cmd_timeout: float | None = None) -> BurstResult | None:
         topo = self.topo
         n = topo.nodes.get(nk) if topo else None
         uuid = self.console_uuid.get(nk)
@@ -783,7 +784,8 @@ class TelemetryEngine:
         try:
             res = run_burst(t, IosDialect(), cmds, creds, timeout=timeout, needs_recovery=s.needs_recovery,
                             expect_hostname=n.label, start=False, config_lines=config_lines,
-                            save_config=save_config)
+                            save_config=save_config, plain=plain, stay_logged_in=stay_logged_in,
+                            **({"cmd_timeout": cmd_timeout} if cmd_timeout else {}))
         finally:
             self._live_transports.discard(t)
             if pid:
@@ -1560,8 +1562,9 @@ class TelemetryEngine:
             if not lock.acquire(timeout=BURST_TIMEOUT_S + _extra_timeout(n, self.facts.get(nk)) + 5):
                 return ActionResult(False, "console busy (another probe is running)")
             try:
-                res = self._burst(nk, cmds, timeout=timeout + _extra_timeout(n, self.facts.get(nk)), tiers=_tiers_of(cmds), user=True,
-                                  **burst_kw)
+                tiers = burst_kw.pop("tiers", None)
+                res = self._burst(nk, cmds, timeout=timeout + _extra_timeout(n, self.facts.get(nk)),
+                                  tiers=_tiers_of(cmds) if tiers is None else tiers, user=True, **burst_kw)
             finally:
                 lock.release()
         finally:
@@ -1585,6 +1588,36 @@ class TelemetryEngine:
         if isinstance(r, ActionResult):
             return r
         return ActionResult(r.status == BurstStatus.OK, f"probed in {r.seconds:.1f} s", {"status": r.status})
+
+    def run_show_script(self, node_key: str, commands: list[str], stay_logged_in: bool = True) -> ActionResult:
+        """The user's own show script for this device (right-click > Show script...): typed on the console
+        without sentinel lines, so the open console window shows just the commands and their output.  Runs
+        even while the console is open (that is the point); a line found logged out is left logged in.
+        Read-only: the script is re-validated here (show / ping / traceroute only)."""
+        from . import show_scripts as SS
+        cmds = [SS.normalise(c) for c in commands]
+        bad = next((f"{c[:40]}: {SS.check_line(c)}" for c in cmds if SS.check_line(c)), "")
+        if bad:
+            return ActionResult(False, f"script not run - {bad}")
+        if not cmds:
+            return ActionResult(False, "the script is empty")
+        r = self._user_burst(node_key, cmds, SS.burst_timeout(cmds), tiers=[], plain=True,
+                             stay_logged_in=stay_logged_in, cmd_timeout=30.0)
+        if isinstance(r, ActionResult):
+            return r
+        failed = [c for c in cmds if c not in r.outputs or r.outputs[c].text is None]
+        errors = [c for c in cmds if c in r.outputs and r.outputs[c].text is not None
+                  and re.search(r"^\s*% ?(Invalid input|Incomplete command|Ambiguous command)", r.outputs[c].text, re.M)]
+        done = len(cmds) - len(failed)
+        text = f"{done} of {len(cmds)} command(s) in {r.seconds:.1f} s"
+        if failed:
+            why = r.outputs[failed[0]].error if failed[0] in r.outputs else "not sent"
+            text += f"; stopped at '{failed[0]}' ({why})"
+        if errors:
+            text += "; the device rejected: " + ", ".join(f"'{c}'" for c in errors)
+        return ActionResult(not failed and not errors, text,
+                            {"status": r.status, "failed": failed, "rejected": errors,
+                             "outputs": {c: o.text for c, o in r.outputs.items()}})
 
     def refresh_config(self, node_key: str) -> ActionResult:
         r = self._user_burst(node_key, IOS_CONFIG, CONFIG_TIMEOUT_S)

@@ -444,6 +444,43 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/cloud_shots.py [--verify] [--da
   shell history. If the command fails, the tab stays open and shows the error. Without D-Bus, LabDesk
   falls back to a new `konsole -e …` window, or xterm.
 
+### Show script per device (what LabDesk types when you open a console)
+
+Each Cisco router and managed switch can have its own **show script**: a short list of commands LabDesk types
+for you in that device's console, so the window opens on the output you care about for *that* device
+(HSRP and tracking on the spokes, BGP on the hub, VLANs on a switch…).
+
+* **Edit it:** right-click a device → **Show script…**. One command per line.
+  * **Suggest from live data** fills the editor from what the device is running right now (HSRP / VRRP groups,
+    BGP, OSPF, VLANs, EtherChannel - read from the device, never from the lab file).
+  * **Copy from…** takes another device's script as a starting point.
+  * **Run this script each time I open the console** (on by default). Untick it to keep the script for the menu only.
+  * **Save and run now** types it straight away.
+* **Run it by hand:** right-click → **Run show script now** (the output appears in the open console).
+* **Remove it:** empty the editor (or **Clear**) and **Save**.
+
+What the console shows is just the commands and their output (plus `terminal length` / `terminal width`, which stop
+the output from pausing at `--More--` and are put back at the end):
+
+```
+R1#terminal length 0
+R1#show standby brief
+Interface   Grp  Pri P State   Active          Standby         Virtual IP
+Gi0/1       10   110 P Active  local           172.16.0.3      172.16.0.1
+R1#show track brief
+…
+R1#terminal length 24
+R1#
+```
+
+Rules: only `show`, `ping` and `traceroute` lines are accepted (`sh` / `sho` are fine), so a script that runs by
+itself can never change a device; writing output to a file (`| redirect`, `| tee`, `| append`) is refused; a line
+starting with `!` or `#` is a comment; at most 20 commands. `show running-config` needs the enable secret
+(right-click → **Credentials…**). Wait for the script to finish before typing - your keys and the script would mix.
+A device without a script behaves as before. Scripts are saved per device name in
+`~/.config/labdesk/show-scripts.json` (Windows: `%APPDATA%\LabDesk\show-scripts.json`). Not available for Juniper /
+Fortinet VMs and Linux hosts yet. Live check: `tools/show_script_live.py --nodes R1,HUB`.
+
 ### CML controller changes made during setup
 
 1. Cockpit → CML2 → *SSH Terminal Server Public Key Authentication* was enabled
@@ -478,6 +515,7 @@ labdesk_app/
   catalog.py, validate.py, config.py
   parsers/ios_l2.py     IOSvL2 switching parsers (VLANs, trunks, STP, MAC, CDP, EtherChannel, LACP, PAgP)
   etherchannel.py       EtherChannel mode rules, IOS command generation, day-0 patching (pure)
+  show_scripts.py       per-device show scripts: read-only validation, show-scripts.json, suggestions from live facts
   accounts.py           on-device accounts from IOS / Junos / FortiOS configs: encrypted (scheme) or plain text (pure)
   probe/creds.py        device-creds file: per-node / default login, atomic 0600 writer
   ui/                   main_window, canvas, graphics (vector vendor icons), dialogs, hovercard (+ hovercard_model), worker (thread pool)

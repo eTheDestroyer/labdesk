@@ -590,6 +590,112 @@ def secret_field(text: str = "", placeholder: str = "") -> QLineEdit:
     return e
 
 
+class ShowScriptDialog(LabDeskDialog):
+    """One device's show script: the read-only commands LabDesk types in its console when it is opened
+    (``show_scripts``).  *Suggest* fills the editor from what the device is running right now (live facts);
+    *Copy from* takes another device's saved script.  ``result_script()`` is the validated script,
+    ``run_now`` says the user asked to run it straight away."""
+
+    def __init__(self, label: str, script, suggestion: list[str], others: dict | None = None,
+                 can_run: bool = True, parent=None):
+        from PySide6.QtWidgets import QComboBox
+        from .. import show_scripts as SS
+        super().__init__(f"Show script - {label}", parent,
+                         header=("utilities-terminal", f"Show script for {label}",
+                                 "The show commands LabDesk types for you in this device's console. "
+                                 "Each device has its own script."))
+        self.SS = SS
+        self.label = label
+        self.suggestion = list(suggestion)
+        self.others = dict(others or {})
+        self.run_now = False
+        self.resize(520, 0)
+        self.edit = QPlainTextEdit()
+        self.edit.setFont(T.mono())
+        self.edit.setLineWrapMode(QPlainTextEdit.NoWrap)
+        self.edit.setPlaceholderText("one command per line, for example:\nshow ip interface brief\nshow standby brief")
+        self.edit.setMinimumHeight(190)
+        self.edit.setPlainText(script.text() if script is not None else "")
+        self.body.addWidget(self.edit)
+        row = QHBoxLayout()
+        row.setSpacing(8)
+        self.suggest_btn = QPushButton("Suggest from live data")
+        self.suggest_btn.setToolTip("Fill the script from what this device is running right now "
+                                    "(HSRP, BGP, OSPF, VLANs… read from the device)")
+        self.suggest_btn.clicked.connect(self._suggest)
+        row.addWidget(self.suggest_btn)
+        self.copy_from = QComboBox()
+        self.copy_from.addItem("Copy from…")
+        for name in sorted(self.others):
+            self.copy_from.addItem(name)
+        self.copy_from.setEnabled(bool(self.others))
+        self.copy_from.activated.connect(self._copy)
+        row.addWidget(self.copy_from)
+        row.addStretch(1)
+        self.clear_btn = QPushButton("Clear")
+        self.clear_btn.clicked.connect(lambda: self.edit.setPlainText(""))
+        row.addWidget(self.clear_btn)
+        self.body.addLayout(row)
+        self.on_open = QCheckBox("Run this script each time I open the console")
+        self.on_open.setChecked(script.on_open if script is not None else True)
+        self.body.addWidget(self.on_open)
+        hint = QLabel("Only show, ping and traceroute commands: the script can never change a device. "
+                      "A line starting with ! is a comment. An empty script removes it. "
+                      "Saved in the LabDesk settings folder (show-scripts.json).")
+        hint.setWordWrap(True)
+        hint.setObjectName("muted")
+        hint.setFont(T.type("small"))
+        self.body.addWidget(hint)
+        self.error = QLabel("")
+        self.error.setWordWrap(True)
+        self.error.setStyleSheet(f"color: {T.status_text('down').name()};")
+        self.error.setFont(T.type("small"))
+        self.body.addWidget(self.error)
+        self.run_btn = self.add_button("Save and run now", QDialogButtonBox.ActionRole)
+        self.run_btn.setToolTip("Save the script and type it on the console now" if can_run
+                                else "The device is not running")
+        self.run_btn.clicked.connect(self._run)
+        self._can_run = can_run
+        self.cancel_button()
+        self.ok = self.add_button("Save", QDialogButtonBox.AcceptRole, "primary", default=True)
+        self.edit.textChanged.connect(self._check)
+        self._check()
+
+    def _suggest(self):
+        self.edit.setPlainText("\n".join(self.suggestion))
+
+    def _copy(self, index: int):
+        name = self.copy_from.itemText(index)
+        other = self.others.get(name)
+        if other is not None:
+            self.edit.setPlainText(other.text())
+        self.copy_from.setCurrentIndex(0)
+
+    def commands(self) -> list[str]:
+        return self.SS.parse(self.edit.toPlainText())
+
+    def _check(self, *_):
+        err = ""
+        cmds: list[str] = []
+        try:
+            cmds = self.commands()
+        except self.SS.ScriptError as e:
+            err = str(e)
+        self.error.setText(err)
+        self.error.setVisible(bool(err))
+        self.ok.setEnabled(not err)
+        self.run_btn.setEnabled(not err and bool(cmds) and self._can_run)
+
+    def _run(self):
+        self.run_now = True
+        self.accept()
+
+    def result_script(self):
+        """The script to save; ``None`` = remove this device's script (the editor is empty)."""
+        cmds = self.commands()
+        return self.SS.ShowScript(cmds, self.on_open.isChecked()) if cmds else None
+
+
 class CredentialsDialog(LabDeskDialog):
     """Login user, password and enable secret LabDesk uses on one device's console (probes: login prompt,
     'enable').  Stored in ``~/.config/labdesk/device-creds`` (0600) by ``probe.creds.save``; the values never go

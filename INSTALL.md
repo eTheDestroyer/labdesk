@@ -204,6 +204,10 @@ To pin it to the taskbar, right-click the LabDesk icon in the menu and choose *P
    `enable` → `cisco` (SSH / telnet: `admin` / `cisco`); Linux PCs: `cisco` / `cisco`. Right-click a device →
    **Copy password** / **Credentials…** to copy or change it. All platforms: README, "First logins".
 
+6. **Choose what each device shows when its console opens:** right-click a router or switch → **Show script…**,
+   type the `show` commands you want for that device (or click **Suggest from live data**), and **Save**.
+   README, "Show script per device".
+
 CML-Free runs at most **5 devices at a time**. The counter in the toolbar (`CML n/5`) shows how many are running.
 
 ---
