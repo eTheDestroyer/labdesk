@@ -170,9 +170,10 @@ def test_hover_card_login_rows(cfile):
     # nothing saved yet: the table / day-0 value, tagged default
     m = H.build_card(nv, creds=C.load_detail("R1"), first_login=first)
     rows = m.section("Login").rows
-    assert rows[0].text == "First login" and rows[0].value == "admin / cisco" and rows[0].badge == "default"
+    assert rows[0].text == "LabDesk will try" and rows[0].value == "admin / cisco" and rows[0].badge == "default"
     assert rows[1].text == "enable" and rows[1].value == "cisco"
-    assert "First login: admin / cisco [default]" in m.text()
+    assert "LabDesk will try: admin / cisco [default]" in m.text()
+    assert "default, not read from device" in m.section("Login").note
     # seeded -> still default; edited -> saved
     C.seed("R1", first.creds_values())
     assert H.build_card(nv, creds=C.load_detail("R1"), first_login=first).section("Login").rows[0].badge == "default"
@@ -225,11 +226,11 @@ def test_credentials_dialog_reset_button_and_inspector_summary(cfile):
     assert dlg.reset_btn.text() == "Reset to default" and not dlg.reset_requested
     dlg.reset_btn.click()
     assert dlg.reset_requested and dlg.result() == CredentialsDialog.Accepted
-    assert login_summary("R1", first) == "me · password + enable secret (saved)"
+    assert login_summary("R1", first) == "me · password + enable secret (saved in LabDesk)"
     C.reset_to_default("R1", first.creds_values())
     assert C.load("R1").password == "cisco"
-    assert login_summary("R1", first) == "admin · password + enable secret (first-login default)"
+    assert login_summary("R1", first) == "admin · password + enable secret (LabDesk will try this default, not read from device)"
     assert login_summary("R7", DL.first_login("iosv", "hostname R7\n")) == \
-        "no login: press Enter · enable: no password (default)"
+        "no login: press Enter · enable: no password (default, not read from device)"
     assert not hasattr(CredentialsDialog("R2", C.load_detail("R2"), None), "reset_btn")   # no default known
     app.processEvents()

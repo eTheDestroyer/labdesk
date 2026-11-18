@@ -338,7 +338,11 @@ SECTIONS = {
         ("link:PROTOCOL_DOWN", "line protocol down", _link("PROTOCOL_DOWN", ends="proto_down"), None, ""),
         ("link:CABLE_PULLED", "cable pulled (simulated)", _link("CABLE_PULLED"), None, ""),
         ("link:OFF", "not started / node off", _link("LINK_NOT_STARTED"), None, ""),
-        ("link:UNKNOWN", "unknown (no fresh data)", _link("UNKNOWN", ends="neutral"), None, ""),
+        ("link:UNKNOWN", "unknown / not read (no live data)", _link("UNKNOWN", ends="neutral"), None,
+         "LabDesk shows only what it reads live from the devices: no fresh read = unknown, never a guess"),
+        ("pill:unread", "port name not read from device", _pill("Gi0/1", "", T.NEUTRAL, dashed=True), None,
+         "dashed interface pill: the name is CML's wiring (the slot the cable plugs into); the device has not "
+         "reported this interface yet (stopped, not probed yet, or not read by LabDesk)"),
         ("kvm", "host-KVM link (double line)", _link("UP", kvm=True), None, ""),
         ("cond", "conditioned (delay / loss)", _pill("50 ms", "bolt", "#6D28D9"), None, ""),
     ],
@@ -399,7 +403,8 @@ SECTIONS = {
          "one hatched 'Po2 · Altn BLK' marker for the bundle (spanning tree sees the Port-channel as one port)"),
     ],
     "Nodes": [
-        ("state:booted", "running (booted)", _badge("booted", "BOOTED"), None, ""),
+        ("state:booted", "running (booted)", _badge("booted", "BOOTED"), None,
+         "node state badges are CML's (or libvirt's) runtime state, not read from the device"),
         ("state:booting", "booting", _badge("booting", "STARTED"), None, ""),
         ("state:stopped", "stopped / wiped (body dimmed)", _badge("stopped", "STOPPED"), None, ""),
         ("state:disconnected", "disconnected / missing", _badge("disconnected", "DISCONNECTED"), None, ""),
@@ -412,7 +417,10 @@ SECTIONS = {
         ("node:host", "Linux host", _tile("alpine"), None, ""),
         ("learning", "learning… first probe running", _collector("learn", "dots", T.NEUTRAL), None, ""),
         ("paused", "paused: your console is open", _collector("paused", "clock", T.NEUTRAL), None, ""),
-        ("stale", "stale data (faded, ⏱)", _chip("OSPF", "OSPF", "⏱"), None, ""),
+        ("notread", "not read: no live collector", _collector("not read", "question", T.NEUTRAL), None,
+         "nothing about this device is shown until LabDesk reads it live"),
+        ("stale", "stale data (faded, ⏱)", _chip("OSPF", "OSPF", "⏱"), None,
+         "the last live read is older than 45 s; hover the device for its age"),
     ],
     "Cloud": [
         ("cloud", "Internet cloud (answers 8.8.8.8 / 1.1.1.1)", _inet, None, ""),
@@ -468,6 +476,11 @@ def scene_presence(scene) -> set[str]:
                 keys.add("rail:" + str(getattr(k, "value", k)))
         if getattr(li.lv, "traffic", None) is not None:
             keys.add("traffic")
+        try:
+            if any((txt and not li.end_name_live(sd)) for sd, txt in (("a", li.label_a), ("b", li.label_b))):
+                keys.add("pill:unread")
+        except Exception:  # noqa: BLE001
+            pass
         for side in vis.side_kinds or ():
             if side == "PROTO_DOWN":
                 keys.add("link:PROTOCOL_DOWN")
@@ -529,6 +542,8 @@ def scene_presence(scene) -> set[str]:
             keys.add("learning")
         elif ck == "paused_console":
             keys.add("paused")
+        elif ck == "unverified":
+            keys.add("notread")
     if ctx is not None and ctx.switch_chips:
         keys.add("chip:STP")
         for chips in ctx.switch_chips.values():

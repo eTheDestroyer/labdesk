@@ -1,0 +1,20 @@
+Physical interface: ge-0/0/0, Enabled, Physical link is Up
+  Current address: 52:54:00:0f:8a:90, Hardware address: 52:54:00:0f:8a:90
+Physical interface: ge-0/0/1, Enabled, Physical link is Up
+  Current address: 52:54:00:da:d1:28, Hardware address: 52:54:00:da:d1:28
+Physical interface: ge-0/0/2, Enabled, Physical link is Up
+  Current address: 52:54:00:83:07:df, Hardware address: 52:54:00:83:07:df
+Physical interface: ge-0/0/3, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:03, Hardware address: 2c:6b:f5:05:10:03
+Physical interface: ge-0/0/4, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:04, Hardware address: 2c:6b:f5:05:10:04
+Physical interface: ge-0/0/5, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:05, Hardware address: 2c:6b:f5:05:10:05
+Physical interface: ge-0/0/6, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:06, Hardware address: 2c:6b:f5:05:10:06
+Physical interface: ge-0/0/7, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:07, Hardware address: 2c:6b:f5:05:10:07
+Physical interface: ge-0/0/8, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:08, Hardware address: 2c:6b:f5:05:10:08
+Physical interface: ge-0/0/9, Enabled, Physical link is Down
+  Current address: 2c:6b:f5:05:10:09, Hardware address: 2c:6b:f5:05:10:09

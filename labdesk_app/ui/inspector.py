@@ -1161,7 +1161,7 @@ class Inspector(QWidget):
             rows.append(("Node definition", nv.raw.get("node_definition", "") or nv.dtype.node_definition, True))
         m = self.win.mgmt_of(nv.key)
         if m:
-            rows.append(("Management", f"{m.get('user', '')}@{m['ip']}", True))
+            rows.append(("Management", f"{m.get('user', '')}@{m['ip']} (saved in LabDesk)", True))
         item = self.win.scene.nodes.get(nv.key) if hasattr(self.win, "scene") else None
         if item is not None and item.has_card:
             first = self.win.first_login_of(nv.key) if hasattr(self.win, "first_login_of") else None
@@ -1172,9 +1172,19 @@ class Inspector(QWidget):
             rows.append(("Loopback", nt.loopback, True))
         links = [lv for lv in data.links if nv.key in (lv.a, lv.b)]
         if links:
-            up = sum(1 for lv in links if (ev(lv.status.kind) if lv.status is not None else
-                                           ("UP" if lv.state in ("STARTED", "up") else "")) == "UP")
-            rows.append(("Links", f"{up} of {len(links)} up", False))
+            known = [lv for lv in links if lv.status is not None]
+            if known:
+                up = sum(1 for lv in known if ev(lv.status.kind) == "UP")
+                rows.append(("Links", f"{up} of {len(links)} up", False))
+            else:
+                rows.append(("Links", f"{len(links)} (state not read)", False))
+        if nt is not None and nt.last_probe_age_s is not None:
+            age = nt.last_probe_age_s
+            rows.append(("Live data", (f"stale · last read {age:.0f} s ago" if age > 45 else f"read {age:.0f} s ago"),
+                         False))
+        elif nt is not None:
+            rows.append(("Live data", "not read" + (f" ({nt.collector_detail})" if nt.collector_detail else " yet"),
+                         False))
         self.kv.set_rows(rows)
 
     def show_link(self, lv, data):
@@ -2024,16 +2034,17 @@ def login_summary(label: str, first=None) -> str:
         return "not set (Credentials…)"
     if not fl.username and not fl.password:
         return "no login: press Enter" + (" · enable: no password" if fl.has_enable and not fl.enable else "") \
-            + " (default)"
+            + " (default, not read from device)"
     parts = [fl.username or "no user"]
     have = [w for w, v in (("password", fl.password), ("enable secret", fl.enable)) if v]
     if have:
         parts.append(" + ".join(have))
     if fl.password_encrypted or fl.enable_encrypted:
         parts.append(DL.ENCRYPTED)
-    tag_txt = {"default": " (first-login default)", "saved": " (saved)"}.get(tag or "", "")
+    tag_txt = {"default": " (LabDesk will try this default, not read from device)",
+               "saved": " (saved in LabDesk)"}.get(tag or "", "")
     if tag == "saved" and d.uses_defaults:
-        tag_txt = " (shared default)"
+        tag_txt = " (shared default, saved in LabDesk)"
     return " · ".join(parts) + tag_txt
 
 

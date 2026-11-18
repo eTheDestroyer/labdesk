@@ -500,10 +500,11 @@ class NodeFacts:
     ec: "EcFacts | None" = None                       # EtherChannel tables (switches; routers with a Port-channel)
     addrs: Fact[dict[str, "AddrInfo"]] | None = None  # iface_key -> addresses ('show ip interface', source cli)
     addr_overrides: dict[str, "AddrInfo"] = field(default_factory=dict)   # console tap (source 'console')
-    api_addrs: Fact[dict[str, list[str]]] | None = None   # CML layer3_addresses: iface_key -> host IPs (DHCP)
     addr_live_ts: float | None = None                 # last time an address source was read (cli / tap)
     accounts: "Fact | None" = None                    # accounts.DeviceAccounts from the running-config (CONFIG tier)
     accounts_note: str = ""                           # why accounts are unknown ('needs enable secret')
+    iface_macs: "Fact | None" = None                  # Junos: {mac: 'ge-0/0/0'} (live 'show interfaces')
+    junos_local_as: "Fact | None" = None              # Junos: routing-options autonomous-system (live)
 
     def iface(self, name: str) -> IfFact | None:
         if self.ifaces is None:
@@ -520,7 +521,10 @@ class NodeFacts:
 
 
 # ----------------------------------------------------------------------- interface addresses
-ADDR_SOURCES = ("cli", "console", "config", "api")     # provenance, most to least authoritative per read time
+ADDR_SOURCES = ("cli", "console", "config")     # provenance, most to least authoritative per read time
+# Live-only rule: every source above is device output (CLI probe, the device's own console transcript, the
+# running-config read from the device).  CML's layer3_addresses (L2 DHCP snooping) is NOT device output and
+# is not used.
 
 
 @dataclass(frozen=True)
@@ -632,10 +636,6 @@ def effective_addrs(nf: "NodeFacts | None") -> dict[str, AddrInfo]:
         for k, f in nf.ifaces.value.items():
             if k not in out:                  # not covered by the address read (or it never ran)
                 out[k] = _fallback_addr(f, nf, nf.ifaces.ts)
-    if nf.api_addrs is not None:
-        for k, ips in nf.api_addrs.value.items():
-            if ips and (k not in out or not out[k].configured):
-                out[k] = AddrInfo(None, (), "dhcp", None, None, "api", nf.api_addrs.ts)
     base_ts = max([x for x in (nf.addrs.ts if nf.addrs else None, nf.ifaces.ts if nf.ifaces else None)
                    if x is not None], default=None)
     for k, ov in nf.addr_overrides.items():
@@ -795,6 +795,8 @@ class TopoLink:
     iface_b: str
     api_state: str         # CML link state (STARTED / STOPPED / DEFINED_ON_CORE) or 'up' for KVM
     kvm: bool = False
+    mac_a: str = ""        # host-KVM: the VM NIC MAC of that end (to find the device's own interface name)
+    mac_b: str = ""
 
 
 @dataclass
@@ -1547,7 +1549,6 @@ class EndAddr:
     sources: set[str] = field(default_factory=set)
     ts: float | None = None        # oldest read time of the addressing used
     live_ts: float | None = None   # last time any address source of this node was read
-    api_ips: list[str] = field(default_factory=list)
     role: str = "router"           # NodeRole value of the node
 
     @property
@@ -1592,10 +1593,8 @@ class EndAddr:
 
     def lines(self) -> list[str]:
         if not self.l3 and not self.addrs:
-            if self.api_ips:
-                return [f"{self.label} {self.iface}: seen by CML (DHCP snooping): " + ", ".join(self.api_ips)]
             what = {"switch": "switchport (no IP on the cable)", "egress": "external connector",
-                    "host": "host (not probed)"}.get(self.role, "not probed")
+                    "host": "host (not probed: address not read)"}.get(self.role, "not read yet")
             return [f"{self.label} {self.iface}: {what}"]
         if not self.configured:
             return [f"{self.label} {self.iface}: no IP address"]
@@ -1624,7 +1623,7 @@ class LinkAddressing:
     configured_side: str | None = None   # ONE_SIDED: 'a' | 'b'
     tooltip: str = ""              # multi-line plain text
     explain: str = ""              # one sentence for the Inspector
-    source: str = ""               # 'cli' | 'console' | 'api' | 'cli+console'
+    source: str = ""               # 'cli' | 'console' | 'config' | 'cli+console'
     age_s: float | None = None
     stale: bool = False
 
@@ -1668,8 +1667,6 @@ def _end_addr(nk: str, ifl: str, topo: Topology, facts: dict[str, NodeFacts]) ->
         e.sources = {a.source for a in used}
         e.ts = min(a.ts for a in used)
     e.live_ts = nf.addr_live_ts or (nf.ifaces.ts if nf.ifaces else None)
-    if nf.api_addrs is not None:
-        e.api_ips = list(nf.api_addrs.value.get(k, []))
     return e
 
 
@@ -1695,14 +1692,6 @@ def link_addressing(link: TopoLink, topo: Topology, facts: dict[str, NodeFacts],
     names = {s: f"{e.label} {e.iface}" for s, e in ends}
     detail = [ln for _, e in ends for ln in e.lines()]
     if not conf:
-        api = [(s, e) for s, e in ends if e.api_ips]
-        if api:
-            s, e = api[0]
-            la.state, la.label = SubnetState.DHCP, f"dhcp {e.api_ips[0]}"
-            la.compact = "dhcp"
-            la.tooltip = "\n".join([f"{la.label}: address learned by CML (DHCP snooping)"] + detail)
-            la.explain = f"CML saw {e.label} get {e.api_ips[0]} by DHCP."
-            la.source = "api"
         return la
     known = {s: e.networks for s, e in conf}
     nets_by = {s: e.networks_with([n for s2, ns in known.items() if s2 != s for n in ns]) for s, e in conf}
@@ -1777,7 +1766,7 @@ def link_addressing(link: TopoLink, topo: Topology, facts: dict[str, NodeFacts],
                     (f" (and {', '.join(la.nets[1:])})" if plus else "") + "."
     else:
         return la
-    src_words = {"cli": "CLI probe", "console": "typed on the console (CML console log)", "api": "CML API",
+    src_words = {"cli": "CLI probe", "console": "typed on the console (CML console log)",
                  "config": "running-config"}
     when = f", read {int(la.age_s)} s ago" if la.age_s is not None else ""
     tail = f"source: {', '.join(src_words.get(x, x) for x in srcs)}{when}" + (" (stale)" if la.stale else "")
@@ -2258,6 +2247,9 @@ def _side(topo: Topology, node_key: str, iface_label: str, facts: dict[str, Node
           fresh_s: float) -> tuple[LinkSide, IfFact | None, bool]:
     """(side, iface fact, stale)"""
     n = topo.nodes.get(node_key)
+    if n is not None and n.role == NodeRole.ROUTER and not n.probed:
+        # a router LabDesk cannot read (host-KVM without a wired collector): never assume its port is up
+        return LinkSide.UNKNOWN, None, True
     if n is None or not n.collected:
         return LinkSide.NOT_APPLICABLE, None, False
     nf = facts.get(node_key)
@@ -2343,12 +2335,21 @@ def link_status(link: TopoLink, topo: Topology, facts: dict[str, NodeFacts], lin
     # 4. unknown (stale / missing) side
     if stale:
         names = [topo.nodes[k].label for k in stale if k in topo.nodes]
+        unread = [topo.nodes[k].label for k in stale if k in topo.nodes and not topo.nodes[k].probed]
+        if unread:
+            return done(LinkStatus(LinkKind.UNKNOWN, stale[0], None, "not read",
+                                   "not read", " and ".join(unread) + " is not read by LabDesk (no live collector"
+                                   " for it yet), so the state of this port is unknown.", False, stale))
         return done(LinkStatus(LinkKind.UNKNOWN, stale[0], None, "no fresh data",
                                "state unknown", "No recent information from " + " and ".join(names) + ".",
                                False, stale))
     # 8. up
-    return done(LinkStatus(LinkKind.UP, text="up", plain_text="Both ends are up.",
-                           api_certain=side_a == side_b == LinkSide.NOT_APPLICABLE))
+    if side_a == side_b == LinkSide.NOT_APPLICABLE:
+        # no end is read from a device: only CML's own runtime state says anything about this cable
+        return done(LinkStatus(LinkKind.UP, text="up", plain_text="CML state: the link is started and both nodes "
+                               "are running (no device on this cable is read by LabDesk).", api_certain=True))
+    return done(LinkStatus(LinkKind.UP, text="up", plain_text="Both ends are up (read from the device).",
+                           api_certain=False))
 
 
 # ======================================================================= join (D3)

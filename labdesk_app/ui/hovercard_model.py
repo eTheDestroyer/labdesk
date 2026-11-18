@@ -2,6 +2,10 @@
 what the card says.  ``ui/hovercard.py`` paints it.
 
 Rules: only facts that exist are shown (nothing is invented); a missing fact is a muted hint, never a guess.
+Live-only: every row about the device (interfaces, protocols, router-id, accounts "On the device") comes from
+live device output (probe bursts, console transcript, SSH show commands).  The header state is CML's /
+the hypervisor's runtime state (labelled as such); the Login section is what LabDesk has saved or will try
+(labelled "saved in LabDesk" / "default, not read from device"), never something the device reported.
 On-device passwords that are encrypted are only ever called "encrypted (<scheme>)" - the hash is not kept anywhere.
 Plain-text passwords (stored LabDesk login, ``password 0 x`` on the device) are shown in clear unless
 ``show_passwords`` is off (View ▸ Show passwords on hover), then they are masked.
@@ -14,6 +18,8 @@ MASK = "••••••"                       # fixed length: never reveals 
 MAX_IFACES = 8
 MAX_PROTO_ROWS = 8
 CREDS_HINT = "right-click ▸ Credentials…"
+FRESH_S = 45.0                        # telemetry.FRESH_S: older live data is called stale
+NOT_READ = "not read yet"
 PLAIN_NOTE = "plain text, not encrypted"
 
 STATE_WORDS = {"BOOTED": ("Booted", "up", "booted"), "running": ("Running", "up", "booted"),
@@ -25,7 +31,7 @@ STATE_WORDS = {"BOOTED": ("Booted", "up", "booted"), "running": ("Running", "up"
                "missing": ("Not created", "down", "disconnected"), "unknown": ("Unknown", "down", "disconnected")}
 COLLECTOR_WORDS = {"learning": ("learning…", "muted"), "paused_console": ("paused: console in use", "muted"),
                    "console_busy": ("console busy", "warn"), "needs_credentials": ("needs login / enable secret", "warn"),
-                   "error": ("probe error", "down"), "unverified": ("collector beta / unverified", "muted"),
+                   "error": ("probe error", "down"), "unverified": ("not read (collector not wired yet)", "muted"),
                    "limited": ("limited", "warn"), "no_mgmt": ("no mgmt address", "warn"),
                    "disabled": ("probing off", "muted")}
 SIDE_GLYPH = {"UP": ("up", "up"), "DOWN": ("down", "down"), "PROTO_DOWN": ("proto_down", "proto down"),
@@ -141,6 +147,31 @@ def _iface_rows(nt) -> Section | None:
     return sec
 
 
+def _live_row(nv, nt) -> Row:
+    """'Live data': how old the last read of the device is, or why nothing has been read."""
+    if nt is None:
+        return Row("Live data", NOT_READ, tone="muted", note="probing off / no telemetry")
+    cs = _ev(nt.collector_state)
+    age = getattr(nt, "last_probe_age_s", None)
+    if cs == "off":
+        return Row("Live data", "not read", tone="muted", note="device not running")
+    if cs == "not_probed":
+        return Row("Live data", "not read", tone="muted", note="LabDesk does not read this kind of device")
+    if cs == "unverified":
+        return Row("Live data", "not read", tone="muted",
+                   note=getattr(nt, "collector_detail", "") or "collector not wired yet")
+    note = ""
+    if cs in COLLECTOR_WORDS and cs != "learning":
+        note = COLLECTOR_WORDS[cs][0]
+    elif getattr(nt, "probing", False):
+        note = "probing…"
+    if age is None:
+        return Row("Live data", NOT_READ, tone="muted", note=note or ("first read running…" if cs == "learning" else ""))
+    if age > FRESH_S:
+        return Row("Live data", f"stale · last read {_age(age)}", tone="warn", note=note)
+    return Row("Live data", f"read {_age(age)}", tone=None, note=note)
+
+
 def _names(items, key="name", limit=3) -> str:
     names = [x.get(key) or x.get("neighbor_id") or x.get("ip") or "?" for x in items][:limit]
     extra = len(items) - len(names)
@@ -219,15 +250,22 @@ def _login_section(creds, show: bool, first=None) -> Section:
     default_logins.FirstLogin of the node (None = old behaviour: only what device-creds holds)."""
     from .. import default_logins as DL
     sec = Section("Login")
+    sec.aside = "saved in LabDesk"
     if creds is not None and getattr(creds, "error", None):
         sec.note, sec.note_tone = f"{creds.error}", "warn"
         return sec
     fl, tag = DL.effective(creds, first)
     if fl is None:
+        sec.aside = ""
         sec.note = f"no credentials saved — {CREDS_HINT}"
         return sec
+    tried = tag == "default"
+    if tried:
+        sec.aside = "not read from device"
+    key = "LabDesk will try" if tried else "Saved login"
+    badge = "default" if tried else ("saved" if tag == "saved" else "")
     if not fl.username and not fl.password:
-        sec.rows.append(Row("First login", "no login (press Enter)", badge=tag or "", tone="muted"))
+        sec.rows.append(Row(key, "no login (press Enter)", badge=badge, tone="muted"))
     else:
         if fl.password_encrypted:
             pw = DL.ENCRYPTED
@@ -235,8 +273,8 @@ def _login_section(creds, show: bool, first=None) -> Section:
             pw = _secret(fl.password, show)
         else:
             pw = "(no password)"
-        sec.rows.append(Row("First login", f"{fl.username or '—'} / {pw}", mono=True, secret=bool(fl.password),
-                            badge=tag or ""))
+        sec.rows.append(Row(key, f"{fl.username or '—'} / {pw}", mono=True, secret=bool(fl.password),
+                            badge=badge))
     if fl.enable_encrypted:
         sec.rows.append(Row("enable", DL.ENCRYPTED, tone="muted"))
     elif fl.enable:
@@ -245,8 +283,12 @@ def _login_section(creds, show: bool, first=None) -> Section:
                             note="shared default" if src == "default" and tag == "saved" else ""))
     elif fl.has_enable:
         sec.rows.append(Row("enable", "no password", tone="muted"))
+    notes = []
+    if tried:
+        notes.append("default, not read from device")
     if fl.note:
-        sec.note = fl.note
+        notes.append(fl.note)
+    sec.note = " · ".join(notes)
     if not show and (fl.password or fl.enable):
         sec.aside = "hidden"
     return sec
@@ -254,10 +296,9 @@ def _login_section(creds, show: bool, first=None) -> Section:
 
 def _device_section(nv, nt, show: bool) -> Section:
     sec = Section("On the device")
-    kvm = str(getattr(nv, "key", "")).startswith("kvm:")
     cs = _ev(getattr(nt, "collector_state", None)) if nt is not None else ""
     if nt is None or cs in ("off", ""):
-        sec.note = "read from the running-config while the device runs"
+        sec.note = "not read (device not running)" if cs == "off" else "not read yet"
         return sec
     if cs == "not_probed":
         sec.note = "not read: LabDesk does not probe this kind of device"
@@ -265,8 +306,9 @@ def _device_section(nv, nt, show: bool) -> Section:
     acc = getattr(nt, "accounts", None)
     if acc is None:
         note = getattr(nt, "accounts_note", "") or ""
-        if kvm or _ev(nt.collector_state) == "unverified":
-            sec.note = "not read: the host-KVM collector is not wired yet"
+        if _ev(nt.collector_state) == "unverified":
+            sec.note = "not read: " + ("the Juniper collector needs a management IP" if getattr(nt, "vendor", "") ==
+                                       "juniper" else "the host-KVM collector is not wired yet")
         elif note == "needs enable secret":
             sec.note, sec.note_tone = f"on-device accounts: needs enable secret ({CREDS_HINT})", "warn"
         elif note:
@@ -306,23 +348,19 @@ def build_card(nv, *, creds=None, show_passwords: bool = True, mgmt_ip: str | No
     platform = (getattr(dtype, "title", "") or "").split(" (")[0]
     backend = "host KVM" if getattr(dtype, "backend", "") == "kvm" else "CML"
     word, tone, glyph = STATE_WORDS.get(nv.state, (str(nv.state or "unknown").capitalize(), "muted", "neutral"))
+    word = f"{'VM' if backend == 'host KVM' else 'CML'}: {word}"       # runtime state from CML / libvirt
     m = CardModel(nv.key, nv.label, f"{platform} · {backend}" if platform else backend,
                   getattr(dtype, "vendor", "generic") or "generic", word, tone, glyph)
     if mgmt_ip:
-        m.meta.append(Row("Mgmt IP", mgmt_ip, mono=True))
+        seen = nt is not None and any(getattr(f, "ip", None) == mgmt_ip for f in (getattr(nt, "ifaces", None) or []))
+        m.meta.append(Row("Mgmt IP", mgmt_ip, mono=True,
+                          note="read from device" if seen else "saved in LabDesk"))
+    m.meta.append(_live_row(nv, nt))
     if nt is not None:
         if nt.hostname and nt.hostname != nv.label:
             m.meta.append(Row("Hostname", nt.hostname, mono=True))
         if nt.rid:
             m.meta.append(Row("Router ID", nt.rid, mono=True))
-        cs = _ev(nt.collector_state)
-        if cs in COLLECTOR_WORDS:
-            w, t = COLLECTOR_WORDS[cs]
-            m.meta.append(Row("Probe", w, tone=t,
-                              note=f"data {_age(nt.last_probe_age_s)}" if nt.last_probe_age_s is not None else ""))
-        elif nt.last_probe_age_s is not None:
-            m.meta.append(Row("Probed", _age(nt.last_probe_age_s), tone="muted" if nt.last_probe_age_s > 45 else None,
-                              note="probing…" if nt.probing else ""))
         sec = _iface_rows(nt)
         if sec is not None:
             m.sections.append(sec)

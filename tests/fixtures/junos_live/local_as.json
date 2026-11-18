@@ -1,0 +1,14 @@
+{
+    "configuration" : {
+        "@" : {
+            "junos:commit-seconds" : "1795001591", 
+            "junos:commit-localtime" : "2026-11-18 11:33:11 UTC", 
+            "junos:commit-user" : "admin"
+        }, 
+        "routing-options" : {
+            "autonomous-system" : {
+                "as-number" : "65000"
+            }
+        }
+    }
+}

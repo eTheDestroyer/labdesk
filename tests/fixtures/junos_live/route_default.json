@@ -1,0 +1,110 @@
+{
+    "route-information" : [
+    {
+        "attributes" : {"xmlns" : "http://xml.juniper.net/junos/26.2R0/junos-routing"}, 
+        "route-table" : [
+        {
+            "table-name" : [
+            {
+                "data" : "mgmt_junos.inet.0"
+            }
+            ], 
+            "destination-count" : [
+            {
+                "data" : "3"
+            }
+            ], 
+            "total-route-count" : [
+            {
+                "data" : "3"
+            }
+            ], 
+            "active-route-count" : [
+            {
+                "data" : "3"
+            }
+            ], 
+            "holddown-route-count" : [
+            {
+                "data" : "0"
+            }
+            ], 
+            "hidden-route-count" : [
+            {
+                "data" : "0"
+            }
+            ], 
+            "rt" : [
+            {
+                "attributes" : {"junos:style" : "brief"}, 
+                "rt-destination" : [
+                {
+                    "data" : "0.0.0.0/0"
+                }
+                ], 
+                "rt-entry" : [
+                {
+                    "active-tag" : [
+                    {
+                        "data" : "*"
+                    }
+                    ], 
+                    "current-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ], 
+                    "last-active" : [
+                    {
+                        "data" : [null]
+                    }
+                    ], 
+                    "protocol-name" : [
+                    {
+                        "data" : "Access-internal"
+                    }
+                    ], 
+                    "preference" : [
+                    {
+                        "data" : "12"
+                    }
+                    ], 
+                    "age" : [
+                    {
+                        "data" : "01:48:12", 
+                        "attributes" : {"junos:seconds" : "6492"}
+                    }
+                    ], 
+                    "metric" : [
+                    {
+                        "data" : "0"
+                    }
+                    ], 
+                    "nh" : [
+                    {
+                        "selected-next-hop" : [
+                        {
+                            "data" : [null]
+                        }
+                        ], 
+                        "to" : [
+                        {
+                            "data" : "192.168.122.1"
+                        }
+                        ], 
+                        "via" : [
+                        {
+                            "data" : "fxp0.0"
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            }
+            ]
+        }
+        ]
+    }
+    ]
+}

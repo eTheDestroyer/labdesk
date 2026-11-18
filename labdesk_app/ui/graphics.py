@@ -601,7 +601,7 @@ COLLECTOR_CHIP = {      # V10 static node collector chips: text, icon, colour
     "console_busy": ("console busy", "bang", T.AMBER),
     "needs_credentials": ("needs login / enable secret", "bang", T.AMBER),
     "error": ("probe error", "bang", T.DOWN_RED),
-    "unverified": ("beta", "question", "#8B5CF6"),
+    "unverified": ("not read", "question", T.NEUTRAL),     # no live collector: nothing about it is shown
     "limited": ("limited", "bang", T.AMBER),
     "no_mgmt": ("no mgmt", "bang", T.AMBER),
 }
@@ -787,7 +787,8 @@ class NodeItem(_HitMixin, QGraphicsObject):
 
     def _update_tooltip(self):
         st = STATE_TEXT.get(self.state, self.state)
-        lines = [f"<b>{self.label}</b> · {self.dtype.title}", f"state: {st}"]
+        lines = [f"<b>{self.label}</b> · {self.dtype.title}",
+                 f"{'VM' if self.dtype.backend == 'kvm' else 'CML'} state: {st}"]
         nt = getattr(self.nv, "tele", None)
         if nt is not None:
             if nt.summary:
@@ -796,8 +797,12 @@ class NodeItem(_HitMixin, QGraphicsObject):
                 lines.append(f"router-id {nt.rid}" + (f" · loopback {nt.loopback}" if nt.loopback else ""))
             if nt.collector_detail:
                 lines.append(f"<i>collector: {nt.collector_detail}</i>")
+            if nt.last_probe_age_s is None and _ev(nt.collector_state) not in ("not_probed",):
+                lines.append("<i>live data: not read yet</i>")
+            elif nt.last_probe_age_s is not None and nt.last_probe_age_s > 45:
+                lines.append(f"<i>live data stale: last read {nt.last_probe_age_s:.0f} s ago</i>")
         if self.dtype.backend == "kvm":
-            lines.append("host KVM (virsh) · collector unverified (beta)")
+            lines.append("host KVM (virsh)")
         if self.is_internet:
             h = self.ctx().cloud_health
             if h is not None:
@@ -2135,9 +2140,10 @@ class LinkItem(_HitMixin, QGraphicsItem):
                                 if not tk.dark else QColor("#FDBA74"), height=15, pad=5,
                                 fill=T.alpha(T.STP_BLOCK, 0.12), hatch=T.STP_BLOCK, f=iface_font(True))
             else:
+                unread = not self.end_name_live(side)
                 r = T.draw_pill(p, pt, text, tk, border=border, text_color=text_col, height=15, pad=5,
                                 fill=T.alpha(T.status_fill("down", tk), 0.10) if down else None,
-                                f=iface_font(down))
+                                f=iface_font(down), dashed=unread)
             tip = self._side_tip(side)
             if blk:
                 tip = vis.stp_tip + ("<br><br>" + tip if tip else "")
@@ -2155,8 +2161,22 @@ class LinkItem(_HitMixin, QGraphicsItem):
                           + f": {node.label} {text} sends this device's frames untagged into VLAN {vis.access_vlan}")
             p.restore()
 
+    def end_name_live(self, side: str) -> bool:
+        """The interface name at this end was seen in the device's own output (a live interface fact).
+        False: it is only CML's port label / the NIC name LabDesk gave a host-KVM VM (pill drawn dashed)."""
+        lv = self.lv
+        return bool(lv is not None and getattr(lv, f"live_{side}", False))
+
     def _side_tip(self, side: str) -> str:
         lv = self.lv
+        name = self.label_a if side == "a" else self.label_b
+        node_lbl = self.a.label if side == "a" else self.b.label
+        if not self.end_name_live(side):
+            sv = getattr(lv, f"side_{side}", None) if lv is not None else None
+            why = {"NOT_APPLICABLE": "this device is not read by LabDesk"}.get(_ev(sv) if sv is not None else "",
+                                                                               "not read from the device yet")
+            return (f"{node_lbl} {name}: port name from CML's wiring, not confirmed by the device "
+                    f"({why})")
         if lv is None or lv.tele is None:
             return ""
         f = lv.tele.iface_a if side == "a" else lv.tele.iface_b

@@ -357,8 +357,8 @@ def test_card_shows_live_facts_and_logins():
     m = H.build_card(_nv(_tele(accounts=acc)), creds=_detail(USERNAME="admin", PASSWORD="pw1", ENABLE="cisco"),
                      show_passwords=True, mgmt_ip="192.168.122.50")
     t = m.text()
-    assert m.title == "R1" and m.subtitle == "Cisco IOSv · CML" and m.state_word == "Booted"
-    assert "Mgmt IP: 192.168.122.50" in t and "Probed: 7 s ago" in t
+    assert m.title == "R1" and m.subtitle == "Cisco IOSv · CML" and m.state_word == "CML: Booted"
+    assert "Mgmt IP: 192.168.122.50 (saved in LabDesk)" in t and "Live data: read 7 s ago" in t
     ifs = m.section("Interfaces")
     assert ifs.aside == "2 of 3 up" and [r.text for r in ifs.rows][:2] == ["Gi0/0", "Gi0/1"]
     assert ifs.rows[0].value == "10.0.0.1/30" and ifs.rows[1].glyph == "proto_down"
@@ -393,10 +393,11 @@ def test_card_hints_when_nothing_is_known():
     dev = m.section("On the device")
     assert "needs enable secret" in dev.note and dev.note_tone == "warn" and not dev.rows
     off = H.build_card(_nv(None, state="STOPPED"), creds=None)
-    assert off.state_word == "Stopped" and off.section("Interfaces") is None and off.section("Protocols") is None
+    assert off.state_word == "CML: Stopped" and off.section("Interfaces") is None and off.section("Protocols") is None
     kvm = H.build_card(_nv(NodeTelemetry("kvm:JR1", "JR1", NodeRole.ROUTER, "juniper", CollectorState.UNVERIFIED),
                            key="kvm:JR1", label="JR1"), creds=None)
-    assert "host-KVM collector" in kvm.section("On the device").note
+    assert kvm.section("On the device").note.startswith("not read")
+    assert "Live data: not read" in kvm.text()
 
 
 def test_card_caps_interfaces():

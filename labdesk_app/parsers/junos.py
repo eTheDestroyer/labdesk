@@ -172,9 +172,11 @@ def parse_bgp_summary_json(text) -> ParseResult:
             st = _jv(p, "peer-state") or "unknown"
             pfx = None
             for rib in _jl(p, "bgp-rib"):
-                if _jv(rib, "name") in (None, "inet.0"):
+                name = _jv(rib, "name")
+                if name in (None, "inet.0") or (str(name).endswith(".inet.0") and not str(name).startswith("mgmt_")):
                     v = _jv(rib, "received-prefix-count")
-                    pfx = int(v) if str(v or "").isdigit() else pfx
+                    if str(v or "").isdigit():
+                        pfx = (pfx or 0) + int(v)
             asn = _jv(p, "peer-as")
             res["peers"].append({"ip": addr, "remote_as": int(asn) if str(asn or "").isdigit() else asn,
                                  "state": "Established" if st.lower().startswith("establ") else st,
@@ -355,7 +357,8 @@ def parse_routes_terse(text) -> ParseResult:
 def parse_default_route(text) -> ParseResult:
     """show route 0.0.0.0/0 exact [| display json] -> same shape as ios.parse_ip_route_default
     ({present, proto, code ('S*'|'B*'|'O*'...), distance, next_hops, ...}).  Only inet.0 counts
-    (the mgmt_junos table's fxp0 default is the management VRF, not the data plane)."""
+    (plus routing-instance tables such as CUSTOMER.inet.0; the mgmt_junos table's fxp0 default is the
+    management VRF, not the data plane)."""
     if text is None:
         return ParseResult(False, None, "no output")
     if _json_load(text) is not None:
@@ -364,7 +367,11 @@ def parse_default_route(text) -> ParseResult:
         r = _parse_route_text_default(text)
     if not r.ok:
         return r
-    rows = [x for x in r.data if x["prefix"] == "0.0.0.0/0" and x.get("table", "inet.0") == "inet.0"]
+    def _data_table(t):
+        t = t or "inet.0"
+        return (t == "inet.0" or t.endswith(".inet.0")) and not t.startswith("mgmt_junos")
+    rows = [x for x in r.data if x["prefix"] == "0.0.0.0/0" and _data_table(x.get("table"))]
+    rows.sort(key=lambda x: (x.get("table") or "inet.0") != "inet.0")     # the master table first, then VRFs
     if not rows:
         return ParseResult(True, {"present": False, "next_hops": []})
     x = rows[0]

@@ -60,6 +60,8 @@ class LinkView:
     traffic: object = None                  # telemetry.LinkTraffic | None
     condition: object = None                # telemetry.LinkCondition | None
     bundle: str | None = None               # facts.Bundle.key when the cable is an EtherChannel member
+    live_a: bool = False                    # the a-end interface name was seen in the device's own output
+    live_b: bool = False                    # (False: the name is CML's port label / LabDesk's NIC name only)
 
 
 @dataclass
@@ -135,6 +137,7 @@ class LabController:
         self.element_state_ok = True
         self.first_login_backfill = True        # write first-login defaults to device-creds (default_logins)
         self._first_login_seen: set[tuple] = set()
+        self._kvm_ip_cache: dict[str, str] = {}   # host-KVM mgmt IPs found by virsh (live collector target)
         self.first_login_seeded: list[str] = []  # labels seeded since the UI last asked (pop_first_login_seeded)
         self.telemetry = None
         if telemetry:
@@ -316,8 +319,19 @@ class LabController:
     def _attach_telemetry(self, view: LabView, snap: Snapshot, lab_state: dict, kvm_states: dict,
                           full: bool) -> None:
         from .telemetry import topology_from_snapshot
+        kvm_mgmt = {}
+        for name in lab_state["kvm"]:
+            key = f"kvm:{name}"
+            ip = (lab_state.get("mgmt", {}).get(key) or {}).get("ip")
+            if not ip and full:
+                ip = self.mgmt(key).get("ip")          # virsh lookup: only on full snapshots
+                if ip:
+                    self._kvm_ip_cache[key] = ip
+            kvm_mgmt[key] = ip or self._kvm_ip_cache.get(key)
+        kvm_mgmt = {k: v for k, v in kvm_mgmt.items() if v}
+        self.telemetry.kvm_mgmt = kvm_mgmt
         topo, consoles = topology_from_snapshot(snap.lab, snap.nodes, snap.links, snap.interfaces,
-                                                lab_state["kvm"], lab_state["kvm_links"], kvm_states)
+                                                lab_state["kvm"], lab_state["kvm_links"], kvm_states, kvm_mgmt)
         for nk, n in topo.nodes.items():           # console keys not in the node payload: fetch once
             if nk.startswith("cml:") and nk not in consoles and n.booted and n.collected \
                     and not self.telemetry.console_uuid.get(nk):
@@ -343,6 +357,12 @@ class LabController:
             lv.addressing = lf.addressing
             lv.traffic, lv.condition = tv.traffic.get(lv.key), tv.conditions.get(lv.key)
             lv.bundle = lf.bundle
+            # interface names on the cable ends: confirmed by the device (a live interface fact) or not
+            if lf.iface_a is not None and lv.key.startswith("kvm:"):
+                lv.label_a = short_ifname(lf.iface_a.name)
+            if lf.iface_b is not None and lv.key.startswith("kvm:"):
+                lv.label_b = short_ifname(lf.iface_b.name)
+            lv.live_a, lv.live_b = lf.iface_a is not None, lf.iface_b is not None
 
     # ------------------------------------------------------- first logins
     def backfill_first_logins(self, views: list[NodeView]) -> list[str]:

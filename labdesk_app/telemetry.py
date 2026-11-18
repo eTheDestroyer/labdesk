@@ -25,6 +25,7 @@ See docs/telemetry_model.md for the exact public model.
 from __future__ import annotations
 
 import copy
+import dataclasses
 import os
 import queue
 import re
@@ -44,10 +45,11 @@ from .facts import (DOWN_KINDS, EC_CMDS, L2_CMDS, MANAGED_SWITCH_DEFS, ROLE_WORD
                     LinkKind, NodeFacts, NodeRole, PathState, PortMode, PortState, Proto, Segment, StpVlanInfo,
                     SubnetState, TopoLink, TopoNode, Topology, VlanInfo, apply_addr_cmd, effective_addrs,
                     ios_facts_update, join_facts, l2_facts_update, node_summary, root_names, subnet_changes,
-                    switch_is_l3, topo_role, ec_facts_update, Bundle, EcState)  # noqa: F401
+                    switch_is_l3, topo_role, ec_facts_update, junos_facts_update, Bundle, EcState)  # noqa: F401
 from .parsers import console_tap as P_TAP
 from .parsers import ios as P_IOS
 from .parsers import ios_l2 as P_L2
+from .parsers import junos as P_JUNOS
 from .parsers.common import SyslogLine, iface_key, short_iface
 from .probe import creds as creds_mod
 from .probe.redact import redact, redact_values
@@ -143,6 +145,19 @@ JUNOS_COMMANDS = {
     "slow": ["show ospf interface detail | display json"],
     "config": ["show configuration protocols | display json"],
     "accounts": accounts_mod.JUNOS_ACCOUNT_CMDS,         # parsed by accounts.parse_junos_accounts
+}
+JUNOS_MAC_CMD = 'show interfaces ge-* | match "Physical interface|Current address"'
+JUNOS_AS_CMD = "show configuration routing-options autonomous-system | display json"
+JUNOS_LIVE = {          # what the wired vJunos collector actually runs (read-only, ~1.5 s over SSH)
+    "fast": ["show interfaces terse | display json", "show bgp summary | display json",
+             "show route 0.0.0.0/0 exact | display json", "show ospf neighbor | display json", JUNOS_MAC_CMD],
+    "slow": [JUNOS_AS_CMD] + accounts_mod.JUNOS_ACCOUNT_CMDS,
+}
+JUNOS_PARSERS = {
+    "show interfaces terse | display json": P_JUNOS.parse_interfaces_terse_json,
+    "show bgp summary | display json": P_JUNOS.parse_bgp_summary_json,
+    "show route 0.0.0.0/0 exact | display json": P_JUNOS.parse_default_route,
+    "show ospf neighbor | display json": P_JUNOS.parse_ospf_neighbors_json,
 }
 FORTIOS_COMMANDS = {
     "fast": ["get system interface physical", "get router info ospf neighbor", "get router info bgp summary",
@@ -496,8 +511,10 @@ class TelemetryEngine:
         self._mismatch: dict[str, str | None] = {}  # link key -> mismatch label last logged
         self._ec_state: dict[frozenset, dict] = {}  # bundle member set -> last logged snapshot (ETHERCHANNEL events)
         self._ec_rescan: set[str] = set()           # nodes whose EtherChannel protocol set just changed
-        self.api_l3: dict[str, dict[str, list[str]]] = {}   # node key -> iface_key -> IPv4 (CML snooping)
-        self._next_l3 = 0.0
+        # host-KVM vJunos: live read-only SSH collector (probe/junos_ssh.py)
+        self.kvm_mgmt: dict[str, str] = {}          # node key -> management IP (state.json mgmt / kvm.mgmt_ip)
+        self.junos_runner: Callable | None = None   # tests: (host, user, password, cmds, timeout) -> JunosBurst
+        self.junos_creds: Callable | None = None    # tests: label -> (user, password, source)
         import atexit
         import weakref
         ref = weakref.ref(self)
@@ -545,8 +562,6 @@ class TelemetryEngine:
             self._addr_state.clear()
             self._mismatch.clear()
             self._ec_state.clear()
-            self.api_l3.clear()
-            self._next_l3 = 0.0
 
     def set_probing(self, on: bool) -> None:
         self.probing_enabled = bool(on)
@@ -600,8 +615,6 @@ class TelemetryEngine:
             self._load_conditions(cml_links)
         if self.client is not None:
             self._poll_traffic(topo, now)
-        if self.client is not None:
-            self._poll_l3(topo, now, full_snapshot)
         # console etiquette + scheduling
         if any(n.collected for n in topo.nodes.values()):
             before = self.console_open
@@ -673,7 +686,16 @@ class TelemetryEngine:
             if not n.collected or not n.booted:
                 continue
             if nk.startswith("kvm:"):
-                continue                                   # D6: no KVM collector in this release
+                if n.vendor == "juniper" and self.kvm_mgmt.get(nk):
+                    with self._lock:
+                        s = self.sched.setdefault(nk, _Sched())
+                        if s.running or now < s.next_fast:
+                            continue
+                        s.running = True
+                        slow = now >= s.next_slow
+                    self._ensure_pool()
+                    self._pool.submit(lambda nk=nk, slow=slow: self._run_junos(nk, slow))
+                continue                                   # FortiOS: no live collector yet
             fast_cmds, slow_cmds = command_sets(n, self.facts.get(nk))
             with self._lock:
                 s = self.sched.setdefault(nk, _Sched())
@@ -818,6 +840,108 @@ class TelemetryEngine:
             nf.collector_detail = f"{reason} (retry in {int(delay)} s)"
         if s.failures == 1 or status == BurstStatus.TIMEOUT:
             self._event("PROBE", "probe", "warn", f"{nf.label}: {reason}", [nk])
+
+    # ------------------------------------------------------------- host-KVM vJunos (live, read-only SSH)
+    def _run_junos(self, nk: str, slow: bool) -> None:
+        try:
+            self._junos_burst(nk, slow)
+        finally:
+            with self._lock:
+                s = self.sched.get(nk)
+                if s:
+                    s.running = False
+            cb = self.on_change
+            if cb:
+                try:
+                    cb()
+                except Exception:
+                    pass
+
+    def _junos_burst(self, nk: str, slow: bool) -> None:
+        from .probe import junos_ssh as JS
+        topo = self.topo
+        n = topo.nodes.get(nk) if topo else None
+        host = self.kvm_mgmt.get(nk)
+        if n is None or not host:
+            return
+        s = self.sched.setdefault(nk, _Sched())
+        if self.junos_creds is not None:
+            user, pw, _src = self.junos_creds(n.label)
+        else:
+            try:
+                det = creds_mod.load_detail(n.label)
+            except Exception:  # noqa: BLE001
+                det = None
+            user, pw, _src = JS.junos_creds(n.label, det)
+        if not user or not pw:
+            with self._lock:
+                nf = self.facts.setdefault(nk, NodeFacts(nk, n.label, n.vendor))
+                nf.collector_state = CollectorState.NEEDS_CREDENTIALS
+                nf.collector_detail = "no Junos login saved (device-creds or JUNOS_ADMIN_* in cml-credentials.env)"
+            s.next_fast = self.now() + FAST_S
+            return
+        cmds = list(JUNOS_LIVE["fast"]) + (list(JUNOS_LIVE["slow"]) if slow else [])
+        started = self.now()
+        runner = self.junos_runner or (lambda h, u, p, c, t: JS.run_junos_burst(h, u, p, c, timeout=t))
+        res = runner(host, user, pw, cmds, BURST_TIMEOUT_S)
+        now = self.now()
+        if not res.ok and not res.outputs:
+            self._burst_failed(nk, s, res.reason or "ssh failed", now)
+            return
+        parsed = {}
+        for c, out in res.outputs.items():
+            fn = JUNOS_PARSERS.get(c)
+            if fn is not None:
+                parsed[c] = fn(out.text) if out.text is not None else P_IOS.ParseResult(False, None, out.error)
+        with self._lock:
+            nf = self.facts.get(nk)
+            if nf is None:
+                nf = self.facts[nk] = NodeFacts(nk, n.label, n.vendor)
+            before = _proto_snapshot(nf)
+            junos_facts_update(nf, parsed, now)
+            mac_out = res.outputs.get(JUNOS_MAC_CMD)
+            if mac_out is not None and mac_out.text is not None:
+                nf.iface_macs = Fact(JS.parse_iface_macs(mac_out.text), now)
+            as_out = res.outputs.get(JUNOS_AS_CMD)
+            if as_out is not None and as_out.text is not None:
+                nf.junos_local_as = Fact(JS.parse_local_as(as_out.text), now)
+            if nf.bgp is not None and nf.junos_local_as is not None and nf.bgp.value.local_as is None:
+                nf.bgp.value.local_as = nf.junos_local_as.value
+            acc = [res.outputs.get(c) for c in accounts_mod.JUNOS_ACCOUNT_CMDS]
+            if slow and all(a is not None and a.text is not None for a in acc):
+                nf.accounts = Fact(accounts_mod.parse_junos_accounts("\n".join(a.text for a in acc)), now)
+                nf.accounts_note = ""
+            nf.last_burst_ts = now
+            nf.collector_state = CollectorState.OK if res.ok else CollectorState.ERROR
+            nf.collector_detail = "" if res.ok else (res.reason or "partial read")
+            after = _proto_snapshot(nf)
+        s.failures = 0
+        s.learned = True
+        s.next_fast = started + FAST_S
+        if slow:
+            s.next_slow = started + SLOW_S
+        self._proto_diff_events(nk, n.label, before, after, now)
+        self._addr_events(nk, n.label)
+
+    def _live_kvm_names(self, topo: Topology, facts: dict) -> Topology:
+        """A host-KVM cable end is named after the device's own interface whose MAC matches the VM NIC (live
+        ``show interfaces``); until that is read the name LabDesk gave the NIC at creation stays, unconfirmed."""
+        changed = {}
+        for lk, l in topo.links.items():
+            if not l.kvm:
+                continue
+            new = {}
+            for side, nk, mac in (("a", l.a, l.mac_a), ("b", l.b, l.mac_b)):
+                nf = facts.get(nk)
+                if mac and nf is not None and nf.iface_macs is not None:
+                    name = nf.iface_macs.value.get(mac.lower())
+                    if name:
+                        new["iface_" + side] = name
+            if new:
+                changed[lk] = dataclasses.replace(l, **new)
+        if not changed:
+            return topo
+        return dataclasses.replace(topo, links={**topo.links, **changed})
 
     # ------------------------------------------------------------- merge + diffs
     def _merge(self, nk: str, n: TopoNode, res: BurstResult, now: float, tiers: list[str]) -> None:
@@ -1257,31 +1381,6 @@ class TelemetryEngine:
             parts.append("console open, reading the console log of " + ", ".join(sorted(tapped)))
         return ActionResult(True, "; ".join(parts) or "nothing to refresh")
 
-    def _poll_l3(self, topo: Topology, now: float, full: bool) -> None:
-        """CML's own L3 address discovery (DHCP snooping on L2 / System Bridge external connectors only,
-        verified on 2.10.1: statically configured addresses are never reported).  Read with the full
-        snapshot cadence, only when the lab has a bridge connector."""
-        if not any(n.role == NodeRole.EGRESS and n.egress_mode == "Bridge" and n.booted for n in topo.nodes.values()):
-            return
-        if now < self._next_l3 and not full:
-            return
-        self._next_l3 = now + FULL_SNAPSHOT_S
-        try:
-            data = self.client.layer3_addresses(self.lab_id)
-        except (CMLError, AttributeError):
-            return
-        out: dict[str, dict[str, list[str]]] = {}
-        for nid, d in (data or {}).items():
-            per = {}
-            for _mac, itf in (d.get("interfaces") or {}).items():
-                ips = [x.split("/")[0] for x in (itf.get("ip4") or [])]
-                if ips and itf.get("label"):
-                    per[iface_key(itf["label"])] = ips
-            if per:
-                out[f"cml:{nid}"] = per
-        with self._lock:
-            self.api_l3 = out
-
     def _bridge_names(self) -> dict[str, str]:
         out = {}
         for nf in self.facts.values():
@@ -1651,17 +1750,8 @@ class TelemetryEngine:
     def _build_view(self, topo: Topology, now: float) -> TelemetryView:
         with self._lock:
             facts = dict(self.facts)
-            jf = dict(facts)
-            for nk, per in self.api_l3.items():          # CML DHCP snooping (also for hosts, never probed)
-                n = topo.nodes.get(nk)
-                if n is None:
-                    continue
-                base = jf.get(nk) or NodeFacts(nk, n.label, n.vendor)
-                if base is facts.get(nk):
-                    base = copy.copy(base)
-                base.api_addrs = Fact(per, now, "api")
-                jf[nk] = base
-            join = join_facts(topo, jf, self.link_history, now, FRESH_S, self.verified_internet, VERIFY_TTL_S)
+            topo = self._live_kvm_names(topo, facts)
+            join = join_facts(topo, facts, self.link_history, now, FRESH_S, self.verified_internet, VERIFY_TTL_S)
             nodes = {nk: self._node_view(nk, n, topo, facts, join, now) for nk, n in topo.nodes.items()}
             self._link_events(topo, join, now)
             self._path_events(topo, join, now)
@@ -1680,7 +1770,7 @@ class TelemetryEngine:
             st = CollectorState.NOT_PROBED
         elif not n.booted:
             st = CollectorState.OFF
-        elif not n.probed or nk.startswith("kvm:"):
+        elif not n.probed:
             st = CollectorState.UNVERIFIED
         elif not self.probing_enabled:
             st = CollectorState.DISABLED
@@ -1697,7 +1787,10 @@ class TelemetryEngine:
                            console_open=bool(self.console_uuid.get(nk) and self.console_uuid[nk] in self.console_open),
                            probe_while_open=nk in self.probe_while_open)
         if st == CollectorState.UNVERIFIED:
-            nt.collector_detail = "collector unverified (beta)"
+            nt.collector_detail = ("not read: no management IP saved for the Juniper collector"
+                                   if n.vendor == "juniper" else
+                                   f"not read ({'FortiOS' if n.vendor == 'fortinet' else n.vendor} collector "
+                                   "not wired yet)")
         if nf is None:
             return nt
         # legend 'Freshness': age of the interface facts that drive link state (a ping/trace burst refreshes
@@ -2192,8 +2285,10 @@ def _windows_mem_available_gb() -> float | None:
 # ======================================================================= topology adapter
 def topology_from_snapshot(lab: dict, nodes: list[dict], links: list[dict], interfaces: list[dict],
                            kvm_nodes: dict[str, dict] | None = None, kvm_links: list[dict] | None = None,
-                           kvm_states: dict[str, str] | None = None) -> tuple[Topology, dict[str, str]]:
-    """CML snapshot (+ LabDesk KVM state) -> (Topology, console uuid per node key)."""
+                           kvm_states: dict[str, str] | None = None,
+                           kvm_mgmt: dict[str, str] | None = None) -> tuple[Topology, dict[str, str]]:
+    """CML snapshot (+ LabDesk KVM state) -> (Topology, console uuid per node key).  ``kvm_mgmt``: node key ->
+    management IP; a vJunos with one is read live over SSH (``probed``), any other KVM router is not read."""
     if_by_id = {i["id"]: i for i in interfaces}
     tn: dict[str, TopoNode] = {}
     consoles: dict[str, str] = {}
@@ -2227,10 +2322,12 @@ def topology_from_snapshot(lab: dict, nodes: list[dict], links: list[dict], inte
         key = f"kvm:{name}"
         dt = BY_KEY.get(meta.get("kind"), BY_KEY["vjunos"])
         tn[key] = TopoNode(key, name, topo_role("", "kvm", meta.get("kind", "")), dt.vendor,
-                           (kvm_states or {}).get(name, "unknown"), meta.get("kind", ""), probed=False)
+                           (kvm_states or {}).get(name, "unknown"), meta.get("kind", ""),
+                           probed=dt.vendor == "juniper" and bool((kvm_mgmt or {}).get(key)))
     for i, kl in enumerate(kvm_links or []):
         key = f"kvm:{i}"
-        tl[key] = TopoLink(key, kl["a"], kl["b"], kl.get("label_a", ""), kl.get("label_b", ""), "up", kvm=True)
+        tl[key] = TopoLink(key, kl["a"], kl["b"], kl.get("label_a", ""), kl.get("label_b", ""), "up", kvm=True,
+                           mac_a=kl.get("mac_a", "") or "", mac_b=kl.get("mac_b", "") or "")
     return Topology(lab.get("state", ""), tn, tl), consoles
 
 
