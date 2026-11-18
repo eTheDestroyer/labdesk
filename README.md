@@ -89,6 +89,32 @@ stopped / wiped (the tile body is dimmed; its name stays readable), red ✕ = di
 (CML-Free licence limit; unmanaged switches and external connectors don't count). If CML is
 down, the status bar shows **Start CML VM**, which runs `virsh start cml` and waits for the API.
 
+### Where the data comes from (live only)
+
+Everything LabDesk shows **about a device** comes from **live output of that device**:
+* console probe bursts (`show …` at `>`);
+* the device's own console transcript, while you type;
+* the running-config read from the device;
+* for host-KVM vJunos, read-only SSH `show` commands to its fxp0.
+
+That covers interface names and IPs, subnets on cables, link up/down, OSPF / BGP / HSRP / VRRP / STP / VLAN /
+trunk / EtherChannel chips, routes, the blue default path, router-id, AS numbers and the accounts *On the
+device*.
+
+Nothing is taken from the lab YAML, the CML day-0 / startup config, templates, CML's intended interface data,
+CML's L3 address snooping, or a guess. When a device has not been read (stopped, not probed yet, probe failed,
+no collector), it says **not read yet** / **state unknown**. When the last read is old, it shows its age
+(*Live data: stale · last read 3 min ago*). An interface pill drawn **dashed** is CML's wiring label that the
+device has not confirmed yet.
+
+These are not device data, and they are labelled as such:
+* CML's / libvirt's runtime state (**CML: Booted**, **VM: Running**, link started);
+* your layout;
+* the management IP and logins LabDesk saved (**saved in LabDesk**);
+* the defaults LabDesk will *try* (**LabDesk will try: admin / cisco**, *default, not read from device*).
+
+The full field-by-field audit is in [`docs/live-data-audit.md`](docs/live-data-audit.md).
+
 ### Reading the canvas (live protocol view)
 
 * **Links** - green = up on both ends. **Down is never colour-only**: every cable end carries a shape -
@@ -185,10 +211,12 @@ platform, state, management IP, how fresh the data is, up to 8 interfaces (addre
 `+N more`), the protocols LabDesk knows (OSPF neighbours, BGP peers, HSRP / VRRP role + VIP, default route,
 spanning-tree root / blocked ports, VLANs, EtherChannel `Po1 LACP 2/2 up`) and two login blocks:
 
-* **Login** - the LabDesk login you saved (`admin / Lab-R1-pass`, `enable cisco`), or *no credentials saved*.
+* **Login** - what LabDesk has **saved** (`Saved login  admin / Lab-R1-pass`, `enable cisco`) or the default it **will
+  try** (`LabDesk will try  admin / cisco`, *default, not read from device*), or *no credentials saved*. It is never
+  something the device reported.
 * **On the device** - the accounts configured on the device itself, read from its running-config: `username`
   lines, `enable secret` / `enable password`, `line con` / `line vty` passwords (Junos `root` / login users and
-  FortiOS admins are parsed too, for when the host-KVM collector is wired). An encrypted one says **encrypted**
+  FortiOS admins are parsed too; vJunos accounts are read live over SSH). An encrypted one says **encrypted**
   and the scheme (`type 5 MD5`, `type 7` *weak, reversible*, `type 8 PBKDF2-SHA-256`, `type 9 scrypt`; Junos
   `$6 SHA-512`; FortiOS `ENC`) - the hash itself is never shown or kept. A plain-text one (`password 0 x`,
   `enable password x`) is shown in clear, marked **plain text, not encrypted**. `service password-encryption`
@@ -211,8 +239,8 @@ build) and, on lab open, for every existing node that has no entry yet - it neve
 a field you set as the shared default (`DEFAULT_*`) stays yours. The probes use these values, so login, `enable`
 and the *On the device* accounts work out of the box. Where it shows:
 
-* **Hover card ▸ Login**: `First login  admin / cisco` + `enable  cisco`, tagged **default** (first-login value)
-  or **saved** (you edited it), with a one-line hint (e.g. *the console has no login: press Enter, then 'enable'*).
+* **Hover card ▸ Login**: `LabDesk will try  admin / cisco` + `enable  cisco`, tagged **default** (first-login
+  value, *not read from device*) or `Saved login …` tagged **saved** (you edited it), with a one-line hint (e.g. *the console has no login: press Enter, then 'enable'*).
   *View ▸ Show passwords on hover* masks it like every other password.
 * **Inspector ▸ Overview**: a *Login* row (never the password) and *User* / *Password* copy buttons.
 * **Right-click**: *Copy login* (user name), *Copy password*.
@@ -268,6 +296,13 @@ writes `qa/first-login/*.png` (a password from `cml-credentials.env` is masked i
   link in LabDesk keeps the `labdesk-*` network while another VM (e.g. `cml`) still has a NIC on it.
 * New NICs usually appear in the guest only after a VM reboot.
 * These devices are stored per lab in `~/.config/labdesk/state.json`, along with the management IPs.
+* **Live collector (vJunos)**: when a vJunos has a management IP (`state.json` mgmt or found by virsh), LabDesk
+  reads it every 15 s over SSH. Each burst is about 1.5 s of read-only `show` commands; anything else is refused
+  before connecting: `show interfaces terse`, `show bgp summary` (all instances), `show route 0.0.0.0/0 exact`
+  (inet.0 and VRF tables, not mgmt_junos), `show ospf neighbor`, the ge-* MACs (they name the cable ends), and
+  every 60 s the local AS and login accounts. The login comes from device-creds `<LABEL>_USERNAME/_PASSWORD`,
+  else `JUNOS_ADMIN_USER/_PASS` from `cml-credentials.env`. FortiOS has no live collector yet, so it shows **not
+  read**, and its cables show **state unknown**, never "up".
 
 ## Internet cloud (always answers 8.8.8.8 / 1.1.1.1)
 

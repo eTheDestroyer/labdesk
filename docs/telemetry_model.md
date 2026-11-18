@@ -14,6 +14,11 @@ LabController.poll()  (TaskRunner thread, every 3 s; light API polling per D7)
         └─ TelemetryView  →  LabView.telemetry  (+ promoted fields on NodeView / LinkView)
 ```
 
+**Live-only rule.** Every device fact in this model comes from live device output: CLI probe bursts, the
+device's own console transcript, the running-config read from the device, and read-only Junos SSH `show`
+commands. Nothing comes from the lab YAML, CML day-0 configs, CML interface data or CML L3 snooping. Missing
+data stays missing: the UI shows "not read yet" / UNKNOWN, never a substitute. See `docs/live-data-audit.md`.
+
 ## 1. Where the UI gets it
 
 `LabView` (from `controller.poll()`) carries everything:
@@ -51,6 +56,7 @@ LabController.poll()  (TaskRunner thread, every 3 s; light API polling per D7)
 | `default_hop` | `RouteHop \| None` | not None means paint this link BLUE (`#2F7BFF`). Direction is in `tele.default_direction` (`'a2b'`/`'b2a'`) |
 | `traffic` | `LinkTraffic \| None` | only while the Traffic layer is on or the link is selected |
 | `condition` | `LinkCondition \| None` | show `⌁` + `condition.label` when `condition.enabled` |
+| `live_a`, `live_b` | bool | the end's interface name was seen in the device's own output. False = CML's port label (or LabDesk's KVM NIC name) only: the pill is drawn dashed. KVM cable ends take the device's name for the interface whose MAC matches the VM NIC |
 
 Additional per-link fields on `tele` that LinkView does not promote:
 
@@ -65,7 +71,7 @@ Additional per-link fields on `tele` that LinkView does not promote:
 | enum | values |
 |---|---|
 | `LinkKind` (D4 priority order) | `LAB_OFF, NODE_OFF, CABLE_PULLED, LINK_NOT_STARTED, UNKNOWN, ADMIN_DOWN, LINK_DOWN, PROTOCOL_DOWN, UP` |
-| `LinkSide` | `UP, ADMIN_DOWN, DOWN, PROTO_DOWN, NOT_APPLICABLE` (switch / connector / unprobed end), `UNKNOWN` (no fresh CLI) |
+| `LinkSide` | `UP, ADMIN_DOWN, DOWN, PROTO_DOWN, NOT_APPLICABLE` (unmanaged switch / connector / host end), `UNKNOWN` (no fresh CLI, or a router LabDesk cannot read: status text `'not read'`) |
 | `Health` | `OK, PARTIAL, DOWN, UNKNOWN` |
 | `P2PSource` | `OSPF_OPER, CONFIG, JUNOS_PTTOPT, FORTIOS_P2P, MEDIUM` (`facts.OPER_P2P_SOURCES` = all except CONFIG) |
 | `PathState` | `EGRESS, VERIFIED_INTERNET, BROKEN_AT, NO_EGRESS, NONE, BLACKHOLE, UNRESOLVED, LOOP, STALE, UNKNOWN` |
@@ -175,7 +181,7 @@ mac_counts, mac_table, cdp, etherchannel, routing`, each a `Fact`), merged by `f
 | `console_busy` | 'console busy' (someone is in config mode, at a pager or at a prompt). Nothing was typed |
 | `needs_credentials` | 'needs login / enable secret' |
 | `error` | 'probe error' |
-| `unverified` | 'beta' (host-KVM router, collector not wired in this release) |
+| `unverified` | 'not read' (host-KVM router without a live collector: FortiOS, or a vJunos with no management IP) |
 | `limited` | 'limited' (FortiOS unlicensed, only when `get system status` confirms it) |
 | `no_mgmt` | 'no mgmt' (KVM) |
 | `off`, `disabled`, `not_probed` | no chip |
@@ -295,10 +301,10 @@ port's subinterfaces (`Gi0/0.10`, `Gi0/0.20`) belong to its cable.
 | `label` | `'10.0.12.0/30'`, `'192.168.10.0/24 +1'`, `'⚠ mismatch 10.0.13.0/30 ≠ 10.0.31.0/30'`, `'dhcp 192.168.255.x/24'`, `'unnumbered'` (the UI prefixes `½ ` for `one_sided`) |
 | `compact` | zoomed-out form: `'…12.0/30'`, `'192.168.10/24'`, `'⚠ mismatch'`, `'dhcp'` |
 | `host_a`, `host_b` | `'.1'` / `'.2'` (`facts.host_part`; `''` for /32; `'.1…'` when subinterfaces differ) |
-| `a`, `b` | `EndAddr(node, label, iface, l3, addrs=[(iface short, ip, plen, secondary)], method, unnumbered, sources, ts, live_ts, api_ips, role)` |
+| `a`, `b` | `EndAddr(node, label, iface, l3, addrs=[(iface short, ip, plen, secondary)], method, unnumbered, sources, ts, live_ts, role)` |
 | `configured_side` | `'a'`/`'b'` for `one_sided` |
 | `tooltip`, `explain` | multi-line plain text (first line = headline, last line = source + age); one sentence for the Inspector |
-| `source`, `age_s`, `stale` | `'cli'`, `'console'`, `'cli+console'`, `'api'`; age of the oldest address read; stale after 4 × `FRESH_S` without any read (drawn faded) |
+| `source`, `age_s`, `stale` | `'cli'`, `'console'`, `'config'`, `'cli+console'` (CML's `layer3_addresses` snooping is not device output and is not read); age of the oldest address read; stale after 4 × `FRESH_S` without any read (drawn faded) |
 
 `lf.subnet` / `subnet_hint` / `addressing_mismatch` are derived from it when it exists.
 
@@ -309,7 +315,6 @@ port's subinterfaces (`Gi0/0.10`, `Gi0/0.20`) belong to its cable.
 | `cli` | `parsers.ios.IP_ADDR_CMD` = `show ip interface \| include line protocol\|Internet address\|Secondary address\|unnumbered\|determined by\|negotiated\|processing disabled` (FAST tier, routers and IOSvL2; ~1.5 s, works at `>`) -> `NodeFacts.addrs`. Falls back to `show ip interface brief` + OSPF brief / connected prefix lengths | every FAST burst (15 s) |
 | `console` | **console tap**: `GET /labs/{lab}/nodes/{node}/consoles/0/log?lines=200` (CML's server-side console transcript, ~17 ms, never touches the session), parsed by `parsers.console_tap` (prompt-tracked `interface …` context, `ip address A M [secondary]`, `no ip address [...]`, `ip address dhcp`, `ip unnumbered X`, `default`/`no interface X`; Tab redraws, `?`, backspaces handled; a command followed by an IOS `%` error is ignored; a command on the last log line is re-read after 0.4 s) -> `NodeFacts.addr_overrides` | every `TAP_S` = 1 s while the node's console is open (daemon thread `labdesk-console-tap`), once more right after it closes, and on Refresh |
 | `config` | the redacted running-config (`ConfigFacts.addrs`, incl. secondaries / unnumbered) - only fills a missing prefix length | CONFIG tier |
-| `api` | `GET /labs/{lab}/layer3_addresses` | full-snapshot cadence, **only when the lab has a System-Bridge connector**: on CML 2.10.1 it reports only DHCP leases snooped on L2 external connectors (verified: empty for every statically addressed interface) |
 
 `effective_addrs` merges per interface by read time: a console override wins only while it is newer than the
 last CLI address read, and `prune_overrides` drops it as soon as a later CLI read exists (a burst that started
@@ -688,11 +693,26 @@ give the provisioning defaults:
 - vJunos: nic0 is fxp0, and nic N+1 is ge-0/0/N.
 - FortiOS: nic N-1 is portN.
 
-**Not live yet:** the KVM collector is not wired. KVM routers appear with
-`collector_state = unverified` (show 'beta'). Their link ends are `NOT_APPLICABLE`, so a
-KVM link shows `UP` (both VMs running) without guest oper state. With zero KVM devices, no
-virsh call, timer or UI element exists. `tests/test_telemetry_engine.py::test_no_kvm_means_no_virsh`
-enforces this.
+**vJunos: live (read-only SSH).** A vJunos with a management IP (`state.json` mgmt, else `kvm.mgmt_ip`;
+the controller passes `TelemetryEngine.kvm_mgmt`) is `probed` and read by `TelemetryEngine._junos_burst`.
+It uses `probe/junos_ssh.run_junos_burst`: one paramiko connection per burst, one `exec` per command,
+`check_read_only` refuses anything that is not a plain `show`, and the password never appears on a command
+line. The commands are `telemetry.JUNOS_LIVE`:
+* FAST, 15 s: `show interfaces terse | display json`, `show bgp summary | display json` (all instances; prefixes
+  are counted on any `*.inet.0`), `show route 0.0.0.0/0 exact | display json` (inet.0 first, then VRF tables;
+  never `mgmt_junos`), `show ospf neighbor | display json`, and `show interfaces ge-* | match "Physical
+  interface|Current address"`. That last one gives `NodeFacts.iface_macs`, which renames the KVM cable end to
+  the device's own interface for the VM NIC's MAC (`TopoLink.mac_a/mac_b`).
+* SLOW, 60 s: `show configuration routing-options autonomous-system | display json`
+  (`NodeFacts.junos_local_as` -> `bgp.local_as`) and the account commands.
+
+The login is device-creds `<LABEL>_USERNAME/_PASSWORD`, else `JUNOS_ADMIN_*` from cml-credentials.env.
+Measured on the PE Hub-Spoke lab: about 1.5 s per burst.
+
+**FortiOS / a vJunos without a management IP: not read.** These show `collector_state = unverified` ('not
+read'). Their router ends are `UNKNOWN`, so the cable shows `UNKNOWN` / 'not read' and never "up because the
+VM runs". With zero KVM devices, no virsh call, timer or UI element exists
+(`tests/test_telemetry_engine.py::test_no_kvm_means_no_virsh`).
 
 ## 9. Pure helpers (for tests or the Inspector)
 
