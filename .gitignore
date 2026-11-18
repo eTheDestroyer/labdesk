@@ -5,3 +5,6 @@ __pycache__/
 qa/
 *.env
 *.log
+build/
+dist/
+BUILD_INFO
