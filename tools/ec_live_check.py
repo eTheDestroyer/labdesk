@@ -99,7 +99,7 @@ def node_key(label: str) -> str:
 
 def cli(label: str, cmds: list[str], cfg: list[str] | None = None) -> dict:
     """Run show commands (and optionally config lines) on a switch console, under the engine's per-node lock."""
-    from con import Con
+    from console import Con
     eng = WIN.ctl.telemetry
     lock = eng._node_lock(node_key(label))
     out = {}

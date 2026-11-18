@@ -7,7 +7,7 @@ from pathlib import Path
 import pexpect
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from con import ANSI, console_uuid, launchers  # noqa: E402
+from console import ANSI, console_uuid, launchers  # noqa: E402
 
 
 def run(name, cmds):

@@ -10,7 +10,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[2]))
-from con import Con, LAB  # noqa: E402
+from console import Con, LAB  # noqa: E402
 from showcase_replay import slug  # noqa: E402
 
 from labdesk_app.cml_api import CMLClient  # noqa: E402

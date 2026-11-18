@@ -1,7 +1,7 @@
 """Interactive console helper for the Switching Lab (capture + live checks; not used by the app).
 
-    .venv/bin/python tests/fixtures/switching/_tools/con.py SW2 [--user] "show spanning-tree" ...
-    .venv/bin/python tests/fixtures/switching/_tools/con.py SW1 --cfg "interface Gi0/1" "shutdown"
+    .venv/bin/python tests/fixtures/switching/_tools/console.py SW2 [--user] "show spanning-tree" ...
+    .venv/bin/python tests/fixtures/switching/_tools/console.py SW1 --cfg "interface Gi0/1" "shutdown"
 
 Goes through the CML terminal server exactly like LabDesk's probes (ssh ... connect <uuid>).
 --user stays at '>' (checks what works for the probes); default enables (secret 'cisco').

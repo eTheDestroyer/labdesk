@@ -62,7 +62,7 @@ ENGINE = None
 def cli(label, cmds=None, cfg=None):
     """Console session that never interleaves with a LabDesk probe burst: it holds the engine's
     per-node console lock (the same lock the bursts take) for the whole session."""
-    from con import Con
+    from console import Con
     lock = None
     if ENGINE is not None and ENGINE.topo is not None:
         nk = next(k for k, n in ENGINE.topo.nodes.items() if n.label == label)
@@ -76,7 +76,7 @@ def cli(label, cmds=None, cfg=None):
 
 
 def _cli(label, cmds=None, cfg=None):
-    from con import Con
+    from console import Con
     c = Con(label, enable=cfg is not None)
     try:
         if cfg:

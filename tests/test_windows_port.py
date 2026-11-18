@@ -410,3 +410,20 @@ def test_connection_dialog_vmx_field_on_windows(qapp, tmp_path, windows):
     d.vmx.setText(r"C:\VMs\CML\cml.vmx")
     d._save()
     assert st.value(VMX_KEY) == r"C:\VMs\CML\cml.vmx"
+
+
+def test_no_tracked_file_has_a_name_windows_cannot_check_out():
+    """CON, PRN, AUX, NUL, COM1-9, LPT1-9 (with any extension), names ending in a dot or blank and the
+    characters <>:"|?* cannot exist on Windows: one such file makes 'git clone' fail there."""
+    import re
+    import shutil
+    import subprocess
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    if not shutil.which("git") or not (root / ".git").exists():
+        pytest.skip("not a git checkout")
+    files = subprocess.run(["git", "ls-files"], cwd=root, capture_output=True, text=True, check=True).stdout.split("\n")
+    reserved = re.compile(r"^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$", re.I)
+    bad = [f for f in files if f and any(reserved.match(part) or re.search(r'[<>:"|?*]', part) or part.endswith((".", " "))
+                                         for part in f.split("/"))]
+    assert not bad, f"rename these (invalid on Windows): {bad}"

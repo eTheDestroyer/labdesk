@@ -6,7 +6,7 @@ STATE names the lab situation (healthy, partial, fail_on, fail_proto, ...); file
 ``<STATE>__<node>__<command slug>.txt`` plus an entry in ``manifest.json`` (time, line count).  The command
 list is the probe set (telemetry.SW_FAST + SW_SLOW + EC set) plus the heavy show commands the probes never run
 (etherchannel detail, interfaces port-channel N, running-config section).  Goes through the CML terminal
-server like LabDesk's probes (tests/fixtures/switching/_tools/con.py).
+server like LabDesk's probes (tests/fixtures/switching/_tools/console.py).
 """
 import json
 import sys
@@ -18,7 +18,7 @@ ROOT = HERE.parents[3]
 sys.path.insert(0, str(ROOT / "tests" / "fixtures" / "switching" / "_tools"))
 sys.path.insert(0, str(ROOT / "tests"))
 sys.path.insert(0, str(ROOT))
-from con import Con  # noqa: E402
+from console import Con  # noqa: E402
 from showcase_replay import slug  # noqa: E402
 
 OUT = HERE.parent
