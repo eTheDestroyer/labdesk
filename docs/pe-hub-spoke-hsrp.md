@@ -268,6 +268,15 @@ stays up, so this time the **IP SLA** (track 1) is what notices it (~10-15 s).
 
 ## Verified results (2026-11-18)
 
+**After the switch to redistribute-only BGP (`verification.txt`)** - all passed: HUB/R1/R2 `router bgp`
+has `redistribute connected route-map RM-CONNECTED-TO-BGP` and no `network`; every BGP path ends in `?`;
+PE 3/3 `Establ`, 172.16.0.0/24 best via R1 (`65200 ?`, R2 `65200 65200 65200 ?`), 192.168.20.0/24 best
+via R2; the PE receives only the LANs (`... all`: no /30, nothing hidden), `show ip bgp 10.0.0.0 255.0.0.0
+longer-prefixes` empty on all three; PC-DATA / PC-PHONE 0% loss, first hop 172.16.0.2 / 192.168.20.3;
+filter test A (10.99.99.99/32 redistributed on R1: "Not advertised to any peer") and B (PE "Rejected by
+import policy", HUB never had it); failover R1: R2 Active grp 10 after 22 s, R1 back after 51 s;
+failover R2 (PE side): R1 Active grp 20 after 41 s, R2 back after 46 s.
+
 **After isolating the PE links (afternoon, `verification-isolated-links.txt`)** - everything below passed again:
 PE 3/3 `Establ`; HUB only the two branch LANs; R1 Active grp 10 / R2 Active grp 20, all tracks Up;
 PC-DATA / PC-PHONE ping 192.168.10.1 0% loss, first hop 172.16.0.2 / 192.168.20.3; filter test A
