@@ -155,6 +155,12 @@ class Palette(QListWidget):
                 it.setForeground(T.tokens().N(11))
                 it.setFont(T.type("caption", upper=True))
 
+    def repopulate(self):
+        """Rebuild the list (a feature became available, e.g. the LabDesk VMs arrived on Windows)."""
+        self.clear()
+        self._populate()
+        self.set_rail(self.rail)
+
     def _populate(self):
         self._section("Cisco CML routers / hosts")
         for d in DEVICE_TYPES:
@@ -258,6 +264,7 @@ class MainWindow(QMainWindow):
         self._pending_moves: dict[str, float] = {}
         self._cml_ok: bool | None = None
         self._cml_starting = False
+        self._vm_fetching = False
         self._cml_version = ""
         self._last_states: dict[str, str] = {}
         self._busy_ops = 0
@@ -513,6 +520,11 @@ class MainWindow(QMainWindow):
         self.a_connection = self._act("CML connection…", self.edit_connection, None,
                                       "CML address, username and password", icon="network-connect")
         m.addAction(self.a_connection)
+        if plat.IS_WINDOWS:
+            self.a_fetch_vms = self._act("Download LabDesk VMs…", lambda _c=False: self.download_vms(), None,
+                                         "Download CML, vJunos, FortiOS and the Internet cloud (VMware) from the "
+                                         "private GitHub repository; resumes where it stopped", icon="go-down")
+            m.addAction(self.a_fetch_vms)
         da = self._act("Delete lab…", self.delete_lab)
         da.setIcon(icons.icon("edit-delete", "danger"))
         m.addAction(da)
@@ -1015,9 +1027,12 @@ class MainWindow(QMainWindow):
             self.cml_label.setToolTip("The CML controller does not answer")
             self.counter.set_state("CML offline", "down", "down")
         self.start_cml_btn.setVisible(not ok)
-        if not ok and first and vmware.active() and as_bool(self.settings.value("cml/autostart", True), True):
-            # Windows + LabDesk-VMs bundle: click and play - LabDesk starts (and on the first run sets up) CML
-            QTimer.singleShot(0, lambda: self.start_cml_vm(auto=True))
+        if not ok and first and plat.IS_WINDOWS and as_bool(self.settings.value("cml/autostart", True), True):
+            if vmware.active():
+                # Windows + LabDesk-VMs bundle: click and play - LabDesk starts (first run: sets up) CML
+                QTimer.singleShot(0, lambda: self.start_cml_vm(auto=True))
+            elif vmware.find_bundle() is None:
+                QTimer.singleShot(0, lambda: self.download_vms(auto=True))
         if not self.ctl.lab_id:
             if (not ok) != self.empty.offline or first:
                 self.empty.set_offline(not ok, config.CML_HOST)
@@ -1478,6 +1493,63 @@ class MainWindow(QMainWindow):
             return None
         return [vmrun, "-T", "ws", "start", vmx, "nogui"]
 
+    def _thread_log(self):
+        """A log function a worker thread may call (lines are written by the GUI thread)."""
+        bridge = _Bridge(self)
+        lines: list[str] = []
+
+        def flush():
+            while lines:
+                self.log(lines.pop(0))
+        bridge.changed.connect(flush)
+
+        def note(msg: str):
+            lines.append(msg)
+            bridge.changed.emit()
+        return note
+
+    def download_vms(self, auto: bool = False):
+        """Windows: fetch the LabDesk-VMs bundle from the private GitHub repo (resumable), then set up and
+        start CML - the 'click and play' first start when the folder was not copied by hand."""
+        from .. import vmfetch
+        if self._vm_fetching:
+            return
+        if vmware.find_bundle(refresh=True) is not None and not auto:
+            info(self, "LabDesk VMs", f"The LabDesk VMs are already on this PC ({vmware.find_bundle().root}).")
+            return
+        if not confirm(self, "LabDesk VMs", "Download the LabDesk VMs now?", "Download",
+                       destructive=False, cancel="Not now",
+                       detail="CML with its router images, vJunos, FortiOS and the Internet cloud for VMware "
+                              f"Workstation, about 16 GB, from the private GitHub repository {vmfetch.repo()}. "
+                              "Git may ask you to sign in to GitHub once. The download continues where it "
+                              "stopped if LabDesk is closed; afterwards LabDesk sets everything up and starts CML."):
+            if auto and config.needs_setup():
+                self.edit_connection(first_run=True)
+            return
+        self._vm_fetching = True
+        note = self._thread_log()
+        self.log("looking for the LabDesk VMs on GitHub…")
+
+        def work():
+            remote = vmfetch.find_remote()
+            return vmfetch.fetch(log=note, remote=remote, stop=lambda: getattr(self, "_closing", False))
+
+        def done(root):
+            self._vm_fetching = False
+            vmware.activate()
+            self.palette_list.repopulate()
+            self.log(f"LabDesk VMs ready ({root})", "ok")
+            if config.needs_setup():
+                info(self, "CML login", "One more thing: the CML password (the folder from GitHub does not carry "
+                     "it). Type the CML admin password, and the sysadmin password for the Internet cloud.")
+                self.edit_connection(first_run=True)
+            self.start_cml_vm(auto=True)
+
+        def fail(e):
+            self._vm_fetching = False
+            self.on_error("download LabDesk VMs", True)(e)
+        self.runner.submit(work, on_done=done, on_error=fail)
+
     def start_cml_vm(self, auto: bool = False):
         """Start the CML VM and wait for its API.  Windows with the LabDesk-VMs bundle: VMware, set up on
         the first start (``auto``: LabDesk does this by itself at launch - click and play)."""
@@ -1493,17 +1565,7 @@ class MainWindow(QMainWindow):
         self.start_cml_btn.setEnabled(False)
         how = "VMware Workstation" if bundled else ("vmrun start" if start_cmd else "virsh start cml")
         self.log(("CML is offline - " if auto else "") + f"starting the CML VM ({how}) and waiting for the API…")
-        logq = _Bridge()
-        lines: list[str] = []
-
-        def flush():
-            while lines:
-                self.log(lines.pop(0))
-        logq.changed.connect(flush)
-
-        def note(msg: str):
-            lines.append(msg)
-            logq.changed.emit()
+        note = self._thread_log()
 
         def work():
             if start_cmd:

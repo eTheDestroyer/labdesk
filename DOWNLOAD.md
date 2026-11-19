@@ -165,10 +165,10 @@ The login is saved in `%APPDATA%\LabDesk\cml-credentials.env`, outside the git f
 
 ### Click and play: the VMs (CML, vJunos, FortiOS, Internet cloud)
 
-Build the **LabDesk-VMs** folder once on the Linux PC (`.venv/bin/python tools/make_windows_bundle.py`), copy it
-into `C:\Users\<you>\labdesk\LabDesk-VMs` and start `labdesk.bat`: LabDesk installs / uses VMware Workstation,
-creates its network (one administrator prompt) and starts CML by itself - no connection dialog.
-Details: [INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows).
+The first start offers **Download the LabDesk VMs now?** (16 GB from the private repository
+`eTheDestroyer/labdesk-vms`, with the GitHub login Git already has). Then LabDesk asks for the CML passwords once,
+sets up VMware Workstation's network (one administrator prompt) and starts CML by itself.
+Details and requirements (VMware Workstation, Hyper-V off): [INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows).
 
 ---
 

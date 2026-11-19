@@ -28,9 +28,9 @@ right-click management, light/dark/KDE themes, a 300+ test suite built on real c
 
 **Download with git (Linux and Windows):** [DOWNLOAD.md](DOWNLOAD.md) - clone, install, open, step by step.
 
-**Windows 10/11:** click and play. Copy the **LabDesk-VMs** folder (built once on the Linux PC with
-`tools/make_windows_bundle.py`) next to LabDesk and start it: LabDesk runs CML, vJunos, FortiOS and the Internet
-cloud in VMware Workstation, sets it up on the first start and needs no connection dialog. Consoles open in the
+**Windows 10/11:** click and play. LabDesk downloads its VMs (CML, vJunos, FortiOS, Internet cloud; private repo
+`eTheDestroyer/labdesk-vms`, published from the Linux PC with `tools/make_windows_bundle.py` +
+`tools/publish_vm_bundle.py`), runs them in VMware Workstation and sets everything up on the first start. Consoles open in the
 LabDesk console window ([INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows)).
 
 ### Quick start
@@ -576,6 +576,7 @@ labdesk_app/
   plat.py               platform layer: Linux vs Windows paths, tools (ssh.exe, wt.exe, vmrun) and Linux-only features
   vmware.py             Windows: VMware Workstation backend (LabDesk-VMs bundle, vmx files, vmrun, VMnet setup)
   cockpit.py            commands inside the CML VM via Cockpit (Windows: the Internet cloud lives there)
+  vmfetch.py            Windows: download the LabDesk-VMs bundle from the private GitHub release (resume, SHA-256)
   streams.py            in-process console streams (CML via paramiko, VMware serial pipes) for Windows
   tabexec.py, askpass.py  Konsole tab bootstrap, SSH_ASKPASS helper
   ui/console/           the LabDesk console window (Linux): palette, screen (pyte + scrollback), keymap, lens (IOS

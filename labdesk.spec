@@ -42,7 +42,7 @@ a = Analysis(
     # pyte / wcwidth: the LabDesk console window (Windows too); websocket: CML Cockpit (Internet cloud in the CML VM)
     hiddenimports=["paramiko", "psutil", "yaml", "PySide6.QtSvg", "pyte", "wcwidth", "websocket",
                    "labdesk_app.ui.console.window", "labdesk_app.ui.console.stream_session",
-                   "labdesk_app.vmware", "labdesk_app.streams", "labdesk_app.cockpit"],
+                   "labdesk_app.vmware", "labdesk_app.vmfetch", "labdesk_app.streams", "labdesk_app.cockpit"],
     hookspath=[],
     runtime_hooks=[],
     excludes=excludes,

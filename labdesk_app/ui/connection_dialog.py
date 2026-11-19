@@ -74,7 +74,16 @@ class CmlConnectionDialog(LabDeskDialog):
         if plat.IS_WINDOWS:
             from .. import vmware
             bundle = vmware.find_bundle()
+        self.sysadmin = None
         if bundle is not None:
+            self._has_sys = bool(cur.get("CML_SYSADMIN_PASS"))
+            self.sysadmin = secret_field(placeholder="saved - leave empty to keep it" if self._has_sys
+                                         else "CML sysadmin password (Internet cloud)")
+            self.sysadmin.setToolTip("The CML 'sysadmin' password (Cockpit, port 9090): LabDesk reads and sets "
+                                     "the Internet cloud inside the CML VM with it")
+            form.addRow("Sysadmin password", self.sysadmin)
+            if not self.host.text():
+                self.host.setText(bundle.manifest.get("cml", {}).get("ip") or "192.168.122.60")
             note = QLabel(f"CML runs on this PC in VMware Workstation, from {bundle.root}. LabDesk starts it "
                           "by itself; the login above came with that folder.")
             note.setWordWrap(True)
@@ -233,6 +242,9 @@ class CmlConnectionDialog(LabDeskDialog):
         updates = {"CML_HOST": host, "CML_ADMIN_USER": user}
         if pw:
             updates["CML_ADMIN_PASS"] = pw
+        if self.sysadmin is not None and self.sysadmin.text():
+            updates["CML_SYSADMIN_PASS"] = self.sysadmin.text()
+            updates.setdefault("CML_SYSADMIN_USER", "sysadmin")
         try:
             config.update_env_file(updates, self.cred_file)
         except OSError as e:

@@ -16,53 +16,55 @@ On Windows, LabDesk runs **everything on the PC itself**: CML (with its router i
 Fortinet VMs and the Internet cloud run in **VMware Workstation**, set up and started by LabDesk. You start
 LabDesk; it does the rest (click and play).
 
-KVM exists only on Linux, so the VMs come as a ready-made folder, **LabDesk-VMs**, that you build once on the
-Linux PC and copy to Windows. It is about 16 GB and holds licensed images and your CML password, so it is not in
-git (`.gitignore` excludes it). Copy it only to your own PCs.
+KVM exists only on Linux, so the VMs come as a ready-made folder, **LabDesk-VMs** (about 16 GB: CML with its
+router images, vJunos, FortiOS, the Internet cloud). It lives in the **private** GitHub repository
+`eTheDestroyer/labdesk-vms` (licensed Cisco / Juniper / Fortinet images: never in the public LabDesk repository),
+and LabDesk downloads it by itself.
 
 ### What you need
 
 | You need | Why |
 |---|---|
-| **Windows 10 or 11** (64-bit), **16 GB RAM** recommended (CML gets 8 GB) | |
-| **VMware Workstation Pro** (free for personal use) | runs the VMs. LabDesk installs it silently when its installer is in `LabDesk-VMs\installer\` |
-| **The LabDesk-VMs folder** (step 1) | CML + router images, vJunos, FortiOS, Internet cloud, your CML login |
+| **Windows 10 or 11** (64-bit), **16 GB RAM** recommended (CML gets 8 GB), **40 GB free disk** | |
+| **Git for Windows**, signed in to a GitHub account that can read `eTheDestroyer/labdesk-vms` | LabDesk downloads the VMs with Git's GitHub login (DOWNLOAD.md step 1-2) |
+| **VMware Workstation Pro** (free for personal use, Broadcom download portal) | runs the VMs |
 | **Virtualization on, Hyper-V off** | CML runs routers inside its VM (nested virtualization). VMware cannot offer that while Windows' Hyper-V is on: turn off *Windows Security → Device security → Core isolation → Memory integrity* and run `bcdedit /set hypervisorlaunchtype off` as administrator, then restart |
 
-### Step 1: build the LabDesk-VMs folder (on the Linux PC, once)
+### Start LabDesk - click and play
 
-```bash
-cd ~/labdesk                         # (or ~/cml-labs/labdesk)
-.venv/bin/python tools/make_windows_bundle.py
+```powershell
+cd $HOME\labdesk
+git pull
+.\install.bat
+.\labdesk.bat
 ```
 
-It prepares the CML VM for VMware (harmless under KVM), shuts CML down for about 5 minutes to copy its disk,
-starts it again (start your running labs again afterwards), converts vJunos and FortiOS from `~/Downloads`, and
-writes `~/LabDesk-VMs`. Put the VMware installer (`VMware-workstation-full-*.exe`, from Broadcom's download
-portal) into `~/Downloads` first if you want LabDesk to install VMware for you.
+The first time LabDesk:
 
-### Step 2: copy it next to LabDesk on Windows
-
-Copy the whole `LabDesk-VMs` folder (USB disk, your own cloud drive, network share) to **one** of:
-
-* inside the git folder: `C:\Users\<you>\labdesk\LabDesk-VMs` (git ignores it), or
-* next to `LabDesk.exe`, or `C:\Users\<you>\LabDesk-VMs`.
-
-Use a local disk (SSD), not a USB stick: the VMs run from this folder.
-
-### Step 3: start LabDesk
-
-Double-click **`labdesk.bat`** (git) or **`LabDesk.exe`**. The first time LabDesk:
-
-1. takes the CML login from the folder - **no connection dialog**;
-2. installs VMware Workstation if it is missing and the installer is in the folder;
+1. asks **Download the LabDesk VMs now?** → **Download**. Git may show its GitHub sign-in window once. The event
+   log shows the progress (16 GB; it continues where it stopped if LabDesk is closed - start it again, or
+   **Lab → Download LabDesk VMs…**). The VMs go to `labdesk\LabDesk-VMs` (git ignores that folder);
+2. asks for the **CML password** and the **CML sysadmin password** (they are not in the download), once;
 3. creates the LabDesk network (VMnet, 192.168.122.0/24, CML at 192.168.122.60) - **Windows asks once for
    administrator rights**;
-4. starts CML in VMware and waits for it (2 to 4 minutes; the event log shows each step).
+4. starts CML in VMware and waits for it (2 to 4 minutes).
 
 Later starts: LabDesk just starts CML when it is off. The status bar shows **CML 2.x · 192.168.122.60** when ready.
 
-> **"Windows protected your PC"** (LabDesk.exe): LabDesk is not code-signed. Click **More info → Run anyway**.
+> **Copying instead of downloading:** a `LabDesk-VMs` folder copied from the Linux PC (USB disk) into
+> `labdesk\LabDesk-VMs`, next to `LabDesk.exe` or `C:\Users\<you>\LabDesk-VMs` works too, and carries the CML
+> login (no password question).
+
+### Updating the VMs (on the Linux PC)
+
+```bash
+cd ~/cml-labs/labdesk
+.venv/bin/python tools/make_windows_bundle.py      # rebuilds ~/LabDesk-VMs (CML is down ~5 min)
+.venv/bin/python tools/publish_vm_bundle.py        # uploads it to the private repo (resumable)
+```
+
+`publish_vm_bundle.py` refuses a public repository, never uploads `cml-credentials.env`, and cuts every file into
+parts under GitHub's 2 GB limit; LabDesk checks every part's SHA-256 while downloading.
 
 ### What works on Windows
 
@@ -83,11 +85,12 @@ Everything that works on Linux:
 
 | What you see | What to do |
 |---|---|
-| "VMware Workstation is not installed" | Install VMware Workstation Pro, or put its installer in `LabDesk-VMs\installer\`, then start LabDesk again |
+| "VMware Workstation is not installed" | Install VMware Workstation Pro (or put its installer in `LabDesk-VMs\installer\`), then start LabDesk again |
 | "…nested virtualization… Hyper-V…" | Turn off Memory integrity and Hyper-V (see *What you need*), restart Windows |
 | "the administrator prompt was cancelled" | Start LabDesk again and click **Yes** in the Windows prompt (needed once, for the VMware network) |
 | **CML offline** for more than 5 minutes | Open VMware Workstation → *LabDesk CML* to see its screen. LabDesk also follows CML if VMware's DHCP gave it another address |
-| "no LabDesk-VMs folder found" | Copy the folder to one of the places in step 2 |
+| "no GitHub login on this PC" / "GitHub refused the login" | Install Git for Windows and sign in to GitHub with an account that can read `eTheDestroyer/labdesk-vms` (or set `GH_TOKEN`) |
+| "not enough disk space" | Free about 40 GB on the drive of the labdesk folder, then **Lab → Download LabDesk VMs…** |
 | "the VM is open in the VMware Workstation window" | Close that VM's tab in VMware Workstation (LabDesk drives the VMs itself) |
 | LabDesk closes right after starting | Send `%LOCALAPPDATA%\LabDesk\cache\labdesk.log` with your bug report |
 

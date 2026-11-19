@@ -71,10 +71,13 @@ def main(argv=None) -> int:
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     smoke = bool(os.environ.get("LABDESK_SMOKE_EXIT_MS"))
+    deferred = False
     if plat.IS_WINDOWS:
         from . import vmware
-        vmware.activate()             # LabDesk-VMs bundle: VMware runs CML + host VMs; its CML login is used
-    if (args.setup or config.needs_setup()) and not smoke:
+        # LabDesk-VMs bundle: VMware runs CML + host VMs, its CML login is used (no dialog).  No bundle yet:
+        # the main window offers to download it first and asks for the login after that.
+        deferred = not vmware.activate() and not args.setup
+    if (args.setup or config.needs_setup()) and not smoke and not deferred:
         # first run (no credentials file / no CML password; always on a fresh Windows install)
         from .ui.connection_dialog import CmlConnectionDialog
         dlg = CmlConnectionDialog(None, first_run=True)
