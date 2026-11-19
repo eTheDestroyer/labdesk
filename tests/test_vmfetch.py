@@ -21,7 +21,7 @@ def make_release(tmp_path, part_size=10):
     root = tmp_path / "src"
     (root / "CML").mkdir(parents=True)
     (root / "CML" / "cml.vmdk").write_bytes(bytes(range(256)) * 3 + b"tail")     # 772 bytes -> 78 parts
-    (root / "CML" / "CML.vmx").write_text('displayName = "x"\n')
+    (root / "CML" / "CML.vmx").write_bytes(b'displayName = "x"\n')
     (root / "cml-credentials.env").write_text("CML_ADMIN_PASS=secret\n")           # never published
     bundle = {"format": 1, "cml": {"vmx": "CML/CML.vmx"}, "templates": {}}
     (root / vmware.MANIFEST).write_text(json.dumps(bundle))
@@ -88,7 +88,7 @@ def test_fetch_builds_the_bundle(gh, tmp_path):
     dest = tmp_path / "LabDesk-VMs"
     root = vmfetch.fetch(log=lambda m: None, token="tok", dest=dest)
     assert (root / "CML" / "cml.vmdk").read_bytes() == bytes(range(256)) * 3 + b"tail"
-    assert (root / "CML" / "CML.vmx").read_text() == 'displayName = "x"\n'
+    assert (root / "CML" / "CML.vmx").read_bytes() == b'displayName = "x"\n'
     assert json.loads((root / vmware.MANIFEST).read_text())["cml"]["vmx"] == "CML/CML.vmx"
     assert not (root / ".download").exists() and not (root / "cml-credentials.env").exists()
 
