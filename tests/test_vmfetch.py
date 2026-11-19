@@ -26,7 +26,7 @@ def make_release(tmp_path, part_size=10):
     bundle = {"format": 1, "cml": {"vmx": "CML/CML.vmx"}, "templates": {}}
     (root / vmware.MANIFEST).write_text(json.dumps(bundle))
     files = pub.files_of(root)
-    assert [f.name for f in files] == ["CML.vmx", "cml.vmdk"]
+    assert sorted(f.name for f in files) == ["CML.vmx", "cml.vmdk"]
     entries = [pub.describe(root, f, part_size) for f in files]
     assets = {}
     for e in entries:
