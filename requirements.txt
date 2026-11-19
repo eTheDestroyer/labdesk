@@ -2,10 +2,9 @@ PySide6>=6.7
 pexpect>=4.9
 PyYAML>=6.0
 websocket-client>=1.7
-# terminal emulation of the LabDesk console window (Linux); pure Python, brings wcwidth.  Installed on
-# every platform so the tests of the pure parts run everywhere; not packed into LabDesk.exe
+# terminal emulation of the LabDesk console window (Linux and Windows); pure Python, brings wcwidth
 pyte>=0.8.2
 pytest>=8
-# LabDesk for Windows only: probe transport (no pty there) and the open-console scan
+# LabDesk for Windows only: probes + device consoles in process (no pty there), the open-console scan
 paramiko>=3.4; sys_platform == "win32"
 psutil>=5.9; sys_platform == "win32"

@@ -1,5 +1,8 @@
 """Host-KVM network VMs (Juniper vJunos-router, Fortinet FortiOS) via virsh/virt-install.
 
+Windows: the same functions run the VMs in VMware Workstation instead (:mod:`.vmware`, the LabDesk-VMs
+bundle) - callers never see the difference; VMware errors come back as :class:`KvmError`.
+
 All commands are built as argv lists (never shell=True); names are validated.
 Disk layout: each image is uploaded ONCE into the libvirt pool as a base volume, every VM
 gets a thin qcow2 overlay on top of it (fast create, small footprint).
@@ -39,6 +42,22 @@ PROFILES = {
 
 class KvmError(RuntimeError):
     pass
+
+
+def _vmware():
+    """The VMware backend module when LabDesk runs its VMs in VMware (Windows + bundle), else None."""
+    if not plat.IS_WINDOWS:
+        return None
+    from . import vmware
+    return vmware if vmware.active() else None
+
+
+def _vm_call(fn, *args, **kw):
+    from .vmware import VmwareError
+    try:
+        return fn(*args, **kw)
+    except VmwareError as e:
+        raise KvmError(str(e)) from None
 
 
 # ----------------------------------------------------------------- builders
@@ -140,6 +159,10 @@ def parse_domifaddr(text: str) -> str | None:
 
 
 def mem_available_mb(meminfo: str | None = None) -> int:
+    if meminfo is None and plat.IS_WINDOWS:
+        from .telemetry import host_mem_available_gb
+        gb = host_mem_available_gb()
+        return int(gb * 1024) if gb else 0
     if meminfo is None:
         try:
             meminfo = Path("/proc/meminfo").read_text(encoding="utf-8")
@@ -176,6 +199,12 @@ def run(cmd: list[str], timeout: float = 120, input_text: str | None = None) -> 
 
 
 def domstate(vm: str) -> str:
+    vw = _vmware()
+    if vw:
+        try:
+            return vw.domstate(vm)
+        except (vw.VmwareError, OSError):
+            return "unknown"
     try:
         return parse_domstate(run(virsh("domstate", validate.virsh_name(vm)), timeout=10))
     except KvmError as e:
@@ -185,6 +214,12 @@ def domstate(vm: str) -> str:
 
 
 def mgmt_ip(vm: str) -> str | None:
+    vw = _vmware()
+    if vw:
+        try:
+            return vw.mgmt_ip(vm)
+        except (vw.VmwareError, OSError):
+            return None
     for source in ("lease", "arp"):
         try:
             ip = parse_domifaddr(run(virsh("domifaddr", validate.virsh_name(vm), "--source", source), timeout=10))
@@ -239,6 +274,9 @@ def _ensure_base(kind: str, log=print) -> int:
 
 def create_vm(vm: str, kind: str, log=print) -> None:
     vm = validate.virsh_name(vm)
+    vw = _vmware()
+    if vw:
+        return _vm_call(vw.create_vm, vm, kind, log=log)
     if domstate(vm) != "missing":
         raise KvmError(f"a libvirt VM named {vm} already exists")
     vsize = _ensure_base(kind, log)
@@ -250,20 +288,32 @@ def create_vm(vm: str, kind: str, log=print) -> None:
 
 
 def start_vm(vm: str):
+    vw = _vmware()
+    if vw:
+        return _vm_call(vw.start_vm, vm)
     run(build_start_cmd(vm), timeout=60)
 
 
 def stop_vm(vm: str, force: bool = True):
+    vw = _vmware()
+    if vw:
+        return _vm_call(vw.stop_vm, vm, force)
     run(build_stop_cmd(vm, force), timeout=60)
 
 
 def delete_vm(vm: str):
+    vw = _vmware()
+    if vw:
+        return _vm_call(vw.delete_vm, vm)
     if domstate(vm) == "running":
         stop_vm(vm, force=True)
     run(build_undefine_cmd(vm), timeout=60)
 
 
 def ensure_isolated_network(name: str) -> None:
+    if _vmware():
+        isolated_network_xml(name)          # same name check; a VMware LAN segment needs no creation
+        return
     try:
         run(virsh("net-info", name), timeout=10)
         exists = True
@@ -277,6 +327,8 @@ def ensure_isolated_network(name: str) -> None:
 
 
 def delete_network(name: str) -> None:
+    if _vmware():
+        return                              # LAN segments vanish with their last NIC
     for c in (virsh("net-destroy", name), virsh("net-undefine", name)):
         try:
             run(c, timeout=20)
@@ -291,6 +343,9 @@ def parse_domiflist_networks(text: str) -> set[str]:
 
 def network_users(name: str) -> set[str]:
     """Domains (running or not) with a NIC on libvirt network ``name``."""
+    vw = _vmware()
+    if vw:
+        return _vm_call(vw.network_users, name)
     users = set()
     for vm in run(virsh("list", "--all", "--name"), timeout=15).split():
         try:
@@ -302,7 +357,58 @@ def network_users(name: str) -> set[str]:
 
 
 def attach_nic(vm: str, network: str) -> None:
+    vw = _vmware()
+    if vw:
+        _vm_call(vw.attach_nic, vm, network)
+        return
     run(build_attach_nic_cmd(vm, network, live=domstate(vm) == "running"), timeout=30)
+
+
+def nic_macs(vm: str) -> list[str]:
+    """MAC addresses of the VM's NICs, in order."""
+    vw = _vmware()
+    if vw:
+        try:
+            return vw.nic_macs(vm)
+        except (vw.VmwareError, OSError):
+            return []
+    try:
+        out = run(virsh("domiflist", validate.virsh_name(vm)), timeout=10)
+    except KvmError:
+        return []
+    return re.findall(r"([0-9a-f]{2}(?::[0-9a-f]{2}){5})", out)
+
+
+def detach_nic(vm: str, mac: str) -> None:
+    """Remove the NIC with this MAC (live too when the VM runs).  Errors are ignored like a missing NIC."""
+    vw = _vmware()
+    if vw:
+        try:
+            vw.detach_nic(vm, mac)
+        except (vw.VmwareError, OSError):
+            pass
+        return
+    cmd = virsh("detach-interface", "--domain", validate.virsh_name(vm), "--type", "network", "--mac", mac, "--config")
+    if domstate(vm) == "running":
+        cmd.append("--live")
+    try:
+        run(cmd, timeout=30)
+    except KvmError:
+        pass
+
+
+def start_cml_vm(log=print) -> None:
+    """Start the CML controller VM: ``virsh start cml`` (Linux) or VMware from the bundle (Windows)."""
+    from . import config as _c
+    vw = _vmware()
+    if vw:
+        _vm_call(vw.start_cml, log=log)
+        return
+    try:
+        run(virsh("start", _c.CML_VM_NAME), timeout=60)
+    except KvmError as e:
+        if "already active" not in str(e) and "already running" not in str(e).lower():
+            raise
 
 
 def guest_nic_name(kind: str, index: int) -> str:

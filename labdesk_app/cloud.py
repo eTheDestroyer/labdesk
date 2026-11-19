@@ -16,6 +16,10 @@ Lab side: a CML ``external_connector`` in "System Bridge" mode (bridged onto vir
 against the CML-Free node limit), tagged ``labdesk-cloud``.  A router linked to it gets
 ``ip address 100.64.0.N 255.255.255.0`` and ``ip route 0.0.0.0 0.0.0.0 100.64.0.1``.
 
+Windows (VMware, LabDesk-VMs bundle): the same cloud runs INSIDE the CML VM (installed there by
+tools/make_windows_bundle.py on bridge0, started only under VMware).  :func:`check_health` and the routes
+file readers / writers then go through CML's Cockpit (:mod:`.cockpit`) instead of the local files.
+
 Everything here except :func:`check_health`, :func:`write_routes_file` and the file readers is pure
 (unit-tested in tests/test_cloud.py).
 """
@@ -109,7 +113,22 @@ def parse_conf(text: str) -> CloudConf:
                      edge if _is_ip(edge) else None)
 
 
+GUEST_ROUTES = "/var/lib/labdesk-cloud/routes.conf"         # inside the CML VM (Windows)
+GUEST_STATUS = "/run/labdesk-cloud/status"
+
+
+def in_cml_vm() -> bool:
+    """The cloud lives inside the CML VM (Windows + VMware bundle built with the cloud)."""
+    if not plat.IS_WINDOWS:
+        return False
+    from . import vmware
+    b = vmware.find_bundle()
+    return b is not None and bool(b.manifest.get("cml", {}).get("cloud_inside"))
+
+
 def load_conf(path: Path | None = None) -> CloudConf:
+    if path is None and in_cml_vm():
+        return CloudConf(bridge="bridge0")        # what make_windows_bundle.py installs in the CML VM
     try:
         return parse_conf(Path(path or CONF_PATH).read_text(encoding="utf-8"))
     except OSError:
@@ -277,6 +296,8 @@ def check_health(conf: CloudConf | None = None) -> CloudHealth:
     """IO: status file + /run/netns/<ns> + one host ping (≈1 ms when up, ≤1 s when down).
     Never needs root; run it on the TaskRunner.  Windows: always 'unsupported' (Linux only)."""
     conf = conf or load_conf()
+    if in_cml_vm():
+        return _check_health_in_cml(conf)
     if not plat.HAS_CLOUD:
         return CloudHealth("unsupported", problem="Linux only", cloud_ip=conf.cloud_ip, net=str(conf.network),
                            ts=time.time())
@@ -288,6 +309,23 @@ def check_health(conf: CloudConf | None = None) -> CloudHealth:
         status = None
     host_ping = _ping(conf.cloud_ip) if installed and ns_exists else None
     return health_from(status, ns_exists=ns_exists, host_ping=host_ping, installed=installed, conf=conf)
+
+
+def _check_health_in_cml(conf: CloudConf) -> CloudHealth:
+    """Windows: read the cloud's status file inside the CML VM through Cockpit (one short session)."""
+    from .cockpit import Cockpit, CockpitError
+    script = (f"cat {GUEST_STATUS} 2>/dev/null; echo; echo @@ns=$(test -e /run/netns/{conf.ns} && echo 1 || echo 0) "
+              "inst=$(test -e /etc/labdesk-cloud.conf && echo 1 || echo 0)")
+    try:
+        out = Cockpit(timeout=15).sh(script, timeout=15).output
+    except CockpitError as e:
+        h = CloudHealth("down", conf.headline_answers, cloud_ip=conf.cloud_ip, net=conf.net_text, ts=time.time())
+        h.problem = f"the CML VM does not answer ({e})"
+        return h
+    status, _, tail = out.rpartition("@@")
+    flags = _kv(tail.replace(" ", "\n"))
+    return health_from(status, ns_exists=flags.get("ns") == "1", host_ping=None,
+                       installed=flags.get("inst") == "1", conf=conf)
 
 
 # ============================================================================ addressing
@@ -506,6 +544,12 @@ def plan_routes(current_text: str | None, router_ip: str, lans, conf: CloudConf 
 
 
 def read_routes_file(path: Path | None = None) -> str | None:
+    if path is None and in_cml_vm():
+        from .cockpit import Cockpit, CockpitError
+        try:
+            return Cockpit(timeout=20).read_file(GUEST_ROUTES)
+        except CockpitError:
+            return None
     try:
         return Path(path or ROUTES_PATH).read_text(encoding="utf-8")
     except OSError:
@@ -514,7 +558,15 @@ def read_routes_file(path: Path | None = None) -> str | None:
 
 def write_routes_file(text: str, path: Path | None = None) -> None:
     """Atomic write of the user-owned routes file (the path unit picks it up).  Raises PermissionError
-    when the directory is not writable (cloud not installed for this user)."""
+    when the directory is not writable (cloud not installed for this user).  Windows: written inside the
+    CML VM through Cockpit (as the CML sysadmin, who owns the file there)."""
+    if path is None and in_cml_vm():
+        from .cockpit import Cockpit, CockpitError
+        try:
+            Cockpit(timeout=30).write_file(GUEST_ROUTES, text)
+        except CockpitError as e:
+            raise PermissionError(str(e)) from None
+        return
     p = Path(path or ROUTES_PATH)
     tmp = p.with_name(f".{p.name}.{os.getpid()}.tmp")
     tmp.write_text(text, encoding="utf-8")

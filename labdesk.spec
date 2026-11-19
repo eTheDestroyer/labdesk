@@ -23,7 +23,6 @@ if os.path.exists(os.path.join(ROOT, "BUILD_INFO")):
 # Qt / Python modules LabDesk never imports (keeps the exe small)
 excludes = [
     "tkinter", "unittest", "pydoc_data", "pytest", "_pytest", "pexpect", "ptyprocess",
-    "pyte", "wcwidth",          # the LabDesk console window is Linux only (Windows keeps Windows Terminal)
     "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.QtWebEngineQuick", "PySide6.QtWebChannel",
     "PySide6.QtWebSockets", "PySide6.QtQml", "PySide6.QtQuick", "PySide6.QtQuickWidgets", "PySide6.QtQuick3D",
     "PySide6.Qt3DCore", "PySide6.Qt3DRender", "PySide6.QtMultimedia", "PySide6.QtMultimediaWidgets",
@@ -40,7 +39,10 @@ a = Analysis(
     pathex=[ROOT],
     binaries=[],
     datas=datas,
-    hiddenimports=["paramiko", "psutil", "yaml", "PySide6.QtSvg"],
+    # pyte / wcwidth: the LabDesk console window (Windows too); websocket: CML Cockpit (Internet cloud in the CML VM)
+    hiddenimports=["paramiko", "psutil", "yaml", "PySide6.QtSvg", "pyte", "wcwidth", "websocket",
+                   "labdesk_app.ui.console.window", "labdesk_app.ui.console.stream_session",
+                   "labdesk_app.vmware", "labdesk_app.streams", "labdesk_app.cockpit"],
     hookspath=[],
     runtime_hooks=[],
     excludes=excludes,

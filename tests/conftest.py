@@ -22,3 +22,15 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "linux_only" in item.keywords:
             item.add_marker(skip)
+
+
+import pytest  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _no_real_vm_bundle(monkeypatch):
+    """Never find the user's real LabDesk-VMs bundle (Windows/VMware tests bring their own)."""
+    from labdesk_app import vmware
+    monkeypatch.setattr(vmware, "bundle_candidates", lambda: [])
+    monkeypatch.setattr(vmware, "_BUNDLE", None)
+    yield

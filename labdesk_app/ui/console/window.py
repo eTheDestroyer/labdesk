@@ -137,6 +137,8 @@ class ConsoleWindow(QWidget):
         for i, t in enumerate(self.tabs):
             if not t.session.alive and ((key and t.meta.get("key") == key) or list(t.cmd.argv) == argv):
                 t.cmd, t.label = cmd, cmd.title
+                if (getattr(cmd, "meta", None) or {}).get("transport") and hasattr(t.session, "transport"):
+                    t.session.transport = dict(cmd.meta["transport"])
                 self.strip.set_label(i, cmd.title)
                 t.view.scroll_to_bottom()
                 # same tab, scrollback kept: start on a fresh line with default attributes
@@ -151,8 +153,12 @@ class ConsoleWindow(QWidget):
 
     def _add_tab(self, cmd) -> int:
         cols, rows = self.grid()
-        session = PtySession(cols, rows, self.prefs.scrollback, self)
         meta = getattr(cmd, "meta", None) or {}
+        if meta.get("transport"):                  # Windows: in-process ssh / VMware serial pipe, no pty
+            from .stream_session import StreamSession
+            session = StreamSession(meta["transport"], cols, rows, self.prefs.scrollback, self)
+        else:
+            session = PtySession(cols, rows, self.prefs.scrollback, self)
         view = TerminalView(session, self.prefs.palette(), self.prefs.font_pt, meta.get("node_definition"),
                             self.prefs.highlight, self.stack)
         tab = ConsoleTab(cmd.title, cmd, session, view)

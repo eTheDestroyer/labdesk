@@ -1,4 +1,4 @@
-"""LabDesk's own console window (Linux): tab strip + terminal well + status line.
+"""LabDesk's own console window (Linux and Windows): tab strip + terminal well + status line.
 
 ``palette``, ``screen``, ``keymap``, ``lens`` and ``boxdraw`` are pure Python (no Qt) and import on every
 platform; ``session`` / ``window`` need a pty and are imported only on Linux, when the first console opens.
@@ -30,10 +30,13 @@ def window_size(columns: int, rows: int, cell: tuple[int, int] = (9, 21)) -> tup
 
 
 def available() -> bool:
-    """The LabDesk console can run here: Linux, pyte importable and /usr/bin/setsid present.  Otherwise
-    MainWindow keeps the platform's default launcher (Konsole / Windows Terminal)."""
+    """The LabDesk console can run here: pyte importable and (Linux) /usr/bin/setsid present, or Windows
+    (consoles are in-process streams there).  Otherwise MainWindow keeps the platform's default launcher
+    (Konsole / Windows Terminal)."""
     from ... import plat
-    if not plat.IS_LINUX or not os.path.exists(SETSID):
+    if plat.IS_WINDOWS:
+        pass                             # no pty: device consoles run as in-process streams (stream_session)
+    elif not plat.IS_LINUX or not os.path.exists(SETSID):
         return False
     try:
         import pyte  # noqa: F401

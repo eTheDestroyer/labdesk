@@ -83,11 +83,21 @@ def askpass_env(cred_key: str = "CML_ADMIN_PASS") -> dict[str, str]:
 
 def cml_console(label: str, console_uuid: str, user: str) -> ConsoleCommand:
     argv = cml_ssh_base(user) + ["connect", validate.uuid(console_uuid)]
-    # Windows: no askpass helper (it is a Python script) - ssh asks for the CML password in the console
-    return ConsoleCommand(validate.cml_label(label), argv, {} if plat.IS_WINDOWS else askpass_env())
+    if plat.IS_WINDOWS:
+        # the LabDesk console window runs it in process (paramiko, saved login: nothing to type); Windows
+        # Terminal (fallback) runs the ssh argv and ssh asks for the CML password
+        return ConsoleCommand(validate.cml_label(label), argv, {},
+                              {"transport": {"type": "cml", "uuid": validate.uuid(console_uuid),
+                                             "user": validate.username(user)}})
+    return ConsoleCommand(validate.cml_label(label), argv, askpass_env())
 
 
 def kvm_console(vm: str) -> ConsoleCommand:
+    if plat.IS_WINDOWS:
+        from .vmware import pipe_name
+        pipe = pipe_name(vm)
+        # VMware VM: its serial port is the named pipe \\.\pipe\labdesk-<vm> (LabDesk console window)
+        return ConsoleCommand(vm, ["vmware-serial", pipe], {}, {"transport": {"type": "pipe", "path": pipe}})
     from .kvm import build_console_cmd
     return ConsoleCommand(vm, build_console_cmd(vm), {})
 

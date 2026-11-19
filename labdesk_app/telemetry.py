@@ -370,10 +370,11 @@ def _windows_console_uuids(ex: set[int]) -> set[str]:
 def open_console_uuids(exclude_pids: set[int] | None = None) -> set[str]:
     """Console uuids with an ssh 'connect <uuid>' process on this host (LabDesk Konsole tabs
     and the user's own ssh).  Cheap /proc scan; our own probe pids are excluded."""
-    out = set()
+    from .streams import open_uuids
+    out = open_uuids()                        # consoles of the LabDesk console window that run in process
     ex = exclude_pids or set()
     if plat.IS_WINDOWS:
-        return _windows_console_uuids(ex)
+        return out | _windows_console_uuids(ex)
     try:
         pids = [p for p in os.listdir("/proc") if p.isdigit()]
     except OSError:

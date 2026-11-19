@@ -152,7 +152,7 @@ Double-click **`labdesk.bat`** in the `labdesk` folder, or run:
 
 To get a Desktop icon: right-click `labdesk.bat` → **Send to** → **Desktop (create shortcut)**.
 
-The first time, LabDesk asks where CML is:
+With the LabDesk-VMs folder in place nothing is asked. Without it, the first time LabDesk asks where CML is:
 
 ```
 CML address:   192.168.80.130    ← the address you open in the browser to reach CML
@@ -163,12 +163,12 @@ Password:      ••••••            ← the CML password
 Click **Test connection**. When it says **✓ Connected**, click **Save**.
 The login is saved in `%APPDATA%\LabDesk\cml-credentials.env`, outside the git folder.
 
-### What is different on Windows
+### Click and play: the VMs (CML, vJunos, FortiOS, Internet cloud)
 
-* Device consoles open as tabs in **Windows Terminal** (or in a console window if it is not installed), and ask for
-  the CML password each time unless you set up an SSH key.
-* Juniper / Fortinet VMs and the Internet cloud are Linux only.
-* Details and troubleshooting: [INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows).
+Build the **LabDesk-VMs** folder once on the Linux PC (`.venv/bin/python tools/make_windows_bundle.py`), copy it
+into `C:\Users\<you>\labdesk\LabDesk-VMs` and start `labdesk.bat`: LabDesk installs / uses VMware Workstation,
+creates its network (one administrator prompt) and starts CML by itself - no connection dialog.
+Details: [INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows).
 
 ---
 

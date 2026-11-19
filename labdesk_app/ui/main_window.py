@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QDockWidget, QFileDialog, 
                                QLabel, QListWidget, QListWidgetItem, QMainWindow, QMenu, QPushButton, QScrollArea,
                                QSizePolicy, QToolBar, QToolButton, QVBoxLayout, QWidget)
 
-from .. import cloud, config, kvm, launchers, plat, validate
+from .. import cloud, config, kvm, launchers, plat, validate, vmware
 from .. import default_logins as DL
 from .. import show_scripts as SS
 from ..catalog import BY_KEY, DEVICE_TYPES, NON_COUNTING_DEFS
@@ -110,6 +110,11 @@ def unavailable_reason(d) -> str:
     """Why a device type cannot be added on this OS ('' = it can)."""
     if d.backend == "kvm" and not plat.HAS_KVM:
         return plat.LINUX_ONLY_TIP
+    if d.backend == "kvm" and plat.IS_WINDOWS:
+        b = vmware.find_bundle()
+        if b is not None and d.key not in b.kinds:
+            return (f"The {vmware.BUNDLE_DIR_NAME} bundle has no {d.title} image. Rebuild it on the Linux PC "
+                    "with the image in ~/Downloads (tools/make_windows_bundle.py).")
     if d.key == "ext_cloud" and not plat.HAS_CLOUD:
         return plat.CLOUD_LINUX_ONLY_TIP
     return ""
@@ -252,6 +257,7 @@ class MainWindow(QMainWindow):
         self._polling = False
         self._pending_moves: dict[str, float] = {}
         self._cml_ok: bool | None = None
+        self._cml_starting = False
         self._cml_version = ""
         self._last_states: dict[str, str] = {}
         self._busy_ops = 0
@@ -1009,6 +1015,9 @@ class MainWindow(QMainWindow):
             self.cml_label.setToolTip("The CML controller does not answer")
             self.counter.set_state("CML offline", "down", "down")
         self.start_cml_btn.setVisible(not ok)
+        if not ok and first and vmware.active() and as_bool(self.settings.value("cml/autostart", True), True):
+            # Windows + LabDesk-VMs bundle: click and play - LabDesk starts (and on the first run sets up) CML
+            QTimer.singleShot(0, lambda: self.start_cml_vm(auto=True))
         if not self.ctl.lab_id:
             if (not ok) != self.empty.offline or first:
                 self.empty.set_offline(not ok, config.CML_HOST)
@@ -1469,34 +1478,61 @@ class MainWindow(QMainWindow):
             return None
         return [vmrun, "-T", "ws", "start", vmx, "nogui"]
 
-    def start_cml_vm(self):
+    def start_cml_vm(self, auto: bool = False):
+        """Start the CML VM and wait for its API.  Windows with the LabDesk-VMs bundle: VMware, set up on
+        the first start (``auto``: LabDesk does this by itself at launch - click and play)."""
         start_cmd = None
-        if plat.IS_WINDOWS:
+        bundled = vmware.active()
+        if plat.IS_WINDOWS and not bundled:
             start_cmd = self._start_cml_windows()
             if start_cmd is None:
                 return
+        if self._cml_starting:
+            return
+        self._cml_starting = True
         self.start_cml_btn.setEnabled(False)
-        self.log("starting CML VM (" + ("vmrun start" if start_cmd else "virsh start cml")
-                 + ") and waiting for the API…")
+        how = "VMware Workstation" if bundled else ("vmrun start" if start_cmd else "virsh start cml")
+        self.log(("CML is offline - " if auto else "") + f"starting the CML VM ({how}) and waiting for the API…")
+        logq = _Bridge()
+        lines: list[str] = []
+
+        def flush():
+            while lines:
+                self.log(lines.pop(0))
+        logq.changed.connect(flush)
+
+        def note(msg: str):
+            lines.append(msg)
+            logq.changed.emit()
 
         def work():
-            try:
-                if start_cmd:
+            if start_cmd:
+                try:
                     kvm.run(start_cmd, timeout=120)
-                else:
-                    kvm.run(kvm.virsh("start", config.CML_VM_NAME), timeout=60)
-            except kvm.KvmError as e:
-                if "already active" not in str(e) and "already running" not in str(e).lower():
-                    raise
+                except kvm.KvmError as e:
+                    if "already active" not in str(e) and "already running" not in str(e).lower():
+                        raise
+            else:
+                kvm.start_cml_vm(log=note)
+                if bundled:
+                    config.reload_cml_host()
+                    self.ctl.client.set_host(config.CML_HOST)
             end = time.time() + 900
             client = CMLClient()
             while time.time() < end:
                 if client.is_ready():
                     return True
+                if bundled:
+                    moved = vmware.refresh_cml_address()      # CML's DHCP lease is not the saved address
+                    if moved:
+                        note(f"CML answers on {moved} (VMware DHCP) - using that address")
+                        client.set_host(moved)
+                        self.ctl.client.set_host(moved)
                 time.sleep(5)
             raise CMLError("CML did not become ready within 15 minutes")
 
         def done(_):
+            self._cml_starting = False
             self.start_cml_btn.setEnabled(True)
             self.log("CML is ready", "ok")
             if not self.ctl.lab_id and self.ctl.state.last_lab:
@@ -1504,6 +1540,7 @@ class MainWindow(QMainWindow):
             self.poll()
 
         def fail(e):
+            self._cml_starting = False
             self.start_cml_btn.setEnabled(True)
             self.on_error("start CML", True)(e)
         self.runner.submit(work, on_done=done, on_error=fail)
@@ -1519,13 +1556,17 @@ class MainWindow(QMainWindow):
             info(self, d.title, why)
             return
         if d.backend == "kvm":
-            text = (f"Create a host-KVM VM '{d.title}' via libvirt?\n\n{d.note}\n\n"
+            via = "VMware Workstation" if vmware.active() else "libvirt"
+            text = (f"Create a host VM '{d.title}' via {via}?\n\n{d.note}\n\n" + (
+                    "The VM is a linked clone of the bundle's template (fast, small). NIC 1 (management) is on "
+                    "the LabDesk VMware network (192.168.122.0/24, same as virbr0 on Linux)."
+                    if vmware.active() else
                     "The disk is a thin overlay on a base image uploaded once to the 'images' pool. "
-                    "NIC 1 (management) is on the libvirt 'default' network (virbr0).")
+                    "NIC 1 (management) is on the libvirt 'default' network (virbr0)."))
             warn = kvm.memory_warning(d.key)
             if warn:
                 text += f"\n\nWARNING: {warn}"
-            if not confirm(self, "Create host VM", f"Create a host-KVM VM “{d.title}” via libvirt?", "Create VM",
+            if not confirm(self, "Create host VM", f"Create a host VM “{d.title}” via {via}?", "Create VM",
                            destructive=False, detail=text.split("\n\n", 1)[1]):
                 return
         self.log(f"adding {d.title}…")
@@ -1834,8 +1875,8 @@ class MainWindow(QMainWindow):
         set or it cannot run here), else the platform default (Konsole / Windows Terminal).  Nothing is
         created on screen before the first console opens."""
         from . import console
-        if plat.IS_LINUX and str(app_settings().value("console/engine", "labdesk")) != "konsole" \
-                and console.available():
+        if (plat.IS_LINUX or plat.IS_WINDOWS) and str(app_settings().value("console/engine", "labdesk")) \
+                not in ("konsole", "terminal") and console.available():
             return self._labdesk_console()
         return launchers.default_launcher()
 
@@ -1868,10 +1909,12 @@ class MainWindow(QMainWindow):
                                         "Console text one point smaller (in the console: Ctrl+Alt+-)")
         self.a_text_reset = self._act("Reset text size", lambda _c=False: self._zoom_console(0), None,
                                       "Console text back to 11 pt (in the console: Ctrl+Alt+0)")
-        self.a_konsole = self._act("Use Konsole instead", self._set_console_engine, None,
-                                   "Open device consoles as tabs of a Konsole window instead of the LabDesk "
-                                   "console window. Applies to the next console you open",
-                                   checkable=True)
+        other = "Windows Terminal" if plat.IS_WINDOWS else "Konsole"
+        self.a_konsole = self._act(f"Use {other} instead", self._set_console_engine, None,
+                                   f"Open device consoles as tabs of a {other} window instead of the LabDesk "
+                                   "console window. Applies to the next console you open"
+                                   + (" (VMware VM consoles always use the LabDesk console)" if plat.IS_WINDOWS
+                                      else ""), checkable=True)
         self.a_konsole.setChecked(str(self.settings.value("console/engine", "labdesk")) == "konsole")
         self.a_konsole.setVisible(not self._launcher_injected and console.available())
         cm.addAction(self.a_neon)
@@ -1931,7 +1974,8 @@ class MainWindow(QMainWindow):
             self.launcher.neon = self.a_neon.isChecked()
         self._sync_console_menu()
         own = getattr(self.launcher, "supports_look", False)
-        self.log("consoles open in " + ("the LabDesk console window" if own else "Konsole")
+        self.log("consoles open in " + ("the LabDesk console window" if own else
+                                        "Windows Terminal" if plat.IS_WINDOWS else "Konsole")
                  + " - applies to the next console you open", "info")
 
     def _set_show_passwords(self, on: bool):

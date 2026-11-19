@@ -1,6 +1,7 @@
-"""ConsoleWindowLauncher: the launcher MainWindow installs on Linux so device consoles open as tabs of
-LabDesk's own console window (``launchers.py`` stays free of Qt; Konsole remains the fallback and Windows
-keeps Windows Terminal).
+"""ConsoleWindowLauncher: the launcher MainWindow installs so device consoles open as tabs of LabDesk's own
+console window (``launchers.py`` stays free of Qt; Konsole remains the Linux fallback).  On Windows the
+device consoles are in-process streams (CML: paramiko, VMware VMs: serial pipe); management ssh / telnet
+to a device still opens in Windows Terminal.
 
 ``open(cmd)`` is called on a worker thread: it validates the command, hands it to the GUI thread through
 a queued signal and returns at once - it never waits for the tab (no timeout can report a failure for a
@@ -86,7 +87,15 @@ class ConsoleWindowLauncher(QObject):
 
     # ------------------------------------------------------------------ any thread
     def open(self, cmd) -> str:
+        meta = getattr(cmd, "meta", None) or {}
+        if not meta.get("transport") and os.name == "nt":
+            # Windows: management ssh / telnet to a device need a real console - Windows Terminal
+            from ...launchers import WindowsConsoleLauncher
+            return WindowsConsoleLauncher().open(cmd)
         prog = os.path.basename(cmd.argv[0]) if cmd.argv else ""
+        if meta.get("transport"):
+            self._open_requested.emit(cmd)
+            return f"LabDesk console tab '{cmd.title}'"
         if prog not in ALLOWED:
             raise ValueError(f"the LabDesk console runs only ssh, virsh or telnet (not {prog or 'nothing'})")
         self._open_requested.emit(cmd)

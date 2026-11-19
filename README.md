@@ -28,13 +28,10 @@ right-click management, light/dark/KDE themes, a 300+ test suite built on real c
 
 **Download with git (Linux and Windows):** [DOWNLOAD.md](DOWNLOAD.md) - clone, install, open, step by step.
 
-**Windows 10/11:** download **LabDesk.exe** from the GitHub *Releases* page and run it; a first-run dialog asks for the
-CML address and login ([INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows)). It needs a CML VM that
-Windows can reach (for example CML in VMware Workstation). Consoles open as tabs in Windows Terminal (or a console
-window) with the built-in OpenSSH client; you type the CML password there unless `~/.ssh/labdesk_ed25519` exists.
-**Not on Windows:** host-KVM Juniper/Fortinet VMs and the Internet cloud (Linux only, greyed out); *Start CML VM* works
-only through VMware Workstation's `vmrun` (set the CML `.vmx` under *Lab ▸ CML connection…*). LabDesk.exe is not
-code-signed: SmartScreen → *More info* → *Run anyway*.
+**Windows 10/11:** click and play. Copy the **LabDesk-VMs** folder (built once on the Linux PC with
+`tools/make_windows_bundle.py`) next to LabDesk and start it: LabDesk runs CML, vJunos, FortiOS and the Internet
+cloud in VMware Workstation, sets it up on the first start and needs no connection dialog. Consoles open in the
+LabDesk console window ([INSTALL.md → LabDesk for Windows](INSTALL.md#labdesk-for-windows)).
 
 ### Quick start
 
@@ -577,6 +574,9 @@ labdesk_app/
   kvm.py                virsh / virt-install command builders and runners
   launchers.py          console / ssh / telnet / http command builders, Konsole D-Bus launcher, Windows Terminal launcher
   plat.py               platform layer: Linux vs Windows paths, tools (ssh.exe, wt.exe, vmrun) and Linux-only features
+  vmware.py             Windows: VMware Workstation backend (LabDesk-VMs bundle, vmx files, vmrun, VMnet setup)
+  cockpit.py            commands inside the CML VM via Cockpit (Windows: the Internet cloud lives there)
+  streams.py            in-process console streams (CML via paramiko, VMware serial pipes) for Windows
   tabexec.py, askpass.py  Konsole tab bootstrap, SSH_ASKPASS helper
   ui/console/           the LabDesk console window (Linux): palette, screen (pyte + scrollback), keymap, lens (IOS
                         emphasis), boxdraw - pure Python; session (ssh child on a pty), view, tabstrip, statusline,
@@ -616,7 +616,7 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python tools/e2e_demo.py      # live: needs 
 ## Limitations
 
 * CML-Free allows only 5 running nodes.
-* LabDesk for Windows: no host-KVM devices and no Internet cloud (Linux only); consoles ask for the CML password
+* LabDesk for Windows: host VMs and the Internet cloud need the LabDesk-VMs folder (VMware Workstation); vJunos / FortiOS on VMware are best effort
   unless the SSH key is set up; *Start CML VM* needs VMware Workstation. The .exe is unsigned (SmartScreen warning).
 * Host-VM links via the System Bridge all share one broadcast domain. Removing a host-VM link
   detaches its NIC, but the CML connector node stays in place, so delete it yourself if you want it gone.

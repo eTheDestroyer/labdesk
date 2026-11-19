@@ -1,6 +1,7 @@
 """One console session: the device's ssh / virsh / telnet argv as a real child process on a real pty.
 
-Linux only (pty, termios, fcntl): this module is imported only when the LabDesk console window is used.
+The pty parts are POSIX only; on Windows the window uses :class:`.stream_session.StreamSession` (same
+interface, in-process ssh / VMware serial pipe), which subclasses this class for its screen handling.
 
 * the child is ``/usr/bin/setsid -c <argv>``: setsid makes it a session leader with the pty as its
   controlling terminal and then execs the program in place, so the pid IS the ssh pid (telemetry finds an
@@ -14,13 +15,15 @@ Linux only (pty, termios, fcntl): this module is imported only when the LabDesk 
 """
 from __future__ import annotations
 
-import fcntl
 import os
-import pty
 import struct
 import subprocess
-import termios
 import time
+
+if os.name == "posix":                 # Windows uses StreamSession (stream_session.py): no pty there
+    import fcntl
+    import pty
+    import termios
 
 from PySide6.QtCore import QObject, QSocketNotifier, QTimer, Signal
 

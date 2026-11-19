@@ -70,7 +70,18 @@ class CmlConnectionDialog(LabDeskDialog):
         form.addRow("Username", self.user)
         form.addRow("Password", self.password)
         self.vmx = None
+        bundle = None
         if plat.IS_WINDOWS:
+            from .. import vmware
+            bundle = vmware.find_bundle()
+        if bundle is not None:
+            note = QLabel(f"CML runs on this PC in VMware Workstation, from {bundle.root}. LabDesk starts it "
+                          "by itself; the login above came with that folder.")
+            note.setWordWrap(True)
+            note.setObjectName("muted")
+            note.setFont(T.type("small"))
+            form.addRow("CML VM", note)
+        elif plat.IS_WINDOWS:
             row = QWidget()
             h = QHBoxLayout(row)
             h.setContentsMargins(0, 0, 0, 0)

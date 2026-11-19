@@ -640,15 +640,7 @@ class LabController:
         l = lab["kvm_links"].pop(index)
         for end, mac in (("a", l.get("mac_a")), ("b", l.get("mac_b"))):
             if l[end].startswith("kvm:") and mac:
-                vm = l[end][4:]
-                live = kvm.domstate(vm) == "running"
-                cmd = kvm.virsh("detach-interface", "--domain", vm, "--type", "network", "--mac", mac, "--config")
-                if live:
-                    cmd.append("--live")
-                try:
-                    kvm.run(cmd, timeout=30)
-                except kvm.KvmError:
-                    pass
+                kvm.detach_nic(l[end][4:], mac)
         if l.get("net", "").startswith("labdesk-"):
             # keep a network other VMs still use (e.g. the CML VM's NIC on a per-link isolated network)
             mine = {l[e][4:] for e in ("a", "b") if l[e].startswith("kvm:")}
@@ -1154,8 +1146,4 @@ del _name
 
 
 def _domiflist_macs(vm: str) -> list[str]:
-    try:
-        out = kvm.run(kvm.virsh("domiflist", vm), timeout=10)
-    except kvm.KvmError:
-        return []
-    return re.findall(r"([0-9a-f]{2}(?::[0-9a-f]{2}){5})", out)
+    return kvm.nic_macs(vm)
