@@ -54,7 +54,10 @@ def test_console_rejects_bad_label_and_user():
 
 def test_kvm_console():
     c = launchers.kvm_console("vjunos1")
-    assert c.argv == ["virsh", "-c", "qemu:///system", "console", "vjunos1", "--force"]
+    if sys.platform == "win32":          # VMware VM: its serial pipe, opened in the LabDesk console window
+        assert c.meta["transport"] == {"type": "pipe", "path": r"\\.\pipe\labdesk-vjunos1"}
+    else:
+        assert c.argv == ["virsh", "-c", "qemu:///system", "console", "vjunos1", "--force"]
 
 
 def test_ssh_and_telnet_to_device():

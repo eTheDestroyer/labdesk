@@ -760,7 +760,9 @@ def test_dialogs_are_modal_for_their_own_window_only(app):
 
 def test_console_command_meta_is_not_part_of_the_request_line():
     cmd = launchers.cml_console("R1", UUID, "admin")
-    assert cmd.meta == {}
+    # Windows: the in-process console transport rides in meta (never in the request line either)
+    assert {k: v for k, v in cmd.meta.items() if k != "transport"} == {}
+    assert ("transport" in cmd.meta) == (sys.platform == "win32")
     cmd.meta.update(key="lab:cml:n1", kind="cml", node_definition="iosv", lab_title="My lab")
     assert "meta" not in cmd.as_json() and "My lab" not in cmd.as_json()
     assert launchers.ssh_to_device("R1", "10.0.0.1").meta == {"kind": "ssh"}
@@ -782,14 +784,15 @@ def test_controller_fills_the_console_meta_from_the_live_node(tmp_path):
     ctl = LabController(Client(), state=object(), telemetry=False)
     ctl.lab_id, ctl.lab_title = "lab1", "PE Hub-Spoke HSRP"
     cmd = ctl.console_command("cml:n1")
-    assert cmd.meta == {"key": "lab1:cml:n1", "kind": "cml", "node_definition": "iosv",
-                        "lab_title": "PE Hub-Spoke HSRP"}
+    assert {k: v for k, v in cmd.meta.items() if k != "transport"} == {
+        "key": "lab1:cml:n1", "kind": "cml", "node_definition": "iosv", "lab_title": "PE Hub-Spoke HSRP"}
     assert cmd.argv[-2:] == ["connect", UUID] and cmd.title == "R1"
     if sys.platform != "win32":
         kvm = ctl.console_command("kvm:vmx1")
         assert kvm.meta["kind"] == "kvm" and kvm.meta["key"] == "lab1:kvm:vmx1"
 
 
+@pytest.mark.linux_only            # Windows: a command without a console transport goes to Windows Terminal
 def test_launcher_refuses_anything_but_ssh_virsh_telnet(app, tmp_path):
     from labdesk_app.ui.console.launcher import ConsolePrefs, ConsoleWindowLauncher
     from PySide6.QtCore import QSettings
@@ -837,11 +840,12 @@ def test_console_prefs_persist_and_clamp(app, tmp_path):
 
 def test_console_is_available_only_with_pyte_and_setsid(monkeypatch):
     from labdesk_app import plat
-    assert console.available() == (plat.IS_LINUX and os.path.exists("/usr/bin/setsid"))
+    assert console.available() == (plat.IS_WINDOWS or (plat.IS_LINUX and os.path.exists("/usr/bin/setsid")))
     monkeypatch.setattr(console, "SETSID", "/nonexistent/setsid")
-    assert console.available() is False
+    assert console.available() is plat.IS_WINDOWS          # Windows needs no setsid (in-process streams)
     monkeypatch.undo()
     monkeypatch.setattr(plat, "IS_LINUX", False)
+    monkeypatch.setattr(plat, "IS_WINDOWS", False)
     assert console.available() is False
 
 
