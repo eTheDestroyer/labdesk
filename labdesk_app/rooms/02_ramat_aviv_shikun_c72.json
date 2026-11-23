@@ -1,0 +1,603 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Ramat Aviv A shikun flat, type C-72 (1955-59)",
+  "title_he": "דירת שיכון ברמת אביב א', טיפוס ג-72 (1955-1959)",
+  "kind": "home",
+  "city": "Tel Aviv-Yafo (Ramat Aviv A)",
+  "city_he": "תל אביב-יפו (רמת אביב א')",
+  "era": "1955-1959, state savings-housing programme (planners Yitzhak Perlstein and Robert Bennet)",
+  "source": {
+   "title": "Tel Aviv-Yafo municipality, Ramat Aviv A urban-fabric documentation file (Ronel Architects, 2nd ed. 1.5.2018), page 88: type C-72 (ג-72) typical floor with written dimensions, two elevations and a section with written levels",
+   "url": "https://www.tel-aviv.gov.il/Forms/תיעוד%20מרקמי%20רמת%20אביב%20א'.pdf",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Box 8.895 x 7.40 m: the written overall width from the west gable's outer face to the party-wall / stair axis, and the written depth of the original core. The yellow later additions (4.00 m at the balcony side, 2.40 m at the stair side, plan 2173) are left out: this is the original flat.",
+   "West gable 0.10 m, as written ('10'), replacing the draft's 0.20 m. The back chain 0.10+2.30+0.07+2.00+0.07+3.13 = 7.67 m meets the written 4.675+3.00 = 7.675 m to the stair, which confirms it. The front chain 0.10+5.00+0.07+3.55+0.075 is 0.10 m short of the written 8.895 m; the living room keeps 3.55 m (mirror of the next flat about the party wall) and the bedroom takes the 0.10 m (5.10 m net).",
+   "Balcony-side and stair-side facades 0.20 m each: not written; the depth chain 3.40+0.07+3.53 = 7.00 m closes the written 7.40 m only with 0.40 m for the two walls.",
+   "Ceiling 2.59 m clear, from the section on page 88 ('259' between a 10 cm floor build-up and a 20 cm slab, levels 0.00 / 2.89 / 5.78), replacing the draft's assumed 2.75 m.",
+   "Room names are a reading (the plan names no rooms): the 3.55 m room has no door, opens about 2.5 m wide to the entry hall and has the door to the projecting balcony, so it is the living room; the 5.00 m room has two doors either side of a dashed optional partition (to split it into two children's rooms), so it is a bedroom. research_1 listed the strings in drawing order, not by use; the draft's reading is kept.",
+   "Positions between written dimensions are read in proportion from the sketch, which is not to scale (+-0.15 m): all doors and windows, the bath (1.32 m) / WC (0.91 m) split of the written 2.30 m, and the 1.0 m hall.",
+   "Bath door on the hall side of the bath, WC door from the hall: inferred from wall breaks in the sketch.",
+   "The dashed optional partition in the bedroom and the dashed lines in the kitchen are not modelled.",
+   "Windows: positions from the plan's wall breaks and the two elevations on page 88 (two bedroom windows, one for each half of the splittable bedroom; separate bath and WC windows onto the service balcony); sills and heights assumed (rooms 0.9 / 1.3 m, kitchen and gable 1.1 / 1.0 m, bath 1.4 / 0.7 m). Single glazing ('glass'), as built in the 1950s.",
+   "Trisim: slits down on the bedroom windows, rolled up in the living room (daytime use).",
+   "Walls: page 88 writes only the finish (plaster, 'טיח'); hollow concrete block behind it is assumed, as usual for 1950s shikunim (research_1): facades block_20, gable block_10, stairwell walls block_20. The 7 cm partitions take the table's 10 cm block (no 7 cm entry: an upper estimate). The 15 cm party wall is drawn as block_20 on the box edge (no effect inside) and stops at the landing; the box edge along the stair is open, as the stair continues into the mirror half. No loss_db is set.",
+   "Doors: steel entry door (pladelet, today's usual replacement) closed; bath and WC hollow-core doors closed; bedroom, kitchen and small-bedroom doors open.",
+   "Router: the plan shows no communications point; placed in the 1.1 m deep entry hall on the small-bedroom wall about 0.5 m from the flat entry (clear of the door), 1.5 m high, 5 GHz, 20 dBm.",
+   "Furniture is assumed (the plan shows only the bath, basin, WC and a sink); the steel bathtub is below the 1 m measuring plane and is not drawn.",
+   "Half of the common stair and landing lies inside the box and is labelled outside; the stair's projection behind the entrance facade, the balconies and the neighbouring flats are left out."
+  ],
+  "israeli_features": [
+   "1950s 'shikun' three-storey walk-up block in the 'train' typology, two flats per landing",
+   "plastered concrete-block walls, 7 cm block partitions, flat concrete roof",
+   "grouped projecting balconies and an enclosed service balcony with louvres",
+   "trisim (roller shutters) on the bedroom windows",
+   "steel entry door (pladelet) on the common stair",
+   "no mamad: the municipality allows a 'service mamad' (ממ\"ד שירות) as a later addition",
+   "residents' additions allowed by plan 2173: a 13 m2 addition and a 14 m2 rear addition (yellow on the plan)"
+  ],
+  "notes": "An original 72 m2 flat in a 1950s three-storey shikun block in Ramat Aviv A, before the room additions many residents have since built. The router in the entry hall covers the hall, living room and small bedroom strongly and the big bedroom well (about -59 dBm). The far end of the wet core struggles: the kitchen sits near -67 dBm behind the fridge, the bathroom is fair (about -74 dBm) through its closed door, and the toilet, behind three or four block partitions, is weak (about -83 dBm). The 7 cm partitions are counted as 10 cm block, so the real flat may do a few dB better; a later addition or a service mamad adds an outer wall (up to 40 dB for a mamad) and usually needs a second access point."
+ },
+ "width": 8.895,
+ "depth": 7.4,
+ "height": 2.59,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 14.278,
+     "width_m": 0.7,
+     "sill_m": 0.9,
+     "height_m": 1.3,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 33.727,
+     "width_m": 1.0,
+     "sill_m": 0.9,
+     "height_m": 1.3,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 73.749,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 88.252,
+     "width_m": 1.5,
+     "sill_m": 0.9,
+     "height_m": 1.3,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Rear facade (balcony side)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 87.3524,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 10.296,
+     "width_m": 0.6,
+     "sill_m": 1.4,
+     "height_m": 0.7,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 22.523,
+     "width_m": 0.5,
+     "sill_m": 1.4,
+     "height_m": 0.7,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.193,
+     "width_m": 0.9,
+     "sill_m": 1.1,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 82.368,
+     "width_m": 1.0,
+     "sill_m": 0.9,
+     "height_m": 1.3,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Entrance facade (stair side)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 31.081,
+     "width_m": 1.0,
+     "sill_m": 1.1,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.1,
+   "name": "West gable (written 10 cm)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 49.1216,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.15,
+   "name": "Party wall (mirror flat, written 15 cm)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.1216,
+   "start_pct": 0.0,
+   "end_pct": 57.7291,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 38.072,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 60.37,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.07,
+   "name": "Bedroom / hall and bath"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.1216,
+   "start_pct": 57.7291,
+   "end_pct": 87.3524,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 48.767,
+     "width_m": 2.45,
+     "sill_m": 0.0,
+     "height_m": 2.2,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.07,
+   "name": "Living room / hall (open)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.1216,
+   "start_pct": 87.3524,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.2,
+   "name": "Living room / stair landing"
+  },
+  {
+   "axis": "x",
+   "at_pct": 57.7291,
+   "start_pct": 0.0,
+   "end_pct": 49.1216,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.07,
+   "name": "Bedroom / living room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 87.3524,
+   "start_pct": 49.1216,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 15.007,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.2,
+   "name": "Stairwell wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 64.3919,
+   "start_pct": 16.3575,
+   "end_pct": 87.3524,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 6.255,
+     "width_m": 0.65,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 34.759,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 66.112,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.07,
+   "name": "Hall / WC, kitchen, small bedroom"
+  },
+  {
+   "axis": "x",
+   "at_pct": 16.3575,
+   "start_pct": 49.1216,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 15.007,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.07,
+   "name": "Bathroom / hall and WC"
+  },
+  {
+   "axis": "x",
+   "at_pct": 27.3749,
+   "start_pct": 64.3919,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.07,
+   "name": "WC / kitchen"
+  },
+  {
+   "axis": "x",
+   "at_pct": 50.6464,
+   "start_pct": 64.3919,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.07,
+   "name": "Kitchen / small bedroom"
+  }
+ ],
+ "aps": [
+  {
+   "name": "Router (entrance)",
+   "x": 7.25,
+   "y": 4.7,
+   "z": 1.5,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Double bed",
+   "kind": "bed",
+   "x": 3.05,
+   "y": 0.55,
+   "w": 2.0,
+   "d": 1.6,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe (bedroom, west)",
+   "kind": "wardrobe",
+   "x": 0.15,
+   "y": 2.98,
+   "w": 1.4,
+   "d": 0.6,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe (bedroom, east)",
+   "kind": "wardrobe",
+   "x": 3.62,
+   "y": 2.98,
+   "w": 1.45,
+   "d": 0.6,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 0.2,
+   "y": 0.25,
+   "w": 1.3,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa",
+   "kind": "sofa",
+   "x": 7.78,
+   "y": 0.8,
+   "w": 0.9,
+   "d": 2.2,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bookcase and TV unit",
+   "kind": "bookshelf",
+   "x": 5.2,
+   "y": 1.0,
+   "w": 0.3,
+   "d": 1.8,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table",
+   "kind": "table",
+   "x": 6.1,
+   "y": 1.4,
+   "w": 1.2,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchen run",
+   "kind": "kitchen",
+   "x": 2.5,
+   "y": 6.58,
+   "w": 1.95,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Fridge",
+   "kind": "fridge",
+   "x": 2.5,
+   "y": 4.84,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Single bed",
+   "kind": "bed",
+   "x": 6.72,
+   "y": 5.15,
+   "w": 0.9,
+   "d": 2.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe (small bedroom)",
+   "kind": "wardrobe",
+   "x": 4.58,
+   "y": 5.3,
+   "w": 0.6,
+   "d": 1.8,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk (small bedroom)",
+   "kind": "desk",
+   "x": 5.5,
+   "y": 6.58,
+   "w": 1.15,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Washing machine",
+   "kind": "washer",
+   "x": 0.78,
+   "y": 6.55,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Bedroom",
+   "name_he": "חדר שינה",
+   "role": "bedroom",
+   "x": 2.4,
+   "y": 1.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Living room",
+   "name_he": "סלון",
+   "role": "living",
+   "x": 6.9,
+   "y": 2.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Hall",
+   "name_he": "מבואה",
+   "role": "hall",
+   "x": 4.0,
+   "y": 4.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bathroom",
+   "name_he": "אמבטיה",
+   "role": "bath",
+   "x": 0.7,
+   "y": 4.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Toilet",
+   "name_he": "שירותים",
+   "role": "wc",
+   "x": 1.95,
+   "y": 6.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Kitchen",
+   "name_he": "מטבח",
+   "role": "kitchen",
+   "x": 3.45,
+   "y": 5.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Small bedroom",
+   "name_he": "חדר שינה קטן",
+   "role": "bedroom",
+   "x": 6.0,
+   "y": 5.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Common stair and landing (half)",
+   "name_he": "חדר מדרגות משותף (חצי)",
+   "role": "outside",
+   "x": 8.33,
+   "y": 5.8,
+   "ceiling_m": null
+  }
+ ]
+}

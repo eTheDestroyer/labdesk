@@ -1,0 +1,812 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Kibbutz house, Lohamei HaGeta'ot, ground floor (2014)",
+  "title_he": "בית בהרחבת קיבוץ לוחמי הגטאות, קומת קרקע (2014)",
+  "kind": "home",
+  "city": "Lohamei HaGeta'ot (kibbutz, Western Galilee)",
+  "city_he": "קיבוץ לוחמי הגטאות",
+  "era": "2014: a private family house in the kibbutz's 'continuing generation' expansion neighbourhood (not a 1950s members' house)",
+  "source": {
+   "title": "ArchDaily, 'A Modern \"Kibbutz\" House / Henkin Shavit Architecture & Design': the architect's ground floor plan with a 0-1-2 m scale bar (image ground_floor_plan.jpg, 2000 x 1413 px); the first floor plan on the same page was read for what is upstairs, and the page's photos (Yoav Gurin: front entrance, bedroom, west facade) for the door and window types",
+   "url": "https://www.archdaily.com/590166/a-modern-kibbutz-house-henkin-shavit-architecture-and-design",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Scale from the plan's bar (1 m = 90 px). Box 14.6 x 10.25 m = the outer faces of the house; the timber pergola west of the living room and the boundary wall south of it are outside the box.",
+   "Plan up is drawn as north (model +y); the drawing's north sign is not used.",
+   "Ceiling height 2.80 m: not on the drawings (typical net height of a new Israeli house).",
+   "Exterior walls: 20 cm hollow block, plastered (block_20); the plan shows them grey-filled 22-32 cm thick and ArchDaily tags only 'brick'. Interior walls drawn 10-14 cm: 10 cm block (block_10).",
+   "Every wall takes its table material's loss; no wall has its own loss_db, so the old 12 dB 'brick' default and the invented 27 dB concrete figure are gone.",
+   "South wall treated as an ordinary exterior wall (no window drawn); the plan does not show whether a neighbour's house stands behind the boundary wall.",
+   "Mamad read from the drawing (no room names on the plan): thick walls, outward-opening door, vent pipe through the north wall, window with a steel-leaf pocket in the east wall. Net about 3.5 x 2.8 m (about 9.7 m2), not 3.3 x 2.6 m as the draft said.",
+   "Mamad walls: mamad_20 to the house, mamad_25 for the north outer wall, mamad_30 for the east wall that holds the window. Blast door shown OPEN and the window's steel leaf OPEN (mamad_glazing): daily life.",
+   "Entrance: the plan draws thin glazing either side of the front door and the ArchDaily entrance photo shows steel-framed glass sidelights round a solid dark leaf. Sidelights modelled as uncoated double glazing (glass_double); the leaf as a steel pladelet, closed (its material is not stated: estimate).",
+   "Bath doors: hollow-core, closed. Bedroom and laundry doors: open. Laundry yard door and the living room's three pairs of French doors: glazed, closed.",
+   "Glazing: uncoated double glazing (2014, before SI 5282-1 pushed solar-control glass); widths are measured, sills and heights are typical values except the bedroom's two tall casements (sill about 0.7 m, top about 2.4 m, read from the bedroom photo).",
+   "No trisim anywhere: the photos show slim steel-framed glazing with no shutter boxes or guides, and the pergola shades the west doors. Every opening has shutter 'none'.",
+   "Furniture positions and sizes as drawn; tall kitchen and bedroom cupboards as 2.4 m wooden cupboards; mamad furnished as a study (shelves, sofa bed, desk) as drawn.",
+   "The dog-leg stair (oak treads in the photos) is not an obstacle (the model has no stair kind and open treads take little); the stair hall is open to the living room and hall, so it is one room with them.",
+   "Router: the ISP's router in a communications cabinet on the solid living-room wall just west of the glazed entrance screen (x 3.35 m, 0.2 m inside), 1.5 m high, 5 GHz, 20 dBm. The plan does not show the cabinet; this is the nearest solid wall to the front door, and the TV wall too.",
+   "Ground floor only: the model is one storey. Upstairs (master bedroom, children's room, bath and landing over the east half, roof terrace over the living room) is not modelled."
+  ],
+  "israeli_features": [
+   "Mamad (protected room) in the north-east corner with a steel blast door opening outward and a steel-leaf window, used day to day as a study / guest room",
+   "Front door (modelled as a pladelet) in a steel-framed glazed entrance screen",
+   "No trisim: steel-framed windows shaded by a timber pergola instead",
+   "Kibbutz expansion (harchava) house: private plot, two storeys, open living-kitchen ground floor",
+   "Laundry room with a door to the yard (instead of a flat's service balcony)"
+  ],
+  "notes": "A 2014 two-storey family house in the expansion neighbourhood of Kibbutz Lohamei HaGeta'ot; this file is the ground floor: one large open living room, kitchen and stair hall, a bedroom wing with bath and laundry, and the mamad. From the router by the front door the open living area is strong; the bedroom sits behind two block walls at the far end of the house and gets only fair to weak signal. The mamad's 20-30 cm concrete walls block the router: the model lights only the strip seen through the open blast door (the materials council estimates about -50 dBm in the whole room with the door open), and with the door shut the room is cut off. Upstairs (master bedroom, children's room) is not in this file and needs its own access point."
+ },
+ "width": 14.6,
+ "depth": 10.25,
+ "height": 2.8,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 40.411,
+   "end_pct": 73.4932,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 19.462,
+     "width_m": 0.52,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 33.747,
+     "width_m": 0.52,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 87.371,
+     "width_m": 0.6,
+     "sill_m": 1.5,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.23,
+   "name": "North wall: stair hall and bath 1"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 73.4932,
+   "end_pct": 100.0,
+   "material": "mamad_25",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.28,
+   "name": "North wall: mamad (outer, vent pipe only)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 69.6585,
+   "end_pct": 100.0,
+   "material": "mamad_30",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 36.013,
+     "width_m": 0.95,
+     "sill_m": 1.0,
+     "height_m": 1.0,
+     "fill": "mamad_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.28,
+   "name": "East wall: mamad, blast window (steel leaf open)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 51.8049,
+   "end_pct": 69.6585,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 48.634,
+     "width_m": 1.15,
+     "sill_m": 1.2,
+     "height_m": 0.9,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "East wall: bath 2"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 77.7561,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 77.541,
+     "width_m": 1.65,
+     "sill_m": 0.0,
+     "height_m": 2.3,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 50.188,
+     "width_m": 1.65,
+     "sill_m": 0.0,
+     "height_m": 2.3,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 22.836,
+     "width_m": 1.65,
+     "sill_m": 0.0,
+     "height_m": 2.3,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.28,
+   "name": "West facade: three pairs of glazed French doors to the pergola"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 53.0822,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.22,
+   "name": "South wall: living and kitchen (tall cupboards and fridge niche)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.7561,
+   "start_pct": 0.0,
+   "end_pct": 24.5205,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.24,
+   "name": "North wall of the living room (TV wall)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.7561,
+   "start_pct": 24.5205,
+   "end_pct": 40.411,
+   "material": "glass_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 46.121,
+     "width_m": 0.95,
+     "sill_m": 0.0,
+     "height_m": 2.2,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.06,
+   "name": "Entrance screen: steel-framed glass sidelights, solid front door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 40.411,
+   "start_pct": 77.7561,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.24,
+   "name": "Stair hall west wall (to the entrance garden)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 53.0822,
+   "start_pct": 0.0,
+   "end_pct": 26.439,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 49.446,
+     "width_m": 0.56,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.22,
+   "name": "Kitchen east wall to the tree courtyard"
+  },
+  {
+   "axis": "y",
+   "at_pct": 26.439,
+   "start_pct": 53.0822,
+   "end_pct": 69.3151,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 54.852,
+     "width_m": 0.68,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.24,
+   "name": "Laundry south wall, glazed yard door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 69.3151,
+   "start_pct": 15.4146,
+   "end_pct": 26.439,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.24,
+   "name": "Bedroom west wall to the tree courtyard"
+  },
+  {
+   "axis": "y",
+   "at_pct": 15.4146,
+   "start_pct": 69.3151,
+   "end_pct": 92.7397,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.24,
+   "name": "Bedroom south wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 92.7397,
+   "start_pct": 15.4146,
+   "end_pct": 51.8049,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 82.842,
+     "width_m": 0.7,
+     "sill_m": 0.7,
+     "height_m": 1.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 15.282,
+     "width_m": 0.7,
+     "sill_m": 0.7,
+     "height_m": 1.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.22,
+   "name": "Bedroom east wall, two tall casement windows flanking the bed"
+  },
+  {
+   "axis": "y",
+   "at_pct": 51.8049,
+   "start_pct": 92.7397,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.22,
+   "name": "Exterior jog south of bath 2"
+  },
+  {
+   "axis": "x",
+   "at_pct": 56.9178,
+   "start_pct": 64.0976,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.12,
+   "name": "Stair | bath 1, ends as a pier in the hall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 79.6098,
+   "start_pct": 56.9178,
+   "end_pct": 73.4932,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 51.24,
+     "width_m": 0.75,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Bath 1 south wall, door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 73.4932,
+   "start_pct": 79.6098,
+   "end_pct": 100.0,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.21,
+   "name": "Mamad west wall (bath 1 side)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 79.6098,
+   "start_pct": 73.4932,
+   "end_pct": 76.9863,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.25,
+   "name": "Mamad notch"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.9863,
+   "start_pct": 69.6585,
+   "end_pct": 79.6098,
+   "material": "mamad_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "blast_door",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.2,
+   "name": "Mamad door wall, blast door (open, daily use)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 69.6585,
+   "start_pct": 76.9863,
+   "end_pct": 100.0,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.24,
+   "name": "Mamad south wall (bath 2 side)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.9863,
+   "start_pct": 51.8049,
+   "end_pct": 69.6585,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Bath 2 west wall (hall)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 51.8049,
+   "start_pct": 53.0822,
+   "end_pct": 76.9863,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 37.249,
+     "width_m": 0.68,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 82.808,
+     "width_m": 0.73,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Hall south wall: laundry door, bedroom door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 51.8049,
+   "start_pct": 76.9863,
+   "end_pct": 92.7397,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 61.739,
+     "width_m": 0.73,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Bath 2 | bedroom, en-suite door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 53.0822,
+   "start_pct": 26.439,
+   "end_pct": 51.8049,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.1,
+   "name": "Living | laundry"
+  },
+  {
+   "axis": "x",
+   "at_pct": 65.6164,
+   "start_pct": 26.439,
+   "end_pct": 51.8049,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.14,
+   "name": "Laundry | bedroom wardrobe"
+  },
+  {
+   "axis": "y",
+   "at_pct": 35.5122,
+   "start_pct": 53.0822,
+   "end_pct": 58.6986,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Laundry stub (sink | washer niche)"
+  }
+ ],
+ "aps": [
+  {
+   "name": "Router (entrance)",
+   "x": 3.35,
+   "y": 7.8,
+   "z": 1.5,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Kitchen island (sink, hob)",
+   "kind": "kitchen",
+   "x": 2.96,
+   "y": 1.87,
+   "w": 3.55,
+   "d": 1.1,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining end of the island",
+   "kind": "table",
+   "x": 1.6,
+   "y": 1.87,
+   "w": 1.36,
+   "d": 1.1,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Fridge (niche in the south wall)",
+   "kind": "fridge",
+   "x": 5.3,
+   "y": 0.22,
+   "w": 0.9,
+   "d": 0.7,
+   "h": 1.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Tall kitchen cupboards W",
+   "kind": "wardrobe",
+   "x": 0.51,
+   "y": 0.22,
+   "w": 3.22,
+   "d": 0.64,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Tall kitchen cupboards centre",
+   "kind": "wardrobe",
+   "x": 4.07,
+   "y": 0.22,
+   "w": 1.16,
+   "d": 0.64,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Tall kitchen cupboards E",
+   "kind": "wardrobe",
+   "x": 6.32,
+   "y": 0.22,
+   "w": 1.08,
+   "d": 0.64,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa",
+   "kind": "sofa",
+   "x": 1.07,
+   "y": 4.35,
+   "w": 2.95,
+   "d": 0.9,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee table",
+   "kind": "table",
+   "x": 1.51,
+   "y": 5.81,
+   "w": 1.97,
+   "d": 0.77,
+   "h": 0.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Concrete pier (free-standing)",
+   "kind": "column",
+   "x": 5.79,
+   "y": 4.36,
+   "w": 0.22,
+   "d": 1.01,
+   "h": 2.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mamad built-in shelves",
+   "kind": "bookshelf",
+   "x": 10.86,
+   "y": 8.2,
+   "w": 0.36,
+   "d": 1.8,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mamad sofa bed",
+   "kind": "bed",
+   "x": 12.42,
+   "y": 9.2,
+   "w": 1.75,
+   "d": 0.77,
+   "h": 0.45,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mamad desk",
+   "kind": "desk",
+   "x": 12.94,
+   "y": 7.26,
+   "w": 1.36,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bedroom wardrobe (walk-in strip)",
+   "kind": "wardrobe",
+   "x": 9.66,
+   "y": 2.78,
+   "w": 0.54,
+   "d": 2.47,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Double bed",
+   "kind": "bed",
+   "x": 11.45,
+   "y": 2.59,
+   "w": 1.95,
+   "d": 1.6,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Laundry counter with sink",
+   "kind": "kitchen",
+   "x": 7.82,
+   "y": 3.73,
+   "w": 0.6,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Washing machine",
+   "kind": "washer",
+   "x": 7.85,
+   "y": 2.85,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Living room, kitchen and stair hall",
+   "name_he": "סלון, מטבח וחדר מדרגות",
+   "role": "living",
+   "x": 3.5,
+   "y": 3.75,
+   "ceiling_m": null
+  },
+  {
+   "name": "Entrance garden",
+   "name_he": "גינת כניסה",
+   "role": "outside",
+   "x": 2.5,
+   "y": 9.25,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bath 1",
+   "name_he": "אמבטיה 1",
+   "role": "bath",
+   "x": 9.5,
+   "y": 9.25,
+   "ceiling_m": null
+  },
+  {
+   "name": "Mamad (study)",
+   "name_he": "ממ\"ד (חדר עבודה)",
+   "role": "mamad",
+   "x": 12.6,
+   "y": 8.65,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bath 2 (en-suite)",
+   "name_he": "מקלחת הורים",
+   "role": "bath",
+   "x": 12.9,
+   "y": 6.25,
+   "ceiling_m": null
+  },
+  {
+   "name": "Laundry",
+   "name_he": "חדר כביסה",
+   "role": "service",
+   "x": 8.7,
+   "y": 4.55,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bedroom",
+   "name_he": "חדר שינה",
+   "role": "bedroom",
+   "x": 11.8,
+   "y": 4.75,
+   "ceiling_m": null
+  },
+  {
+   "name": "Tree courtyard and garden",
+   "name_he": "חצר העץ והגינה",
+   "role": "outside",
+   "x": 11.5,
+   "y": 0.75,
+   "ceiling_m": null
+  }
+ ]
+}

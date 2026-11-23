@@ -1,0 +1,1364 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Rehovot Community Center: auditorium, lobby and offices",
+  "title_he": "המרכז הקהילתי ברחובות: אולם, לובי ומשרדים",
+  "kind": "public",
+  "city": "Rehovot",
+  "city_he": "רחובות",
+  "era": "2016 (Kimmel Eshkolot Architects; contractor Bonei Binyan)",
+  "source": {
+   "title": "ArchDaily project page: ground-floor plan (FLOOR_PLANS.jpg, scale bar) and Section A (SEC_C.jpg)",
+   "url": "https://www.archdaily.com/803544/rehovot-community-center-kimmel-eshkolot-architects",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Box = the main wing only, 13.6 x 41.0 m, read off the ground-floor sheet rotated 8 degrees square at 32.6 px/m (scale bar); walls to about +-0.3 m",
+   "The handcraft studio (5) is left out: it joins the lobby 28 degrees off the wing and cannot be squared into the same box; the lobby is cut at plan y 41.6 m with no wall where it runs on to the studio",
+   "The library (1) and preschoolers' zone (2) are left out: a separate building across the plaza, at another angle and a floor 0.75 m lower; it needs its own room file and access point",
+   "The office row's slanted south-west corner is squared off at the cut line, and the second (rotated) stair at the south end of the lobby is not drawn",
+   "Height 4.1 m = the auditorium's suspended ceiling in Section A (flat floor at +-0.00, stage +0.50, slab +5.50); the same ceiling is assumed over the lobby and offices",
+   "Auditorium shell = 25 cm reinforced concrete (concrete_25), drawn 0.35 m; material not stated on the page",
+   "Mamam (institutional protected room, about 4.4 x 4.2 m = 18 m2 inside): mamad_30 on the outer wall with the window (Civil Defence Regulations: 30 cm outer walls); the regulations allow 20 cm inner walls up to 20 m2, but the plan draws the inner walls as thick as the outer one (about 0.35 m), so mamad_25 is used",
+   "Mamam blast door OPEN and its window as mamad_glazing (steel leaf open): the room is used daily as an office; close the door in the panel (blast_door, 43 dB) to see it sealed",
+   "Office row facades and toilet walls = 20 cm plastered block (block_20); the office facade is drawn as a thin double line behind an outer screen, so it may be lighter or more glazed; office partitions drawn thin = double gypsum; toilet divisions = 10 cm block",
+   "Lift shaft and the riser's north wall = 20 cm RC; the lift landing door is steel (door_steel)",
+   "The room east of the mamam (door to the lobby) holds two crossed rectangles, read as service shafts: a technical room, the shafts modelled as metal boxes the full height (ducts, pipes, cables)",
+   "Lift shaft walls and the lift's east landing door read off the plan (car drawn against the east opening)",
+   "Lobby and stair facades are glazed (double glazing, uncoated); lobby glazing on the column line at plan x 11.8 m with the main doors there, the strip east of it is the outdoor entrance canopy",
+   "Window sizes and sills are not on the plan: offices 0.9 + 1.5 m, mamam window 1.0 x 1.0 m at 1.0 m, at the gap in its west wall (at most 1.21 m2 by regulation), auditorium slot window 4.6 m wide, 0.3 + 2.7 m",
+   "No trisim: a public building, none drawn",
+   "Doors: hall doors solid (acoustic) and closed; office doors hollow-core, closed; reception and kitchenette doors open; technical room door solid, closed",
+   "Seats are drawn as 10 flat rows of 16 (0.85 m high, no radio loss); stage platform 0.5 m (Section A)",
+   "Communications cabinet in the reception office, stage cabinets, shelving and office desks are typical fittings, not on the plan",
+   "Access point: one ceiling AP in the lobby spine outside the hall doors, 3.9 m, 5 GHz, 20 dBm EIRP"
+  ],
+  "israeli_features": [
+   "Mamam (ממ\"מ, institutional protected room) inside the office row, used daily as an office: RC walls, steel blast door, small steel blast window and the NBC filter-ventilation unit drawn in its corner",
+   "Municipal community centre (matnas) programme: multi-purpose hall, offices, studios, youth wing and a library next door",
+   "Entrance under a deep shading canopy against the sun"
+  ],
+  "notes": "Ground floor of the main wing of Rehovot's 2016 community centre: a multi-purpose hall with a stage and about 160 seats as drawn, the entrance lobby, an office row with the protected room (mamam), toilets and the main stair. One ceiling AP in the lobby covers the lobby, the toilets and the reception office; the hall sits behind about 37 dB of concrete and gets signal only through its doors, so it needs its own AP. The mamam's 25-30 cm concrete walls (even with the blast door open, its doorway faces a side corridor) shade the mamam and the offices behind it; the model has no diffraction, so those rooms read darker than a walk test will show, but they still need an AP of their own, as do the handcraft studio and the library (not in this box)."
+ },
+ "width": 13.6,
+ "depth": 41.0,
+ "height": 4.1,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Auditorium north wall (behind the stage)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 52.195122,
+   "end_pct": 100.0,
+   "material": "concrete_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 22.959184,
+     "width_m": 4.6,
+     "sill_m": 0.3,
+     "height_m": 2.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Auditorium west wall, tall slot window"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 33.170732,
+   "end_pct": 45.121951,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 28.571429,
+     "width_m": 2.2,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "Reception office west facade"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 22.195122,
+   "end_pct": 33.170732,
+   "material": "mamad_30",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 40.0,
+     "width_m": 1.0,
+     "sill_m": 1.0,
+     "height_m": 1.0,
+     "fill": "mamad_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.33,
+   "name": "Mamam outer wall (30 cm RC) with the blast window"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 22.195122,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 79.120879,
+     "width_m": 1.6,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 46.153846,
+     "width_m": 1.8,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 14.285714,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "Office row west facade"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 52.195122,
+   "end_pct": 100.0,
+   "material": "concrete_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 60.969388,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.4,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Auditorium east wall, double exit doors to the plaza"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 47.317073,
+   "end_pct": 52.195122,
+   "material": "glass_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 1.6,
+     "sill_m": 0.0,
+     "height_m": 2.4,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "Lobby east entrance (glazed, to the plaza and the library)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 27.560976,
+   "end_pct": 47.317073,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "Toilet block east wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 16.097561,
+   "end_pct": 27.560976,
+   "material": "glass_double",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "Stair glazing, east"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 35.294118,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "Office row south facade (slanted in reality, squared here)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.195122,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "concrete_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 56.985294,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.4,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.35,
+   "name": "Auditorium south wall, double acoustic doors to the lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 18.382353,
+   "start_pct": 86.829268,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 75.925926,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stage / west backstage room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 77.205882,
+   "start_pct": 86.829268,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 79.62963,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stage / east backstage room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 86.829268,
+   "start_pct": 0.0,
+   "end_pct": 18.382353,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 36.0,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "West backstage room, door to the hall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 86.829268,
+   "start_pct": 77.205882,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 61.290323,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "East backstage room, door to the hall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 8.455882,
+   "start_pct": 45.121951,
+   "end_pct": 52.195122,
+   "material": "glass_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 51.724138,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.2,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lobby west facade (glazed), side exit"
+  },
+  {
+   "axis": "y",
+   "at_pct": 45.121951,
+   "start_pct": 0.0,
+   "end_pct": 33.088235,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 43.333333,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Reception office, door to the lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.088235,
+   "start_pct": 42.926829,
+   "end_pct": 45.121951,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Reception office east wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.088235,
+   "start_pct": 33.170732,
+   "end_pct": 37.560976,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 33.333333,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Reception office, side door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 42.926829,
+   "start_pct": 33.088235,
+   "end_pct": 49.632353,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift shaft north wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 37.560976,
+   "start_pct": 33.088235,
+   "end_pct": 49.632353,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift shaft south wall (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.088235,
+   "start_pct": 37.560976,
+   "end_pct": 42.926829,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift shaft west wall (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 49.632353,
+   "start_pct": 37.560976,
+   "end_pct": 42.926829,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 59.090909,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift shaft east wall, steel landing door to the lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 49.632353,
+   "start_pct": 32.317073,
+   "end_pct": 37.560976,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Wall between the lobby and the side corridor to the mamam"
+  },
+  {
+   "axis": "y",
+   "at_pct": 33.170732,
+   "start_pct": 0.0,
+   "end_pct": 35.661765,
+   "material": "mamad_25",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.28,
+   "name": "Mamam north wall (RC 25)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 22.195122,
+   "start_pct": 0.0,
+   "end_pct": 35.661765,
+   "material": "mamad_25",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.28,
+   "name": "Mamam south wall (RC 25)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 35.661765,
+   "start_pct": 22.195122,
+   "end_pct": 33.170732,
+   "material": "mamad_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 74.444444,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "blast_door",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.28,
+   "name": "Mamam east wall (RC 25), blast door (open in daily use)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 28.04878,
+   "start_pct": 35.661765,
+   "end_pct": 54.411765,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Technical room north wall (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 54.411765,
+   "start_pct": 17.073171,
+   "end_pct": 28.04878,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Technical room east wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 22.195122,
+   "start_pct": 35.661765,
+   "end_pct": 40.808824,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Technical room / kitchenette (foot of shaft 1)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 40.808824,
+   "start_pct": 17.073171,
+   "end_pct": 22.195122,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Kitchenette / technical room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 17.073171,
+   "start_pct": 20.588235,
+   "end_pct": 40.808824,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 54.545455,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Kitchenette door to the corridor"
+  },
+  {
+   "axis": "y",
+   "at_pct": 17.073171,
+   "start_pct": 40.808824,
+   "end_pct": 54.411765,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 37.837838,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Technical room door to the lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.588235,
+   "start_pct": 13.658537,
+   "end_pct": 22.195122,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.285714,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Office 1 east wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 13.658537,
+   "start_pct": 0.0,
+   "end_pct": 35.294118,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 79.166667,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Office 1 / office 2"
+  },
+  {
+   "axis": "x",
+   "at_pct": 35.294118,
+   "start_pct": 0.0,
+   "end_pct": 13.658537,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 32.142857,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Offices 2 and 3, corridor wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 6.341463,
+   "start_pct": 0.0,
+   "end_pct": 35.294118,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Office 2 / office 3"
+  },
+  {
+   "axis": "y",
+   "at_pct": 47.317073,
+   "start_pct": 69.852941,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet block north wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 69.852941,
+   "start_pct": 39.512195,
+   "end_pct": 47.317073,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet block west wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 69.852941,
+   "start_pct": 27.560976,
+   "end_pct": 34.146341,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet block west wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 40.0,
+   "start_pct": 69.852941,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 19.512195,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Men's toilets entry"
+  },
+  {
+   "axis": "y",
+   "at_pct": 34.146341,
+   "start_pct": 69.852941,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 20.731707,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Women's toilets door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 84.558824,
+   "start_pct": 34.146341,
+   "end_pct": 40.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 45.833333,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Accessible WC door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 27.560976,
+   "start_pct": 69.852941,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet block south wall / stair head"
+  },
+  {
+   "axis": "x",
+   "at_pct": 69.852941,
+   "start_pct": 21.95122,
+   "end_pct": 27.560976,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Stair west wall (lower part open to the lobby)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 16.097561,
+   "start_pct": 83.088235,
+   "end_pct": 100.0,
+   "material": "glass_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Lobby glazing south of the stair"
+  },
+  {
+   "axis": "x",
+   "at_pct": 83.088235,
+   "start_pct": 0.0,
+   "end_pct": 16.097561,
+   "material": "glass_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 79.545455,
+     "width_m": 1.8,
+     "sill_m": 0.0,
+     "height_m": 2.4,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lobby east glazing, main entrance doors"
+  }
+ ],
+ "aps": [
+  {
+   "name": "AP1 (lobby ceiling)",
+   "x": 8.2,
+   "y": 15.6,
+   "z": 3.9,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Stage platform (+0.50)",
+   "kind": "table",
+   "x": 2.5,
+   "y": 35.6,
+   "w": 8.0,
+   "d": 5.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steps up to the stage (west)",
+   "kind": "table",
+   "x": 0.5,
+   "y": 37.6,
+   "w": 1.9,
+   "d": 1.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steps up to the stage (east)",
+   "kind": "table",
+   "x": 11.2,
+   "y": 38.3,
+   "w": 1.1,
+   "d": 0.8,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Stage equipment cabinet (west)",
+   "kind": "metal_cabinet",
+   "x": 0.45,
+   "y": 40.05,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Stage equipment cabinet (east)",
+   "kind": "metal_cabinet",
+   "x": 12.2,
+   "y": 40.05,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 1 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 31.45,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 2 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 30.55,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 3 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 29.65,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 4 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 28.75,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 5 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 27.85,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 6 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 26.95,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 7 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 26.05,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 8 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 25.15,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 9 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 24.25,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Seat row 10 (16 seats)",
+   "kind": "sofa",
+   "x": 2.2,
+   "y": 23.35,
+   "w": 8.3,
+   "d": 0.55,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lobby bench",
+   "kind": "sofa",
+   "x": 1.7,
+   "y": 20.7,
+   "w": 2.2,
+   "d": 0.5,
+   "h": 0.45,
+   "loss_db_m": null
+  },
+  {
+   "name": "Reception counter",
+   "kind": "desk",
+   "x": 1.1,
+   "y": 16.5,
+   "w": 3.2,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Reception desk 1",
+   "kind": "desk",
+   "x": 0.5,
+   "y": 15.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Reception desk 2",
+   "kind": "desk",
+   "x": 2.5,
+   "y": 15.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Communications cabinet (wall-mounted)",
+   "kind": "server_rack",
+   "x": 0.25,
+   "y": 13.75,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 1.0,
+   "loss_db_m": null,
+   "z0": 0.8
+  },
+  {
+   "name": "Lift car and counterweight (steel)",
+   "kind": "metal_cabinet",
+   "x": 4.9,
+   "y": 15.7,
+   "w": 1.6,
+   "d": 1.7,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "NBC filter-ventilation unit (steel)",
+   "kind": "metal_cabinet",
+   "x": 0.5,
+   "y": 12.6,
+   "w": 0.8,
+   "d": 0.7,
+   "h": 1.1,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mamam desk 1",
+   "kind": "desk",
+   "x": 0.6,
+   "y": 10.0,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mamam desk 2",
+   "kind": "desk",
+   "x": 2.8,
+   "y": 10.0,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Shaft 1 (ducts and pipes)",
+   "kind": "metal_cabinet",
+   "x": 5.15,
+   "y": 9.25,
+   "w": 0.35,
+   "d": 2.05,
+   "h": 4.1,
+   "loss_db_m": null
+  },
+  {
+   "name": "Shaft 2 (ducts and cables)",
+   "kind": "metal_cabinet",
+   "x": 6.85,
+   "y": 7.3,
+   "w": 0.4,
+   "d": 4.0,
+   "h": 4.1,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchenette fridge",
+   "kind": "fridge",
+   "x": 2.95,
+   "y": 8.25,
+   "w": 0.65,
+   "d": 0.65,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchenette run (sink)",
+   "kind": "kitchen",
+   "x": 3.7,
+   "y": 8.3,
+   "w": 1.7,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 1 desk",
+   "kind": "desk",
+   "x": 0.6,
+   "y": 7.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 1 shelving",
+   "kind": "bookshelf",
+   "x": 0.25,
+   "y": 5.7,
+   "w": 0.9,
+   "d": 0.3,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 2 desk 1",
+   "kind": "desk",
+   "x": 0.7,
+   "y": 3.9,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 2 desk 2",
+   "kind": "desk",
+   "x": 3.1,
+   "y": 4.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 2 shelving",
+   "kind": "bookshelf",
+   "x": 0.25,
+   "y": 2.7,
+   "w": 0.9,
+   "d": 0.3,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 3 desk",
+   "kind": "desk",
+   "x": 1.5,
+   "y": 0.8,
+   "w": 0.7,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 3 meeting table",
+   "kind": "table",
+   "x": 2.4,
+   "y": 0.2,
+   "w": 1.2,
+   "d": 1.0,
+   "h": 0.75,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Multi-purpose hall and stage",
+   "name_he": "אולם רב-תכליתי ובמה",
+   "role": "other",
+   "x": 6.5,
+   "y": 29.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Backstage room (west)",
+   "name_he": "חדר אחורי במה (מערב)",
+   "role": "store",
+   "x": 1.3,
+   "y": 39.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Backstage room (east)",
+   "name_he": "חדר אחורי במה (מזרח)",
+   "role": "store",
+   "x": 11.9,
+   "y": 37.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Entrance lobby",
+   "name_he": "לובי כניסה",
+   "role": "hall",
+   "x": 8.2,
+   "y": 18.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Covered walk (outside)",
+   "name_he": "מעבר מקורה (חוץ)",
+   "role": "outside",
+   "x": 0.5,
+   "y": 20.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Entrance canopy (outside)",
+   "name_he": "סככת כניסה (חוץ)",
+   "role": "outside",
+   "x": 12.5,
+   "y": 3.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Reception office",
+   "name_he": "משרד קבלה",
+   "role": "office",
+   "x": 2.2,
+   "y": 14.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lift shaft",
+   "name_he": "פיר מעלית",
+   "role": "other",
+   "x": 5.35,
+   "y": 16.5,
+   "ceiling_m": null
+  },
+  {
+   "name": "Protected room (mamam), office",
+   "name_he": "ממ\"מ (משמש כמשרד)",
+   "role": "mamad",
+   "x": 2.5,
+   "y": 11.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Technical room (shafts)",
+   "name_he": "חדר טכני (פירים)",
+   "role": "store",
+   "x": 6.2,
+   "y": 10.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Kitchenette",
+   "name_he": "מטבחון",
+   "role": "kitchen",
+   "x": 4.1,
+   "y": 7.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Office 1",
+   "name_he": "משרד 1",
+   "role": "office",
+   "x": 1.4,
+   "y": 6.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Office 2",
+   "name_he": "משרד 2",
+   "role": "office",
+   "x": 2.4,
+   "y": 3.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Office 3",
+   "name_he": "משרד 3",
+   "role": "office",
+   "x": 1.0,
+   "y": 0.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Men's toilets",
+   "name_he": "שירותי גברים",
+   "role": "wc",
+   "x": 11.5,
+   "y": 17.9,
+   "ceiling_m": null
+  },
+  {
+   "name": "Accessible WC",
+   "name_he": "שירותי נכים",
+   "role": "wc",
+   "x": 12.5,
+   "y": 15.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Women's toilets",
+   "name_he": "שירותי נשים",
+   "role": "wc",
+   "x": 11.5,
+   "y": 12.6,
+   "ceiling_m": null
+  }
+ ]
+}

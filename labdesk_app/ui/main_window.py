@@ -159,9 +159,13 @@ class Palette(QListWidget):
         for d in DEVICE_TYPES:
             if d.backend == "cml" and d.shape in ("switch", "hub"):
                 self._add(d)
+        self._section("Wireless")
+        for d in DEVICE_TYPES:
+            if d.backend == "cml" and d.shape == "ap":
+                self._add(d)
         self._section("Connectors")
         for d in DEVICE_TYPES:
-            if d.backend == "cml" and d.vendor == "generic" and d.shape not in ("switch", "hub"):
+            if d.backend == "cml" and d.vendor == "generic" and d.shape not in ("switch", "hub", "ap"):
                 self._add(d)
         self._section("Host KVM (outside CML)" + (" - Linux only" if not plat.HAS_KVM else ""))
         for d in DEVICE_TYPES:
@@ -566,6 +570,9 @@ class MainWindow(QMainWindow):
             la.triggered.connect(lambda _c=False, m=mode: self.compactor.set_mode(m))
             self.layout_actions[mode] = la
         vm.addSeparator()
+        self.a_site = self._act("3D site (Wi-Fi coverage)…", self.open_site_view, "Ctrl+3",
+                                "Model the room in 3D, place the access points and see their coverage")
+        vm.addAction(self.a_site)
         vm.addAction(self._act("Fit view", lambda: self.view.fit_all()))
         self.view_menu_btn = self._menu_button("View", "view-visible", vm, "Layers, legend, theme and layout")
         tb.addWidget(self.view_menu_btn)
@@ -1999,6 +2006,27 @@ class MainWindow(QMainWindow):
         item = self.scene.nodes.get(key)
         return item.label if item else key
 
+    # --------------------------------------------------------------- 3D site (Wi-Fi coverage)
+    def open_site_view(self):
+        """The 3D room of the open lab with its access point nodes (or the stand-alone room when no lab
+        is open).  One window per lab; opening it again brings it forward and re-reads the lab's APs."""
+        from .site3d import open_site_window
+        lab_id = self.ctl.lab_id
+        labels = sorted(n.label for n in self.scene.nodes.values() if n.dtype.key == "ap") if lab_id else []
+        win = getattr(self, "_site_win", None)
+        if win is not None and getattr(win, "lab_id", None) == lab_id and win.isVisible():
+            win.sync_lab_aps(labels)
+        else:
+            if win is not None:
+                win.close()
+            title = self.view_data.title if lab_id and self.view_data is not None else ""
+            win = self._site_win = open_site_window(self.ctl.state, lab_id, title, labels)
+            win.lab_id = lab_id
+            win.setWindowIcon(self.windowIcon())
+            win.show()
+        win.raise_()
+        win.activateWindow()
+
     # --------------------------------------------------------------- consoles
     def open_console(self, key: str):
         item = self.scene.nodes.get(key)
@@ -2377,6 +2405,9 @@ class MainWindow(QMainWindow):
         a = m.addAction(icons.icon("utilities-terminal"), "Console")
         a.setEnabled(not no_console)
         a.triggered.connect(lambda: self.open_console(key))
+        if item.dtype.key == "ap":
+            m.addAction(icons.icon("network-wireless"), "Place in the 3D site…").triggered.connect(
+                self.open_site_view)
         mg = self.mgmt_of(key)
         if mg or key.startswith("kvm:"):
             sub = m.addMenu(icons.icon("network-connect"), "Management")
@@ -2747,4 +2778,7 @@ class MainWindow(QMainWindow):
         except Exception:  # noqa: BLE001
             pass
         self.runner.wait(3000)
+        site = getattr(self, "_site_win", None)
+        if site is not None:
+            site.close()                        # saves the 3D site
         super().closeEvent(ev)

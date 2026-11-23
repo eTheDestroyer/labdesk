@@ -5,6 +5,8 @@ websocket-client>=1.7
 # terminal emulation of the LabDesk console window (Linux); pure Python, brings wcwidth.  Installed on
 # every platform so the tests of the pure parts run everywhere; not packed into LabDesk.exe
 pyte>=0.8.2
+# the 3D site view: the Wi-Fi field of a whole room as one array (labdesk_app/wifi_field.py)
+numpy>=2.1
 pytest>=8
 # LabDesk for Windows only: probe transport (no pty there) and the open-console scan
 paramiko>=3.4; sys_platform == "win32"

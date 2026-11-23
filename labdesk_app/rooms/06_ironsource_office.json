@@ -1,0 +1,4178 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "ironSource office floor, Sarona Tower, Tel Aviv (2017)",
+  "title_he": "קומת משרדי איירונסורס, מגדל שרונה, תל אביב (2017)",
+  "kind": "office",
+  "city": "Tel Aviv-Yafo",
+  "city_he": "תל אביב-יפו",
+  "era": "2017 high-tech fit-out (RUST architects) in the 2017 Azrieli Sarona Tower",
+  "source": {
+   "title": "ArchDaily: IronSource / RUST architects, floor plan (image 48 of 50, floor_Plan_15), with scale bar",
+   "url": "https://www.archdaily.com/882564/ironsource-rust-architects",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Scale 28.4 px/m from the drawn bar (2.5 m = 71 px); the box comes to 44.3 x 60.6 m with about 2,387 m2 indoors; ArchDaily gives 10,000 m2 for the whole fit-out, i.e. about four floors of this size",
+   "The ArchDaily page names neither the building nor the floor; officesnapshots places ironSource in Azrieli Sarona Tower, and the plan is taken as one typical office floor",
+   "Clear ceiling height 3.0 m: not on the plan; the tower is 238.5 m over 61 floors (about 3.9 m floor to floor), minus slab and services",
+   "Both cores are drawn rotated about 10 degrees and are squared on their centre lines: core faces are up to about 1.5 m off at the core ends; the slanted NW and SE wing facades and the SE room fronts are squared too",
+   "Outdoor notches (north between the wings, south between the SW and SE wings) are labelled outside and fenced with the curtain wall, so they leave the coverage shares",
+   "Facade: coated curtain wall all round (Sarona Tower is fully glazed); no openable windows or shutters",
+   "Core walls drawn about 0.40 m thick: modelled with the 40 cm RC row (shelter_40; it is not a shelter)",
+   "Lift shafts: 20 cm RC walls with closed steel landing doors (door_steel); lift cars as solid metal",
+   "Shafts, toilets and plant rooms inside the service core simplified to six rooms (risers drawn as metal ducts in the toilet blocks); toilet walls block 10",
+   "Room-divider walls double gypsum, room fronts single-pane glass; walls read to about +-0.3 m",
+   "Team-room doors open, meeting-room, office and service doors closed; fire-stair door closed (code)",
+   "The 'comm box' is the floor communications room drawn at the service core's east face; AP1 goes on the ceiling in the east corridor right outside it (clear of the fire stair that juts into the corridor)",
+   "One AP only (the library rule: the first one an installer hangs), so most of the floor shows no service; the council's grid check needed about 24 APs at 11 m to bring no service down to about 8 %",
+   "Meeting rooms north of the core take their only doors in their glass north fronts (the core face has none)",
+   "Desks, sofas and tables drawn where the plan shows them; they carry no radio loss",
+   "No mamak is marked on this plan; it is not modelled",
+   "No wall uses its own loss_db: every value is the materials table's"
+  ],
+  "israeli_features": [
+   "Twin reinforced-concrete core of a Tel Aviv supertall: six lift banks, three lift lobbies, fire stair",
+   "Floor comm box ('comm box' on the plan, the floor wiring closet) beside the core, where the ISP fibre and the AP cabling start",
+   "Glass-fronted team rooms round the facade, double-gypsum dividers, coffee bar with island (pinat kafe)",
+   "Bike room in the core for Tel Aviv cycling commuters",
+   "Fully glazed coated curtain wall (Sarona Tower)"
+  ],
+  "notes": "One floor of ironSource's four-floor HQ in Azrieli Sarona Tower: team rooms ring the glass facade and two thick concrete cores (lifts, and toilets / shafts / stair) fill the middle. A single ceiling AP by the comm box covers the east side only; the cores block almost everything behind them, so the west wing, the lift lobbies and the far south and north rooms get no service. A real install needs an AP grid on the corridor ring round the cores (the council's check used about 24 APs on an 11 m grid). The coated curtain wall (about 32 dB at 5 GHz in the table) also keeps Wi-Fi from neighbouring towers out."
+ },
+ "width": 44.3,
+ "depth": 60.6,
+ "height": 3.0,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 5.4455,
+   "end_pct": 100.0,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "West facade (curtain wall)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 30.9255,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "North facade, NW wing (curtain wall)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 30.9255,
+   "start_pct": 82.5083,
+   "end_pct": 100.0,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "NW wing, east facade onto the north notch"
+  },
+  {
+   "axis": "y",
+   "at_pct": 82.5083,
+   "start_pct": 30.9255,
+   "end_pct": 45.8239,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "North notch facade (behind the planters)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 45.8239,
+   "start_pct": 82.5083,
+   "end_pct": 94.8845,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "NE block, west facade onto the north notch"
+  },
+  {
+   "axis": "y",
+   "at_pct": 94.8845,
+   "start_pct": 45.8239,
+   "end_pct": 100.0,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "North facade, NE block (curtain wall)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 94.8845,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "East facade (curtain wall)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 68.8488,
+   "end_pct": 100.0,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, SE wing (curtain wall)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 68.8488,
+   "start_pct": 0.0,
+   "end_pct": 17.8218,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "SE wing, west facade onto the south notch"
+  },
+  {
+   "axis": "y",
+   "at_pct": 17.8218,
+   "start_pct": 53.0474,
+   "end_pct": 68.8488,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South notch facade"
+  },
+  {
+   "axis": "x",
+   "at_pct": 53.0474,
+   "start_pct": 5.4455,
+   "end_pct": 17.8218,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "SW wing, east facade onto the south notch"
+  },
+  {
+   "axis": "y",
+   "at_pct": 5.4455,
+   "start_pct": 0.0,
+   "end_pct": 53.0474,
+   "material": "curtain_wall",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, SW wing (curtain wall)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.9932,
+   "start_pct": 23.4323,
+   "end_pct": 71.6172,
+   "material": "shelter_40",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 82.8767,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 49.3151,
+     "width_m": 1.4,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift core, west face (RC 40)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 71.6172,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "shelter_40",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift core, north face (RC 40)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 23.4323,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "shelter_40",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift core, south face (RC 40)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 45.8239,
+   "start_pct": 23.4323,
+   "end_pct": 71.6172,
+   "material": "shelter_40",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 82.8767,
+     "width_m": 3.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 49.3151,
+     "width_m": 2.6,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 17.8082,
+     "width_m": 3.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift core, east face onto the lift corridor (RC 40, three lobby mouths)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 66.5017,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.5455,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.1818,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 61.8182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.4545,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift bank 1, landing wall (4 steel lift doors)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 60.396,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.5455,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.1818,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 61.8182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.4545,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift bank 2, landing wall (4 steel lift doors)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.67,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.5455,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.1818,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 61.8182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.4545,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift bank 3, landing wall (4 steel lift doors)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 44.7195,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.5455,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.1818,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 61.8182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.4545,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift bank 4, landing wall (4 steel lift doors)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 34.8185,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.5455,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.1818,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 61.8182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.4545,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift bank 5, landing wall (4 steel lift doors)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 29.0429,
+   "start_pct": 20.9932,
+   "end_pct": 45.8239,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.5455,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.1818,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 61.8182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.4545,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift bank 6, landing wall (4 steel lift doors)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 71.6172,
+   "start_pct": 45.8239,
+   "end_pct": 52.5959,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 1.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift corridor, north glass doors (security)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 25.2475,
+   "start_pct": 45.8239,
+   "end_pct": 52.5959,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 1.6,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift corridor, south glass doors"
+  },
+  {
+   "axis": "x",
+   "at_pct": 52.5959,
+   "start_pct": 25.2475,
+   "end_pct": 75.2475,
+   "material": "shelter_40",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 91.7492,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 81.5182,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 63.6964,
+     "width_m": 1.4,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 35.6436,
+     "width_m": 1.4,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 17.4917,
+     "width_m": 1.2,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Service core, west face (RC 40)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 75.2475,
+   "start_pct": 52.5959,
+   "end_pct": 76.298,
+   "material": "shelter_40",
+   "loss_db": null,
+   "door": null,
+   "name": "Service core, north face (RC 40)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 25.2475,
+   "start_pct": 52.5959,
+   "end_pct": 76.298,
+   "material": "shelter_40",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 35.2381,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Service core, south face (RC 40)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.298,
+   "start_pct": 25.2475,
+   "end_pct": 75.2475,
+   "material": "shelter_40",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 52.8053,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Service core, east face (RC 40, comm box door)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 68.1518,
+   "start_pct": 52.5959,
+   "end_pct": 76.298,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Plant rooms / bike room wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 63.6964,
+   "start_pct": 52.5959,
+   "end_pct": 76.298,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Bike room / toilets wall (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 71.7833,
+   "start_pct": 48.8449,
+   "end_pct": 54.4554,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Comm box, west wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 54.4554,
+   "start_pct": 71.7833,
+   "end_pct": 76.298,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Comm box, north wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 48.8449,
+   "start_pct": 71.7833,
+   "end_pct": 76.298,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Comm box, south wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.8251,
+   "start_pct": 52.5959,
+   "end_pct": 71.7833,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilets, dividing wall (block 10)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.2838,
+   "start_pct": 52.5959,
+   "end_pct": 76.298,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilets / south service rooms (block 10)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 64.3341,
+   "start_pct": 50.8251,
+   "end_pct": 61.7162,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet cubicle spine (block 10)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 64.3341,
+   "start_pct": 39.934,
+   "end_pct": 50.8251,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet cubicle spine (block 10)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 48.0198,
+   "start_pct": 76.298,
+   "end_pct": 83.07,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "name": "Fire stair, north wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 35.6436,
+   "start_pct": 76.298,
+   "end_pct": 83.07,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "name": "Fire stair, south wall (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 83.07,
+   "start_pct": 35.6436,
+   "end_pct": 48.0198,
+   "material": "concrete_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 13.3333,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Fire stair, east wall, steel fire door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 83.8284,
+   "start_pct": 62.3025,
+   "end_pct": 80.3612,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 37.5,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 58.75,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Meeting / board room glass fronts"
+  },
+  {
+   "axis": "x",
+   "at_pct": 62.3025,
+   "start_pct": 75.2475,
+   "end_pct": 83.8284,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Meeting room, west glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 71.1061,
+   "start_pct": 75.2475,
+   "end_pct": 83.8284,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Meeting room / board room wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 80.3612,
+   "start_pct": 75.2475,
+   "end_pct": 83.8284,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Board room, east glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 75.2475,
+   "start_pct": 76.298,
+   "end_pct": 80.3612,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Board room, south glass (beside the core)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 84.6501,
+   "start_pct": 60.396,
+   "end_pct": 67.3267,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 80.9524,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 28.5714,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Phone room / meeting room glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 67.3267,
+   "start_pct": 76.298,
+   "end_pct": 84.6501,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Phone room, north glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 64.8515,
+   "start_pct": 76.298,
+   "end_pct": 84.6501,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Phone room / meeting room wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 60.396,
+   "start_pct": 76.298,
+   "end_pct": 84.6501,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Meeting room / pantry wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 25.2475,
+   "start_pct": 76.298,
+   "end_pct": 86.456,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Rooms south of the core, north wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 21.7822,
+   "start_pct": 66.8172,
+   "end_pct": 86.456,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 18.3908,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 50.5747,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.0575,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Rooms south of the core, glass fronts"
+  },
+  {
+   "axis": "x",
+   "at_pct": 66.8172,
+   "start_pct": 21.7822,
+   "end_pct": 25.2475,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Store, west glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 73.8149,
+   "start_pct": 21.7822,
+   "end_pct": 25.2475,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Store / meeting room wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 80.3612,
+   "start_pct": 21.7822,
+   "end_pct": 25.2475,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Meeting room / quiet room wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 86.456,
+   "start_pct": 21.7822,
+   "end_pct": 25.2475,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Quiet room, east glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 57.9208,
+   "start_pct": 14.8984,
+   "end_pct": 20.9932,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Phone booths, north glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.495,
+   "start_pct": 14.8984,
+   "end_pct": 20.9932,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Phone booths, south glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 14.8984,
+   "start_pct": 50.495,
+   "end_pct": 57.9208,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 48.8889,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Phone booths, west glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.4488,
+   "start_pct": 15.3499,
+   "end_pct": 20.9932,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Small meeting rooms, north glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 33.6634,
+   "start_pct": 15.3499,
+   "end_pct": 20.9932,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Small meeting rooms, divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 29.0429,
+   "start_pct": 15.3499,
+   "end_pct": 20.9932,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Small meeting rooms, south glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 15.3499,
+   "start_pct": 29.0429,
+   "end_pct": 38.4488,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 78.9474,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 24.5614,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Small meeting rooms, west glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 27.7652,
+   "start_pct": 15.8416,
+   "end_pct": 23.4323,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Conference room, west glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 40.6321,
+   "start_pct": 15.8416,
+   "end_pct": 23.4323,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 15.2174,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Conference room, east glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 15.8416,
+   "start_pct": 27.7652,
+   "end_pct": 40.6321,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "Conference room, south glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 10.3837,
+   "start_pct": 79.3729,
+   "end_pct": 89.934,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 57.8125,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 40.625,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NW team rooms, glass fronts"
+  },
+  {
+   "axis": "y",
+   "at_pct": 89.934,
+   "start_pct": 0.0,
+   "end_pct": 20.0903,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 94.382,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NW open room, south wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 84.6535,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 79.3729,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "Team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.0903,
+   "start_pct": 87.1287,
+   "end_pct": 100.0,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 11.5385,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NW wing team room, west glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 87.1287,
+   "start_pct": 20.0903,
+   "end_pct": 30.9255,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "NW wing team room, south glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 21.8962,
+   "start_pct": 82.5083,
+   "end_pct": 87.1287,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 57.1429,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NW manager office, west glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 82.5083,
+   "start_pct": 21.8962,
+   "end_pct": 30.9255,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "NW manager office, south glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 10.3837,
+   "start_pct": 28.7129,
+   "end_pct": 69.3069,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 89.8374,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 75.6098,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 51.2195,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 45.935,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 21.1382,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "West team rooms, glass fronts"
+  },
+  {
+   "axis": "y",
+   "at_pct": 69.3069,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "West team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 64.1089,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "West team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 58.4158,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "West team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 48.3498,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "West team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.2838,
+   "start_pct": 0.0,
+   "end_pct": 10.3837,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "West team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 28.7129,
+   "start_pct": 0.0,
+   "end_pct": 13.3183,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "West team room divider (front steps out)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 13.3183,
+   "start_pct": 12.7063,
+   "end_pct": 28.7129,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 74.2268,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 42.268,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 29.8969,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "SW team rooms, glass fronts"
+  },
+  {
+   "axis": "y",
+   "at_pct": 23.5974,
+   "start_pct": 0.0,
+   "end_pct": 13.3183,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "SW team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 18.4818,
+   "start_pct": 0.0,
+   "end_pct": 13.3183,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "SW team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 13.3183,
+   "start_pct": 5.4455,
+   "end_pct": 12.7063,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "SW corner room / south team room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 12.7063,
+   "start_pct": 13.3183,
+   "end_pct": 45.3725,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 4.9296,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 72.5352,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "South team rooms, glass fronts"
+  },
+  {
+   "axis": "x",
+   "at_pct": 27.991,
+   "start_pct": 5.4455,
+   "end_pct": 12.7063,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "South team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 34.9887,
+   "start_pct": 5.4455,
+   "end_pct": 12.7063,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "South team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 45.3725,
+   "start_pct": 5.4455,
+   "end_pct": 14.8515,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "South team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 14.8515,
+   "start_pct": 45.3725,
+   "end_pct": 53.0474,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 26.4706,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "SW wing corner office, north glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 57.7878,
+   "start_pct": 83.1683,
+   "end_pct": 94.8845,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 22.5352,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NE west team room, east wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 57.7878,
+   "start_pct": 79.2079,
+   "end_pct": 83.1683,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "NE small office, east glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 83.1683,
+   "start_pct": 45.8239,
+   "end_pct": 57.7878,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "NE west team room / small office"
+  },
+  {
+   "axis": "x",
+   "at_pct": 45.8239,
+   "start_pct": 79.2079,
+   "end_pct": 82.5083,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "NE small office, west glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 79.2079,
+   "start_pct": 45.8239,
+   "end_pct": 57.7878,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 32.0755,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NE small office, south glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 87.2937,
+   "start_pct": 57.7878,
+   "end_pct": 85.7788,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 12.9032,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.7097,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 64.5161,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 93.5484,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "North team rooms, glass fronts"
+  },
+  {
+   "axis": "x",
+   "at_pct": 64.8984,
+   "start_pct": 87.2937,
+   "end_pct": 94.8845,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "North team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 71.8962,
+   "start_pct": 87.2937,
+   "end_pct": 94.8845,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "North team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 78.8939,
+   "start_pct": 87.2937,
+   "end_pct": 94.8845,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "North team room divider"
+  },
+  {
+   "axis": "x",
+   "at_pct": 85.7788,
+   "start_pct": 86.4686,
+   "end_pct": 94.8845,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "North team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 86.4686,
+   "start_pct": 85.7788,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.2857,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "NE corner room, south wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 89.1648,
+   "start_pct": 73.7624,
+   "end_pct": 86.4686,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 90.9091,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 50.6494,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "East team rooms, glass fronts (north)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 89.1648,
+   "start_pct": 0.0,
+   "end_pct": 66.3366,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 98.01,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 90.5473,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 82.8358,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 75.1244,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 63.6816,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 51.7413,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 44.2786,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 36.5672,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 28.8557,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 17.1642,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "East team rooms, glass fronts"
+  },
+  {
+   "axis": "y",
+   "at_pct": 81.3531,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 73.7624,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 66.3366,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 61.3861,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 56.2706,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 51.1551,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 43.5644,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 35.6436,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 30.6931,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 25.5776,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 20.462,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 12.7063,
+   "start_pct": 89.1648,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "East team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 17.8218,
+   "start_pct": 68.8488,
+   "end_pct": 80.1354,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "SE team rooms, north glass"
+  },
+  {
+   "axis": "y",
+   "at_pct": 12.3762,
+   "start_pct": 68.8488,
+   "end_pct": 80.1354,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "door": null,
+   "name": "SE team room divider"
+  },
+  {
+   "axis": "y",
+   "at_pct": 6.6007,
+   "start_pct": 68.8488,
+   "end_pct": 80.1354,
+   "material": "glass",
+   "loss_db": null,
+   "door": null,
+   "name": "SE team room, south glass"
+  },
+  {
+   "axis": "x",
+   "at_pct": 80.1354,
+   "start_pct": 6.6007,
+   "end_pct": 17.8218,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 61.7647,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 11.7647,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "SE team rooms, east glass"
+  }
+ ],
+ "aps": [
+  {
+   "name": "AP1",
+   "x": 37.9,
+   "y": 31.3,
+   "z": 2.8,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Lift bank 1: 4 steel cars",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 40.7,
+   "w": 10.0,
+   "d": 2.3,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lift bank 2: 4 steel cars",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 33.5,
+   "w": 10.0,
+   "d": 2.7,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lift bank 3: 4 steel cars",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 30.5,
+   "w": 10.0,
+   "d": 2.8,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lift bank 4: 4 steel cars",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 24.1,
+   "w": 10.0,
+   "d": 2.6,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lift bank 5: 4 steel cars",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 21.5,
+   "w": 10.0,
+   "d": 2.4,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lift bank 6: 4 steel cars",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 14.6,
+   "w": 10.0,
+   "d": 2.6,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bike racks (steel)",
+   "kind": "racking_light",
+   "x": 24.0,
+   "y": 39.3,
+   "w": 7.5,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Toilet cubicles (HPL)",
+   "kind": "racking_light",
+   "x": 24.0,
+   "y": 35.6,
+   "w": 1.2,
+   "d": 2.6,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Toilet cubicles (HPL)",
+   "kind": "racking_light",
+   "x": 25.5,
+   "y": 35.6,
+   "w": 1.2,
+   "d": 2.6,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Toilet cubicles (HPL)",
+   "kind": "racking_light",
+   "x": 27.0,
+   "y": 35.6,
+   "w": 1.2,
+   "d": 2.6,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Ducts and risers",
+   "kind": "metal_cabinet",
+   "x": 32.0,
+   "y": 33.4,
+   "w": 1.5,
+   "d": 4.6,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Ducts and risers",
+   "kind": "metal_cabinet",
+   "x": 32.0,
+   "y": 23.6,
+   "w": 1.5,
+   "d": 5.6,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Floor rack (patch panels, switches)",
+   "kind": "server_rack",
+   "x": 32.0,
+   "y": 32.0,
+   "w": 1.0,
+   "d": 0.6,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 28.6,
+   "y": 47.7,
+   "w": 1.8,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Board table",
+   "kind": "table",
+   "x": 32.6,
+   "y": 46.1,
+   "w": 1.8,
+   "d": 3.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "North kitchen counter",
+   "kind": "kitchen",
+   "x": 36.8,
+   "y": 46.6,
+   "w": 0.6,
+   "d": 3.0,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "North kitchen fridge",
+   "kind": "fridge",
+   "x": 36.8,
+   "y": 45.7,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 35.0,
+   "y": 37.2,
+   "w": 1.6,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Pantry counter",
+   "kind": "kitchen",
+   "x": 34.2,
+   "y": 35.8,
+   "w": 3.0,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Pantry fridge",
+   "kind": "fridge",
+   "x": 37.3,
+   "y": 35.8,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Printers (print corner)",
+   "kind": "metal_cabinet",
+   "x": 24.2,
+   "y": 14.5,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 1.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Shelving",
+   "kind": "metal_cabinet",
+   "x": 29.8,
+   "y": 14.6,
+   "w": 2.7,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Conference table",
+   "kind": "table",
+   "x": 13.5,
+   "y": 11.0,
+   "w": 3.5,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 1.2,
+   "y": 58.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 1.2,
+   "y": 56.8,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 1.2,
+   "y": 55.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.7,
+   "y": 58.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.7,
+   "y": 56.8,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.7,
+   "y": 55.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 9.8,
+   "y": 56.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 9.8,
+   "y": 55.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 11.3,
+   "y": 56.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 11.3,
+   "y": 55.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 52.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 49.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 11.8,
+   "y": 51.7,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lounge sofa",
+   "kind": "sofa",
+   "x": 5.3,
+   "y": 53.1,
+   "w": 2.2,
+   "d": 0.9,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 33.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 31.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.3,
+   "y": 33.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.3,
+   "y": 31.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 27.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 25.5,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.3,
+   "y": 27.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.3,
+   "y": 25.5,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 21.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.8,
+   "y": 19.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.3,
+   "y": 21.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.3,
+   "y": 19.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 2.6,
+   "y": 40.0,
+   "w": 1.3,
+   "d": 1.2,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 2.6,
+   "y": 36.6,
+   "w": 1.3,
+   "d": 1.2,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.6,
+   "y": 15.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.1,
+   "y": 15.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 3.6,
+   "y": 15.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.6,
+   "y": 12.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.1,
+   "y": 12.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 3.6,
+   "y": 12.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.6,
+   "y": 8.9,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.1,
+   "y": 8.9,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 3.6,
+   "y": 8.9,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 0.6,
+   "y": 5.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 2.1,
+   "y": 5.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 7.0,
+   "y": 5.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 8.5,
+   "y": 5.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 10.0,
+   "y": 5.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 13.2,
+   "y": 4.5,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 16.0,
+   "y": 5.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 17.5,
+   "y": 5.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 21.0,
+   "y": 6.5,
+   "w": 1.6,
+   "d": 0.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 20.8,
+   "y": 54.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 20.8,
+   "y": 53.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 22.3,
+   "y": 54.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 22.3,
+   "y": 53.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 21.4,
+   "y": 49.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 26.4,
+   "y": 55.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 26.4,
+   "y": 54.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 29.55,
+   "y": 55.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 29.55,
+   "y": 54.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 35.75,
+   "y": 55.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 35.75,
+   "y": 54.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 32.6,
+   "y": 53.8,
+   "w": 1.6,
+   "d": 1.2,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 39.8,
+   "y": 54.8,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.3,
+   "y": 54.8,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 50.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 50.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 47.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 45.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 47.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 45.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 41.0,
+   "y": 38.2,
+   "w": 1.6,
+   "d": 1.0,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 35.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 35.1,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 32.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 32.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 28.9,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 27.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 28.9,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 27.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 24.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 22.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 24.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 22.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 41.0,
+   "y": 19.6,
+   "w": 1.6,
+   "d": 1.0,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 41.0,
+   "y": 16.55,
+   "w": 1.6,
+   "d": 1.0,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Meeting table",
+   "kind": "table",
+   "x": 41.0,
+   "y": 13.45,
+   "w": 1.6,
+   "d": 1.0,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 10.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 8.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 10.3,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 8.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 5.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 4.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 2.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 40.3,
+   "y": 0.8,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 5.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 4.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 2.4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 41.8,
+   "y": 0.8,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Planter bench (soil)",
+   "kind": "stock",
+   "x": 43.2,
+   "y": 40.6,
+   "w": 0.7,
+   "d": 3.8,
+   "h": 0.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 31.0,
+   "y": 9.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 32.5,
+   "y": 9.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 34.0,
+   "y": 9.0,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 31.0,
+   "y": 5.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 32.5,
+   "y": 5.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 34.0,
+   "y": 5.6,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 31.2,
+   "y": 1.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 32.7,
+   "y": 1.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 34.2,
+   "y": 1.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 36.4,
+   "y": 2.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 38.0,
+   "y": 2.2,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 36.4,
+   "y": 0.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desks",
+   "kind": "desk",
+   "x": 38.0,
+   "y": 0.7,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee bar run (cabinets, dishwashers)",
+   "kind": "kitchen",
+   "x": 3.6,
+   "y": 46.4,
+   "w": 4.0,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee bar fridge",
+   "kind": "fridge",
+   "x": 7.8,
+   "y": 46.4,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee bar island",
+   "kind": "table",
+   "x": 3.2,
+   "y": 45.2,
+   "w": 5.4,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lounge sofa",
+   "kind": "sofa",
+   "x": 14.6,
+   "y": 47.9,
+   "w": 2.2,
+   "d": 0.9,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lounge sofa",
+   "kind": "sofa",
+   "x": 7.6,
+   "y": 13.9,
+   "w": 0.9,
+   "d": 2.2,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lounge sofa",
+   "kind": "sofa",
+   "x": 36.4,
+   "y": 9.7,
+   "w": 2.2,
+   "d": 0.9,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Storage cupboards (steel)",
+   "kind": "metal_cabinet",
+   "x": 0.3,
+   "y": 45.6,
+   "w": 0.9,
+   "d": 2.0,
+   "h": 1.95,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Outside N",
+   "name_he": "חוץ צפון",
+   "role": "outside",
+   "x": 17.0,
+   "y": 55.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Outside S",
+   "name_he": "חוץ דרום",
+   "role": "outside",
+   "x": 27.0,
+   "y": 5.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lifts 1",
+   "name_he": "מעליות 1",
+   "role": "other",
+   "x": 14.8,
+   "y": 41.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lobby 1",
+   "name_he": "לובי 1",
+   "role": "hall",
+   "x": 14.8,
+   "y": 38.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lifts 2-3",
+   "name_he": "מעליות 2-3",
+   "role": "other",
+   "x": 14.8,
+   "y": 33.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lobby 2",
+   "name_he": "לובי 2",
+   "role": "hall",
+   "x": 14.8,
+   "y": 28.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lifts 4-5",
+   "name_he": "מעליות 4-5",
+   "role": "other",
+   "x": 14.8,
+   "y": 24.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lobby 3",
+   "name_he": "לובי 3",
+   "role": "hall",
+   "x": 14.8,
+   "y": 19.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lifts 6",
+   "name_he": "מעליות 6",
+   "role": "other",
+   "x": 14.8,
+   "y": 15.9,
+   "ceiling_m": null
+  },
+  {
+   "name": "Lift corridor",
+   "name_he": "מסדרון מעליות",
+   "role": "hall",
+   "x": 21.8,
+   "y": 30.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Plant rooms",
+   "name_he": "חדרים טכניים",
+   "role": "store",
+   "x": 28.5,
+   "y": 43.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bike room",
+   "name_he": "חדר אופניים",
+   "role": "store",
+   "x": 28.5,
+   "y": 40.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Toilets N",
+   "name_he": "שירותים צפון",
+   "role": "wc",
+   "x": 26.0,
+   "y": 34.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Toilets S",
+   "name_he": "שירותים דרום",
+   "role": "wc",
+   "x": 26.0,
+   "y": 27.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Showers",
+   "name_he": "מקלחות",
+   "role": "bath",
+   "x": 28.5,
+   "y": 19.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Comm box",
+   "name_he": "חדר תקשורת",
+   "role": "store",
+   "x": 32.8,
+   "y": 31.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Fire stair",
+   "name_he": "חדר מדרגות",
+   "role": "stair",
+   "x": 35.3,
+   "y": 25.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting N",
+   "name_he": "ישיבות צפון",
+   "role": "meeting",
+   "x": 29.5,
+   "y": 48.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Board room",
+   "name_he": "חדר דירקטוריון",
+   "role": "meeting",
+   "x": 33.5,
+   "y": 48.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Phone",
+   "name_he": "תא טלפון",
+   "role": "office",
+   "x": 35.6,
+   "y": 40.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting C",
+   "name_he": "ישיבות מרכז",
+   "role": "meeting",
+   "x": 35.6,
+   "y": 38.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Store",
+   "name_he": "מחסן",
+   "role": "store",
+   "x": 31.1,
+   "y": 14.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting S",
+   "name_he": "ישיבות דרום",
+   "role": "meeting",
+   "x": 34.1,
+   "y": 14.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Quiet",
+   "name_he": "חדר שקט",
+   "role": "office",
+   "x": 37.0,
+   "y": 14.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Booths",
+   "name_he": "תאי טלפון",
+   "role": "office",
+   "x": 8.0,
+   "y": 33.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting W1",
+   "name_he": "ישיבות מערב 1",
+   "role": "meeting",
+   "x": 8.1,
+   "y": 21.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting W2",
+   "name_he": "ישיבות מערב 2",
+   "role": "meeting",
+   "x": 8.1,
+   "y": 19.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Conference",
+   "name_he": "חדר כנסים",
+   "role": "meeting",
+   "x": 15.1,
+   "y": 11.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team NW",
+   "name_he": "צוות צפון-מערב",
+   "role": "office",
+   "x": 4.4,
+   "y": 57.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team NW2",
+   "name_he": "צוות צפון-מערב 2",
+   "role": "office",
+   "x": 11.3,
+   "y": 56.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Manager NW",
+   "name_he": "מנהל צפון-מערב",
+   "role": "office",
+   "x": 11.7,
+   "y": 51.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team W1",
+   "name_he": "צוות מערב 1",
+   "role": "office",
+   "x": 2.3,
+   "y": 52.9,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team W2",
+   "name_he": "צוות מערב 2",
+   "role": "office",
+   "x": 2.3,
+   "y": 49.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting W3",
+   "name_he": "ישיבות מערב 3",
+   "role": "meeting",
+   "x": 2.3,
+   "y": 40.425,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting W4",
+   "name_he": "ישיבות מערב 4",
+   "role": "meeting",
+   "x": 2.3,
+   "y": 37.125,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team W3",
+   "name_he": "צוות מערב 3",
+   "role": "office",
+   "x": 2.3,
+   "y": 32.35,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team W4",
+   "name_he": "צוות מערב 4",
+   "role": "office",
+   "x": 2.3,
+   "y": 26.25,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team W5",
+   "name_he": "צוות מערב 5",
+   "role": "office",
+   "x": 2.3,
+   "y": 20.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team SW1",
+   "name_he": "צוות דרום-מערב 1",
+   "role": "office",
+   "x": 2.6,
+   "y": 15.9,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team SW2",
+   "name_he": "צוות דרום-מערב 2",
+   "role": "office",
+   "x": 2.6,
+   "y": 12.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team SW3",
+   "name_he": "צוות דרום-מערב 3",
+   "role": "office",
+   "x": 2.6,
+   "y": 7.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team S1",
+   "name_he": "צוות דרום 1",
+   "role": "office",
+   "x": 9.1,
+   "y": 5.5,
+   "ceiling_m": null
+  },
+  {
+   "name": "Manager S",
+   "name_he": "מנהל דרום",
+   "role": "office",
+   "x": 13.9,
+   "y": 5.5,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team S2",
+   "name_he": "צוות דרום 2",
+   "role": "office",
+   "x": 17.8,
+   "y": 5.5,
+   "ceiling_m": null
+  },
+  {
+   "name": "Office S",
+   "name_he": "משרד דרום",
+   "role": "office",
+   "x": 21.8,
+   "y": 6.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team NE2",
+   "name_he": "צוות צפון-מזרח 2",
+   "role": "office",
+   "x": 23.0,
+   "y": 54.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Office NE",
+   "name_he": "משרד צפון-מזרח",
+   "role": "office",
+   "x": 23.0,
+   "y": 49.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team N1",
+   "name_he": "צוות צפון 1",
+   "role": "office",
+   "x": 27.175,
+   "y": 55.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team N2",
+   "name_he": "צוות צפון 2",
+   "role": "office",
+   "x": 30.3,
+   "y": 55.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting N3",
+   "name_he": "ישיבות צפון 3",
+   "role": "meeting",
+   "x": 33.4,
+   "y": 55.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team N4",
+   "name_he": "צוות צפון 4",
+   "role": "office",
+   "x": 36.475,
+   "y": 55.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team NE",
+   "name_he": "צוות צפון-מזרח",
+   "role": "office",
+   "x": 41.2,
+   "y": 55.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E1",
+   "name_he": "צוות מזרח 1",
+   "role": "office",
+   "x": 41.9,
+   "y": 50.85,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E2",
+   "name_he": "צוות מזרח 2",
+   "role": "office",
+   "x": 41.9,
+   "y": 47.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting E3",
+   "name_he": "ישיבות מזרח 3",
+   "role": "meeting",
+   "x": 41.9,
+   "y": 38.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E4",
+   "name_he": "צוות מזרח 4",
+   "role": "office",
+   "x": 41.9,
+   "y": 35.65,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E5",
+   "name_he": "צוות מזרח 5",
+   "role": "office",
+   "x": 41.9,
+   "y": 32.55,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E6",
+   "name_he": "צוות מזרח 6",
+   "role": "office",
+   "x": 41.9,
+   "y": 28.7,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E7",
+   "name_he": "צוות מזרח 7",
+   "role": "office",
+   "x": 41.9,
+   "y": 24.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting E8",
+   "name_he": "ישיבות מזרח 8",
+   "role": "meeting",
+   "x": 41.9,
+   "y": 20.1,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting E9",
+   "name_he": "ישיבות מזרח 9",
+   "role": "meeting",
+   "x": 41.9,
+   "y": 17.05,
+   "ceiling_m": null
+  },
+  {
+   "name": "Meeting E10",
+   "name_he": "ישיבות מזרח 10",
+   "role": "meeting",
+   "x": 41.9,
+   "y": 13.95,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E11",
+   "name_he": "צוות מזרח 11",
+   "role": "office",
+   "x": 41.9,
+   "y": 10.05,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team E12",
+   "name_he": "צוות מזרח 12",
+   "role": "office",
+   "x": 41.9,
+   "y": 3.85,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team SE1",
+   "name_he": "צוות דרום-מזרח 1",
+   "role": "office",
+   "x": 33.0,
+   "y": 9.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Team SE2",
+   "name_he": "צוות דרום-מזרח 2",
+   "role": "office",
+   "x": 33.0,
+   "y": 5.8,
+   "ceiling_m": null
+  },
+  {
+   "name": "Open plan and corridors",
+   "name_he": "אופן ספייס ומסדרונות",
+   "role": "office",
+   "x": 6.0,
+   "y": 27.6,
+   "ceiling_m": null
+  }
+ ]
+}

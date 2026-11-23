@@ -53,6 +53,8 @@ def main(argv=None) -> int:
     ap.add_argument("--lab", help="open the CML lab with this title")
     ap.add_argument("--lab-id", help="open the CML lab with this id")
     ap.add_argument("--setup", action="store_true", help="show the CML connection dialog first")
+    ap.add_argument("--site", action="store_true",
+                    help="open only the 3D site view (Wi-Fi coverage planning); needs no CML")
     args, qt_args = ap.parse_known_args(argv)
 
     if plat.IS_WINDOWS:
@@ -69,6 +71,13 @@ def main(argv=None) -> int:
     from .ui import themectl
     themectl.install(app)                 # Fusion + LabDesk palette / QSS / tokens before any widget exists
     signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    if args.site:                          # stand-alone room planner: no CML, no lab
+        from .ui.site3d import open_site_window
+        site_win = open_site_window(config.State())
+        site_win.setWindowIcon(app.windowIcon())
+        site_win.show()
+        return app.exec()
 
     smoke = bool(os.environ.get("LABDESK_SMOKE_EXIT_MS"))
     if (args.setup or config.needs_setup()) and not smoke:

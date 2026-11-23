@@ -1,0 +1,2283 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Clalit community clinic, Nof Yam, Herzliya: first floor",
+  "title_he": "מרפאת כללית נוף ים, הרצליה: קומה א'",
+  "kind": "public",
+  "city": "Herzliya",
+  "city_he": "הרצליה",
+  "era": "2021 (Doron Sheinman Architects for Clalit Health Services)",
+  "source": {
+   "title": "ArchDaily project page: first-floor plan (plan01), ground-floor plan, section 1-1 and the north, south and east elevations",
+   "url": "https://www.archdaily.com/991946/nof-yam-health-clinic-doron-sheinman-architects",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Scale 25 px/m (no scale bar): stair treads 0.28 m, ArchDaily's 1,000 m2 for two storeys, section 1-1 figure; the east elevation's ribbon window and 14.4 m depth agree. Walls read to about +-0.25 m",
+   "Box 39.0 x 14.4 m = the first floor's outer corners; the 15-degree south facade and 9-degree east facade are stepped behind each room at the facade's mean line (floor area kept); the strip outside the steps, about 85 m2, is labelled outside and left out of the shares",
+   "The skewed south-west room walls (exam room, toilets) are squared at their mean position",
+   "Height 2.85 m = suspended ceiling, read off section 1-1 by its human figure (+-0.1 m)",
+   "Facades = stone cladding on 20 cm block (stone_block): photos show stone panels, the page says steel and concrete; the cladding's backing is not stated",
+   "Ribbon windows: sill 1.1 m, 1.2 m high (elevations, +-0.3 m), low-E double glazing assumed for a 2021 public building; the vertical aluminium fins in front are open and not modelled; no trisim. Facade glass only changes the outdoor strip",
+   "Interior walls: the plan draws two kinds, solid black (0.16-0.32 m) and thin double lines. Black is read as plastered block: block_10 where drawn 0.16-0.24 m, block_20 where 0.28-0.32 m; thin lines as single gypsum or glass. The material is not stated anywhere; this choice decides the result (see notes for the gypsum case)",
+   "Stair core = reinforced concrete: west wall 25 cm (concrete_25, drawn 0.36 m with plaster), north and east walls 20 cm (concrete_20)",
+   "Stair-hall fire doors (steel) held open on magnets in daily use; the glazed screen around them is plain glass",
+   "Doctor, exam and treatment room doors solid wood, closed (consultations); WC and store doors hollow-core, closed; staff kitchen, nurses' and small waiting room doors open",
+   "Treatment 2 (north-east corner) has no door drawn: a sliding door to doctor 6 is assumed",
+   "Toilet cubicles, the two staff WCs and the shaft beside the kitchen store are not walled off: they sit behind the block walls already drawn and only add labels",
+   "Comms room = the 2.5 x 1.9 m room off the stair hall, read as the electrical / comms room, with one rack; the alcove beside it (no walls drawn) may be a future lift",
+   "No protected space on this floor: the only room drawn with shelter-thick walls (0.5 m) is the ground-floor seminar room under doctor 5 / the nurses' station, read as the building's mamam (about 21 m2); first-floor staff reach it by the stair",
+   "Stair flights drawn as a light 'stacked goods' box: a stand-in, the model has no sloped slab",
+   "Furniture placed as drawn: desks and couches per room, chairs as rows; medicine cabinets, a vaccine fridge and store shelving are typical additions not drawn",
+   "AP1: one ceiling AP in the corridor in front of the nurses' station, 2.65 m, 5 GHz, 20 dBm (where an installer would hang the first one, near the comms room)"
+  ],
+  "israeli_features": [
+   "Typical kupat holim (Clalit) floor: double-loaded corridor of doctor rooms (desk plus exam couch), waiting niches with rows of chairs, a nurses' station ('ahot') with a vaccine fridge and a staff kitchen",
+   "Reinforced-concrete stair core with steel fire doors; plastered block partitions",
+   "Building mamam on the ground floor (thick-walled seminar room), none on this floor",
+   "Stone-clad facade with vertical aluminium sun fins instead of trisim; outdoor escape stair to the garden from the waiting hall"
+  ],
+  "notes": "First floor of a two-storey Clalit clinic on a trapezoid plot between the sea and the coastal highway: about 25 small rooms off one long corridor, with the stair core in the middle of the south side. One corridor AP in front of the nurses' station reaches the corridor and the rooms beside it, but every doctor room sits behind block walls and closed solid doors: 44% of the floor has no service at 5 GHz, mostly the west wing, the toilets and the rooms past the concrete stair core. If the partitions turn out to be gypsum rather than block, the no-service share falls to 21%, so knock on a wall before planning. A real design needs about one AP per 3-4 rooms on the corridor ceiling."
+ },
+ "width": 39.0,
+ "depth": 14.4,
+ "height": 2.85,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 95.641026,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 8.713137,
+     "width_m": 2.6,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 18.029491,
+     "width_m": 3.3,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 28.686327,
+     "width_m": 3.8,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 38.337802,
+     "width_m": 2.7,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 46.112601,
+     "width_m": 2.4,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 53.820375,
+     "width_m": 2.75,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 60.187668,
+     "width_m": 1.5,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 67.158177,
+     "width_m": 3.2,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 75.469169,
+     "width_m": 2.4,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 82.439678,
+     "width_m": 2.1,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "North facade (stone, ribbon windows)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 37.847222,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 74.301676,
+     "width_m": 1.8,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 48.044693,
+     "width_m": 2.1,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 17.318436,
+     "width_m": 2.0,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "West facade"
+  },
+  {
+   "axis": "y",
+   "at_pct": 37.847222,
+   "start_pct": 0.0,
+   "end_pct": 12.435897,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South-west facade, doctor room 3"
+  },
+  {
+   "axis": "y",
+   "at_pct": 30.208333,
+   "start_pct": 12.435897,
+   "end_pct": 22.051282,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 16.0,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 63.333333,
+     "width_m": 2.3,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "South facade, waiting hall (fire exit to the outdoor stair)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 24.305556,
+   "start_pct": 22.051282,
+   "end_pct": 29.74359,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 2.6,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "South facade, exam room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 17.708333,
+   "start_pct": 29.74359,
+   "end_pct": 40.641026,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 11.764706,
+     "width_m": 0.8,
+     "sill_m": 1.7,
+     "height_m": 0.5,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 44.705882,
+     "width_m": 1.2,
+     "sill_m": 1.7,
+     "height_m": 0.5,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 82.352941,
+     "width_m": 1.0,
+     "sill_m": 1.7,
+     "height_m": 0.5,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "South facade, public toilets"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.805556,
+   "start_pct": 40.641026,
+   "end_pct": 46.923077,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 24.489796,
+     "width_m": 0.8,
+     "sill_m": 1.7,
+     "height_m": 0.5,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 75.510204,
+     "width_m": 0.8,
+     "sill_m": 1.7,
+     "height_m": 0.5,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "South facade, staff WCs"
+  },
+  {
+   "axis": "y",
+   "at_pct": 5.555556,
+   "start_pct": 46.923077,
+   "end_pct": 57.179487,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 41.25,
+     "width_m": 0.9,
+     "sill_m": 1.1,
+     "height_m": 1.0,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "South facade, staff kitchen"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 57.179487,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 18.862275,
+     "width_m": 5.6,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 58.682635,
+     "width_m": 4.4,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 86.826347,
+     "width_m": 4.0,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "South facade (box edge)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 12.435897,
+   "start_pct": 30.208333,
+   "end_pct": 37.847222,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 22.051282,
+   "start_pct": 24.305556,
+   "end_pct": 30.208333,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 29.74359,
+   "start_pct": 17.708333,
+   "end_pct": 24.305556,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 40.641026,
+   "start_pct": 11.805556,
+   "end_pct": 17.708333,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 46.923077,
+   "start_pct": 5.555556,
+   "end_pct": 11.805556,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 57.179487,
+   "start_pct": 0.0,
+   "end_pct": 5.555556,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "South facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 95.641026,
+   "start_pct": 74.305556,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 3.0,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "East facade, treatment 2"
+  },
+  {
+   "axis": "x",
+   "at_pct": 96.794872,
+   "start_pct": 50.347222,
+   "end_pct": 74.305556,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 49.275362,
+     "width_m": 3.0,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "East facade, corridor end"
+  },
+  {
+   "axis": "x",
+   "at_pct": 98.333333,
+   "start_pct": 22.569444,
+   "end_pct": 50.347222,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 71.25,
+     "width_m": 1.9,
+     "sill_m": 1.1,
+     "height_m": 1.2,
+     "fill": "low_e",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "name": "East facade, treatment 3"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 22.569444,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "East facade (box edge)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 74.305556,
+   "start_pct": 95.641026,
+   "end_pct": 96.794872,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "East facade, step"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 96.794872,
+   "end_pct": 98.333333,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "East facade, step"
+  },
+  {
+   "axis": "y",
+   "at_pct": 22.569444,
+   "start_pct": 98.333333,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "name": "East facade, step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 12.435897,
+   "start_pct": 37.847222,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 81.899441,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 55.530726,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 23.351955,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "West wing / waiting hall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 76.736111,
+   "start_pct": 0.0,
+   "end_pct": 12.435897,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 43.298969,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Doctor rooms 1 / 2 (connecting door)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 59.305556,
+   "start_pct": 0.0,
+   "end_pct": 12.435897,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Doctor rooms 2 / 3"
+  },
+  {
+   "axis": "x",
+   "at_pct": 22.051282,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 69.142857,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 12.761905,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Waiting hall / exam and doctor rooms"
+  },
+  {
+   "axis": "y",
+   "at_pct": 79.513889,
+   "start_pct": 22.051282,
+   "end_pct": 32.717949,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Exam room / doctor room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 63.541667,
+   "start_pct": 22.051282,
+   "end_pct": 32.717949,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Corridor wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 32.717949,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Doctor room / treatment room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 67.361111,
+   "start_pct": 32.717949,
+   "end_pct": 40.641026,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Treatment room / cupboard alcove"
+  },
+  {
+   "axis": "x",
+   "at_pct": 40.641026,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 37.904762,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Treatment room / waiting niche"
+  },
+  {
+   "axis": "x",
+   "at_pct": 47.589744,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 40.952381,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Waiting niche / doctor room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 55.282051,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Doctor room / nurses' station"
+  },
+  {
+   "axis": "y",
+   "at_pct": 63.541667,
+   "start_pct": 47.589744,
+   "end_pct": 56.794872,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Corridor wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 63.541667,
+   "start_pct": 56.794872,
+   "end_pct": 75.641026,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 6.122449,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Nurses' station glazed front"
+  },
+  {
+   "axis": "x",
+   "at_pct": 59.74359,
+   "start_pct": 84.722222,
+   "end_pct": 100.0,
+   "material": "gypsum_single",
+   "loss_db": null,
+   "door": null,
+   "name": "Head nurse office"
+  },
+  {
+   "axis": "y",
+   "at_pct": 84.722222,
+   "start_pct": 59.74359,
+   "end_pct": 68.717949,
+   "material": "gypsum_single",
+   "loss_db": null,
+   "door": null,
+   "name": "Head nurse office (curved on plan)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 68.717949,
+   "start_pct": 84.722222,
+   "end_pct": 100.0,
+   "material": "gypsum_single",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 54.545455,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Head nurse office door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 75.641026,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Nurses' station / small waiting room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 63.541667,
+   "start_pct": 75.641026,
+   "end_pct": 81.897436,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 73.770492,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Small waiting room front (black cupboard casing and door)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 81.897436,
+   "start_pct": 63.541667,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 40.190476,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Small waiting room / doctor room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 74.305556,
+   "start_pct": 81.897436,
+   "end_pct": 95.641026,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Doctor and treatment rooms / corridor end"
+  },
+  {
+   "axis": "x",
+   "at_pct": 89.230769,
+   "start_pct": 74.305556,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 35.135135,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Doctor room / treatment room (slanted on plan, sliding door assumed)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 22.051282,
+   "start_pct": 30.208333,
+   "end_pct": 50.347222,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 84.482759,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Waiting hall / exam room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 22.051282,
+   "end_pct": 29.74359,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Corridor wall (exam room)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 29.74359,
+   "start_pct": 24.305556,
+   "end_pct": 50.347222,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Exam room / toilets"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 29.74359,
+   "end_pct": 37.051282,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 43.859649,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Corridor wall, toilets entrance"
+  },
+  {
+   "axis": "x",
+   "at_pct": 37.051282,
+   "start_pct": 17.708333,
+   "end_pct": 50.347222,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilets / WC alcove"
+  },
+  {
+   "axis": "y",
+   "at_pct": 27.777778,
+   "start_pct": 37.051282,
+   "end_pct": 40.641026,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 46.428571,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Accessible WC door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 40.641026,
+   "start_pct": 17.708333,
+   "end_pct": 50.347222,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 42.553191,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "WC alcove / staff WCs"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 40.641026,
+   "end_pct": 46.923077,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 55.102041,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Corridor wall, store door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 37.847222,
+   "start_pct": 40.641026,
+   "end_pct": 46.923077,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Store / staff WCs"
+  },
+  {
+   "axis": "x",
+   "at_pct": 46.923077,
+   "start_pct": 11.805556,
+   "end_pct": 50.347222,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Staff WCs / staff kitchen"
+  },
+  {
+   "axis": "y",
+   "at_pct": 40.277778,
+   "start_pct": 46.923077,
+   "end_pct": 51.794872,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 42.105263,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Staff kitchen door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 51.794872,
+   "start_pct": 29.861111,
+   "end_pct": 50.347222,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Kitchen lobby / shaft and store"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 51.794872,
+   "end_pct": 57.179487,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Corridor wall (shaft)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 29.861111,
+   "start_pct": 51.794872,
+   "end_pct": 57.179487,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 38.095238,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Kitchen store door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 57.179487,
+   "start_pct": 5.555556,
+   "end_pct": 50.347222,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.3,
+   "name": "Stair core west wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 57.179487,
+   "end_pct": 64.615385,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Stair core north wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 64.615385,
+   "end_pct": 73.333333,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 69.117647,
+     "width_m": 1.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Glazed screen, double fire doors to the stair hall (held open)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 37.847222,
+   "start_pct": 57.179487,
+   "end_pct": 64.230769,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift alcove / utility room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 64.230769,
+   "start_pct": 23.263889,
+   "end_pct": 37.847222,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 57.142857,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Utility room door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 23.263889,
+   "start_pct": 57.179487,
+   "end_pct": 64.230769,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Utility room / stair"
+  },
+  {
+   "axis": "x",
+   "at_pct": 73.333333,
+   "start_pct": 0.0,
+   "end_pct": 50.347222,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 38.62069,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stair core east wall (RC), door to the back waiting area"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 73.333333,
+   "end_pct": 77.307692,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 61.290323,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Corridor wall, store door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 24.652778,
+   "start_pct": 73.333333,
+   "end_pct": 77.307692,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Store / back waiting area"
+  },
+  {
+   "axis": "x",
+   "at_pct": 77.307692,
+   "start_pct": 21.875,
+   "end_pct": 50.347222,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Store / spare room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 77.307692,
+   "end_pct": 85.25641,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 51.612903,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Corridor wall, spare room door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 29.513889,
+   "start_pct": 77.307692,
+   "end_pct": 85.25641,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Spare room / accessible shower"
+  },
+  {
+   "axis": "y",
+   "at_pct": 21.875,
+   "start_pct": 77.307692,
+   "end_pct": 85.25641,
+   "material": "gypsum_single",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 40.322581,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Accessible shower, sliding door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 85.25641,
+   "start_pct": 21.875,
+   "end_pct": 50.347222,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Spare room / WC"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 85.25641,
+   "end_pct": 89.615385,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Corridor wall (WC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 34.722222,
+   "start_pct": 85.25641,
+   "end_pct": 89.615385,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 32.352941,
+     "width_m": 0.75,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "WC door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 89.615385,
+   "start_pct": 22.569444,
+   "end_pct": 50.347222,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "WC / treatment 3"
+  },
+  {
+   "axis": "y",
+   "at_pct": 50.347222,
+   "start_pct": 89.615385,
+   "end_pct": 96.794872,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 35.357143,
+     "width_m": 0.88,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Corridor wall, treatment 3 door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 22.569444,
+   "start_pct": 88.589744,
+   "end_pct": 98.333333,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 84.210526,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Treatment 3 / doctor 7 (door between)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 88.589744,
+   "start_pct": 0.0,
+   "end_pct": 22.569444,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 63.076923,
+     "width_m": 0.85,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Back waiting area / doctor room"
+  }
+ ],
+ "aps": [
+  {
+   "name": "AP1",
+   "x": 20.6,
+   "y": 8.2,
+   "z": 2.65,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 0.9,
+   "y": 12.7,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 0.9,
+   "y": 9.95,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 0.9,
+   "y": 7.4,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 10.2,
+   "y": 12.4,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 10.3,
+   "y": 10.2,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 13.7,
+   "y": 13.1,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 19.5,
+   "y": 12.7,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Nurse desk",
+   "kind": "desk",
+   "x": 23.0,
+   "y": 10.7,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Nurse desk",
+   "kind": "desk",
+   "x": 23.0,
+   "y": 9.5,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Head nurse desk",
+   "kind": "desk",
+   "x": 24.0,
+   "y": 13.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 32.2,
+   "y": 12.7,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 9.3,
+   "y": 4.9,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 35.2,
+   "y": 4.3,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk",
+   "kind": "desk",
+   "x": 36.9,
+   "y": 0.8,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 2.7,
+   "y": 11.25,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 2.6,
+   "y": 8.8,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 2.5,
+   "y": 5.85,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 9.0,
+   "y": 13.45,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 10.5,
+   "y": 9.35,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 13.4,
+   "y": 9.95,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 19.3,
+   "y": 9.45,
+   "w": 1.9,
+   "d": 0.65,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 25.8,
+   "y": 9.5,
+   "w": 0.65,
+   "d": 1.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 32.7,
+   "y": 10.8,
+   "w": 1.9,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 35.9,
+   "y": 12.0,
+   "w": 0.65,
+   "d": 1.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 10.8,
+   "y": 5.15,
+   "w": 0.65,
+   "d": 1.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 36.9,
+   "y": 5.0,
+   "w": 0.65,
+   "d": 1.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Exam couch",
+   "kind": "bed",
+   "x": 34.8,
+   "y": 0.15,
+   "w": 1.9,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 5.3,
+   "y": 8.2,
+   "w": 2.0,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 5.3,
+   "y": 7.2,
+   "w": 2.0,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 7.85,
+   "y": 4.8,
+   "w": 0.5,
+   "d": 1.4,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 16.0,
+   "y": 11.7,
+   "w": 0.5,
+   "d": 2.4,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 28.6,
+   "y": 9.9,
+   "w": 0.5,
+   "d": 2.7,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 29.7,
+   "y": 12.1,
+   "w": 0.5,
+   "d": 2.0,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 35.3,
+   "y": 10.05,
+   "w": 1.9,
+   "d": 0.5,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Waiting chairs",
+   "kind": "sofa",
+   "x": 32.0,
+   "y": 0.2,
+   "w": 2.0,
+   "d": 0.45,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Medicine cabinet",
+   "kind": "metal_cabinet",
+   "x": 12.9,
+   "y": 13.75,
+   "w": 0.9,
+   "d": 0.45,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Medicine cabinet",
+   "kind": "metal_cabinet",
+   "x": 35.0,
+   "y": 13.75,
+   "w": 0.9,
+   "d": 0.45,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Medicine cabinet",
+   "kind": "metal_cabinet",
+   "x": 21.75,
+   "y": 12.2,
+   "w": 0.45,
+   "d": 0.9,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Vaccine fridge",
+   "kind": "fridge",
+   "x": 21.8,
+   "y": 13.4,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Store cupboards",
+   "kind": "wardrobe",
+   "x": 12.9,
+   "y": 9.2,
+   "w": 2.8,
+   "d": 0.45,
+   "h": 2.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Store shelving",
+   "kind": "metal_cabinet",
+   "x": 16.05,
+   "y": 5.65,
+   "w": 0.45,
+   "d": 1.35,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Store shelving",
+   "kind": "metal_cabinet",
+   "x": 28.75,
+   "y": 4.0,
+   "w": 0.45,
+   "d": 2.8,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchen store shelving",
+   "kind": "metal_cabinet",
+   "x": 20.35,
+   "y": 5.75,
+   "w": 1.75,
+   "d": 0.45,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff kitchen run (sink, dishwasher)",
+   "kind": "kitchen",
+   "x": 21.6,
+   "y": 1.9,
+   "w": 0.6,
+   "d": 2.2,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff kitchen fridge",
+   "kind": "fridge",
+   "x": 21.5,
+   "y": 1.1,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff kitchen table",
+   "kind": "table",
+   "x": 18.9,
+   "y": 1.5,
+   "w": 1.2,
+   "d": 1.2,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sink counter",
+   "kind": "kitchen",
+   "x": 35.2,
+   "y": 2.5,
+   "w": 2.0,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Comms cabinet (assumed)",
+   "kind": "server_rack",
+   "x": 22.55,
+   "y": 4.2,
+   "w": 0.6,
+   "d": 1.0,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "RC column",
+   "kind": "column",
+   "x": 33.96,
+   "y": 9.6,
+   "w": 0.44,
+   "d": 1.05,
+   "h": 2.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Stair flights and landing (RC; stand-in)",
+   "kind": "stock",
+   "x": 23.9,
+   "y": 0.3,
+   "w": 3.1,
+   "d": 2.8,
+   "h": 2.85,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Doctor 1",
+   "name_he": "רופא 1",
+   "role": "office",
+   "x": 2.42,
+   "y": 12.75,
+   "ceiling_m": null
+  },
+  {
+   "name": "Doctor 2",
+   "name_he": "רופא 2",
+   "role": "office",
+   "x": 2.42,
+   "y": 9.56,
+   "ceiling_m": null
+  },
+  {
+   "name": "Doctor 3",
+   "name_he": "רופא 3",
+   "role": "office",
+   "x": 2.42,
+   "y": 6.89,
+   "ceiling_m": null
+  },
+  {
+   "name": "Waiting hall and corridor",
+   "name_he": "המתנה ומסדרון",
+   "role": "hall",
+   "x": 6.7,
+   "y": 5.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Exam 1",
+   "name_he": "בדיקה 1",
+   "role": "office",
+   "x": 12.06,
+   "y": 12.01,
+   "ceiling_m": null
+  },
+  {
+   "name": "Doctor 4",
+   "name_he": "רופא 4",
+   "role": "office",
+   "x": 11.89,
+   "y": 9.43,
+   "ceiling_m": null
+  },
+  {
+   "name": "Treatment 1",
+   "name_he": "טיפולים 1",
+   "role": "other",
+   "x": 15.5,
+   "y": 9.95,
+   "ceiling_m": null
+  },
+  {
+   "name": "Doctor 5",
+   "name_he": "רופא 5",
+   "role": "office",
+   "x": 21.22,
+   "y": 13.85,
+   "ceiling_m": null
+  },
+  {
+   "name": "Nurses' station",
+   "name_he": "עמדת אחיות",
+   "role": "office",
+   "x": 26.0,
+   "y": 10.2,
+   "ceiling_m": null
+  },
+  {
+   "name": "Head nurse",
+   "name_he": "אחות אחראית",
+   "role": "office",
+   "x": 24.61,
+   "y": 12.75,
+   "ceiling_m": null
+  },
+  {
+   "name": "Small waiting",
+   "name_he": "המתנה קטנה",
+   "role": "hall",
+   "x": 30.6,
+   "y": 13.52,
+   "ceiling_m": null
+  },
+  {
+   "name": "Doctor 6",
+   "name_he": "רופא 6",
+   "role": "office",
+   "x": 32.92,
+   "y": 12.01,
+   "ceiling_m": null
+  },
+  {
+   "name": "Treatment 2",
+   "name_he": "טיפולים 2",
+   "role": "other",
+   "x": 35.89,
+   "y": 11.64,
+   "ceiling_m": null
+  },
+  {
+   "name": "Exam 2",
+   "name_he": "בדיקה 2",
+   "role": "office",
+   "x": 9.8,
+   "y": 4.51,
+   "ceiling_m": null
+  },
+  {
+   "name": "Public WCs",
+   "name_he": "שירותי ציבור",
+   "role": "wc",
+   "x": 12.06,
+   "y": 3.66,
+   "ceiling_m": null
+  },
+  {
+   "name": "Accessible WC",
+   "name_he": "שירותי נכים",
+   "role": "wc",
+   "x": 15.15,
+   "y": 3.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Store 1",
+   "name_he": "מחסן 1",
+   "role": "store",
+   "x": 17.32,
+   "y": 6.16,
+   "ceiling_m": null
+  },
+  {
+   "name": "Staff WCs",
+   "name_he": "שירותי צוות",
+   "role": "wc",
+   "x": 17.08,
+   "y": 2.13,
+   "ceiling_m": null
+  },
+  {
+   "name": "Staff kitchen",
+   "name_he": "מטבחון",
+   "role": "kitchen",
+   "x": 19.2,
+   "y": 5.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Kitchen store",
+   "name_he": "מחסן מטבח",
+   "role": "store",
+   "x": 22.0,
+   "y": 6.89,
+   "ceiling_m": null
+  },
+  {
+   "name": "Stair hall",
+   "name_he": "חדר מדרגות",
+   "role": "stair",
+   "x": 27.8,
+   "y": 4.9,
+   "ceiling_m": null
+  },
+  {
+   "name": "Comms room",
+   "name_he": "חדר תקשורת",
+   "role": "other",
+   "x": 23.74,
+   "y": 3.89,
+   "ceiling_m": null
+  },
+  {
+   "name": "Store 2",
+   "name_he": "מחסן 2",
+   "role": "store",
+   "x": 28.96,
+   "y": 3.66,
+   "ceiling_m": null
+  },
+  {
+   "name": "Spare room",
+   "name_he": "חדר פנוי",
+   "role": "other",
+   "x": 31.49,
+   "y": 6.52,
+   "ceiling_m": null
+  },
+  {
+   "name": "Shower",
+   "name_he": "מקלחת",
+   "role": "bath",
+   "x": 32.27,
+   "y": 3.73,
+   "ceiling_m": null
+  },
+  {
+   "name": "WC",
+   "name_he": "שירותים",
+   "role": "wc",
+   "x": 34.03,
+   "y": 6.16,
+   "ceiling_m": null
+  },
+  {
+   "name": "Back waiting",
+   "name_he": "המתנה אחורית",
+   "role": "hall",
+   "x": 31.0,
+   "y": 1.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Treatment 3",
+   "name_he": "טיפולים 3",
+   "role": "other",
+   "x": 36.71,
+   "y": 4.61,
+   "ceiling_m": null
+  },
+  {
+   "name": "Doctor 7",
+   "name_he": "רופא 7",
+   "role": "office",
+   "x": 36.71,
+   "y": 1.91,
+   "ceiling_m": null
+  },
+  {
+   "name": "Garden, outdoor stair",
+   "name_he": "גינה ומדרגות חוץ",
+   "role": "outside",
+   "x": 1.21,
+   "y": 2.13,
+   "ceiling_m": null
+  },
+  {
+   "name": "Planting strip",
+   "name_he": "רצועת גינון",
+   "role": "outside",
+   "x": 38.84,
+   "y": 4.51,
+   "ceiling_m": null
+  }
+ ]
+}

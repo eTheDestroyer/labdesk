@@ -1,0 +1,695 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Beit Safafa family house, Mashrabiya House (2011)",
+  "title_he": "בית המשרביה, בית צפאפא (2011)",
+  "kind": "home",
+  "city": "Jerusalem (Beit Safafa)",
+  "city_he": "ירושלים (בית צפאפא)",
+  "era": "Contemporary: published on ArchDaily in October 2011 (the page states no completion year)",
+  "source": {
+   "title": "ArchDaily, 'The Mashrabiya House / Senan Abdelqader': ground floor plan (image 08fa, no scale bar), 1:200 longitudinal section (08fe) and 1:20 construction detail (08fc). Modelled: the west flat of the north block, ground floor.",
+   "url": "https://www.archdaily.com/175582/the-mashrabiya-house-senan-abdelqader",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Scale: the plan has no scale bar. Read at 47.5 px/m from the 1:200 section (storey levels 0.00/3.40/6.80/10.20 m = 33.8 px/m; grid D-A 14.59 m = 696 px on the plan), checked on beds (1.85-1.89 m) and the bathtub (1.79 m). Uncertainty about +-4 %: all lengths may be up to 0.3 m off.",
+   "Box: outer face of the west and north facades to the party-wall centre (east) and the outer face of the en-suite bathroom, which juts about 1.15 m past the bedrooms' south wall into the courtyard deck: 8.13 x 16.08 m. The deck strip beside it is labelled 'outside'. Clear height 3.10 m (3.40 m storey in the section minus a ~0.30 m slab).",
+   "The flat's half of the shared stair core is inside the box; it is labelled 'outside' so it is left out of the coverage shares. Its east side (the neighbour's half of the core) has no wall in the box.",
+   "The 1.8 x 3.0 m room between the stair and bath 2 has no label on the plan. Its four walls are hatched like the RC stair core and its door opens outward into the hall, as a mamad door does, so it is modelled as a protected room: mamad_20 walls, blast_door. At about 5.3 m2 it is below the 9 m2 mamad minimum and has no window, so it may be a store or a floor shelter instead; the concrete reading is the pessimistic one.",
+   "Safe-room door state: open (daily life: the steel door is usually left open). No window, so no window state.",
+   "Interior partitions: block_10 from the shared table (12 dB at 5 GHz). The draft's own 8 dB figure (which disagreed with 9 dB in other files) is dropped; no wall here sets loss_db.",
+   "North and west facades: the plan draws a ~0.3 m stone band (the mashrabiya screen) with a thin glazing line close behind it; the 1:20 detail shows the screen as stone blocks on a concrete beam with double glazing behind, no concrete wall. No table material is a perforated stone screen; stone_block (20 dB at 5 GHz) is the nearest and is used for the solid parts. Window sizes and sills are assumed (living: floor-to-ceiling sliding glass, as in the interior photos; bedrooms 1.4 x 1.5 m; bathrooms 0.6 x 0.6 m). The screen's perforations are not modelled. With the router inside, facade losses do not change the indoor shares.",
+   "No trisim behind the mashrabiya (the photos show none: the screen is the shading). The courtyard-side bedroom windows are given trisim with the slits open.",
+   "South walls to the courtyard deck (bedrooms and the jutting en-suite): drawn as a thin line (~0.12 m); material assumed Jerusalem stone on block (stone_block), windows assumed.",
+   "Party wall and stair-core walls: reinforced concrete 20 cm (concrete_20), from the hatching shared with the core; thickness drawn 0.15-0.2 m. The safe room's wall to the east flat's twin room is mamad_20.",
+   "Front door: steel entry door (pladelet), closed. Interior doors: hollow-core, open.",
+   "Fridge position assumed (the plan draws only the L-shaped counter); furniture otherwise from the plan.",
+   "Router: the ISP router in a communications cabinet in the hall beside the front door, 1.5 m high, 5 GHz, 20 dBm (no cabinet is drawn)."
+  ],
+  "israeli_features": [
+   "Jerusalem stone: a free-standing perforated stone mashrabiya screen wraps the facades (1:20 detail: stone blocks on a concrete beam)",
+   "several flats in one stone-screened house around a shared stair, a common Arab-Israeli family-building type (the source page does not say who the flats are for)",
+   "reinforced-concrete stair core with the flat's steel entry door (pladelet)",
+   "a small concrete room off the hall that is probably a protected space (mamad)",
+   "stone floor on a sand bed over the concrete slab (1:20 detail)",
+   "3.40 m storey height, generous for an Israeli flat"
+  ],
+  "notes": "A four-room flat on the ground floor of a stone-screened house of several flats in Beit Safafa, Jerusalem, around a shared stair. The router by the front door covers the open living-kitchen-hall well, but every bedroom is behind at least one block wall and the parents' en-suite and bedroom 3 also sit behind wardrobes. The small concrete room beside the stair is treated as a safe room: with its door shut it gets almost no 5 GHz signal. The neighbouring flats share the stair core and the channels, which the model does not show."
+ },
+ "width": 8.13,
+ "depth": 16.08,
+ "height": 3.1,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 23.32,
+     "width_m": 2.4,
+     "sill_m": 0.0,
+     "height_m": 2.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 56.99,
+     "width_m": 2.4,
+     "sill_m": 0.0,
+     "height_m": 2.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 89.12,
+     "width_m": 1.3,
+     "sill_m": 0.0,
+     "height_m": 2.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.32,
+   "name": "North facade: glazing behind the stone mashrabiya"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 7.175,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 88.43,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.7,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 72.92,
+     "width_m": 1.4,
+     "sill_m": 1.05,
+     "height_m": 1.2,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 55.15,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 30.61,
+     "width_m": 0.6,
+     "sill_m": 1.6,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 6.63,
+     "width_m": 1.2,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.32,
+   "name": "West facade: glazing behind the stone mashrabiya"
+  },
+  {
+   "axis": "y",
+   "at_pct": 7.175,
+   "start_pct": 0.0,
+   "end_pct": 76.131,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 27.21,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 75.51,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "South wall of bedrooms 2 and 3 to the courtyard deck"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.131,
+   "start_pct": 0.0,
+   "end_pct": 7.175,
+   "material": "stone_block",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "En-suite bath west wall to the courtyard deck"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 76.131,
+   "end_pct": 100.0,
+   "material": "stone_block",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 0.6,
+     "sill_m": 1.6,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "En-suite bath south wall to the courtyard deck"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 68.578,
+   "end_pct": 100.0,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Party wall to the east flat (living)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 22.1,
+   "end_pct": 41.215,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Safe room east wall, shared with the east flat's twin room (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 22.1,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Party wall to the east flat (bath 2)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 69.626,
+   "start_pct": 0.0,
+   "end_pct": 38.842,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Kitchen | bedroom 1"
+  },
+  {
+   "axis": "x",
+   "at_pct": 38.842,
+   "start_pct": 47.63,
+   "end_pct": 69.626,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Bedroom 1 | hall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 47.63,
+   "start_pct": 0.0,
+   "end_pct": 38.842,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 84.67,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Bedroom 1 | bath 1 and corridor"
+  },
+  {
+   "axis": "x",
+   "at_pct": 27.449,
+   "start_pct": 31.658,
+   "end_pct": 47.63,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 56.56,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Bath 1 | corridor"
+  },
+  {
+   "axis": "y",
+   "at_pct": 31.658,
+   "start_pct": 0.0,
+   "end_pct": 76.131,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 43.54,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 59.18,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Bath 1 and corridor | bedrooms 2 and 3"
+  },
+  {
+   "axis": "x",
+   "at_pct": 39.101,
+   "start_pct": 7.175,
+   "end_pct": 31.658,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Bedroom 2 | bedroom 3 (wardrobes both sides)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 68.578,
+   "start_pct": 76.131,
+   "end_pct": 100.0,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.2,
+   "name": "Stair core north wall (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.131,
+   "start_pct": 41.215,
+   "end_pct": 68.578,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 79.43,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.2,
+   "name": "Stair core west wall with the front door (pladelet)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 41.215,
+   "start_pct": 76.131,
+   "end_pct": 100.0,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.2,
+   "name": "Stair core | safe room (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.131,
+   "start_pct": 22.1,
+   "end_pct": 41.215,
+   "material": "mamad_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 63.7,
+     "width_m": 0.75,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "blast_door",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.2,
+   "name": "Safe room west wall, steel door opening outward"
+  },
+  {
+   "axis": "y",
+   "at_pct": 22.1,
+   "start_pct": 76.131,
+   "end_pct": 100.0,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.2,
+   "name": "Safe room | bath 2 (RC)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.131,
+   "start_pct": 7.175,
+   "end_pct": 22.1,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 28.07,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Bedroom 3 | en-suite bath 2"
+  }
+ ],
+ "aps": [
+  {
+   "name": "Router (entrance)",
+   "x": 5.85,
+   "y": 9.2,
+   "z": 1.5,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Fridge",
+   "kind": "fridge",
+   "x": 0.42,
+   "y": 12.42,
+   "w": 0.63,
+   "d": 0.67,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchen run along the west wall",
+   "kind": "kitchen",
+   "x": 0.42,
+   "y": 11.26,
+   "w": 0.57,
+   "d": 1.16,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchen run along bedroom 1",
+   "kind": "kitchen",
+   "x": 0.99,
+   "y": 11.26,
+   "w": 2.17,
+   "d": 0.63,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table, 6 seats",
+   "kind": "table",
+   "x": 1.58,
+   "y": 13.34,
+   "w": 0.95,
+   "d": 1.68,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee table",
+   "kind": "table",
+   "x": 5.83,
+   "y": 12.77,
+   "w": 0.91,
+   "d": 1.79,
+   "h": 0.45,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa along the party wall",
+   "kind": "sofa",
+   "x": 7.12,
+   "y": 12.63,
+   "w": 0.88,
+   "d": 2.4,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa by the stair core",
+   "kind": "sofa",
+   "x": 6.11,
+   "y": 11.3,
+   "w": 1.47,
+   "d": 0.84,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe, bedroom 1",
+   "kind": "wardrobe",
+   "x": 0.48,
+   "y": 10.56,
+   "w": 2.57,
+   "d": 0.57,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bed, bedroom 1",
+   "kind": "bed",
+   "x": 0.48,
+   "y": 7.7,
+   "w": 0.88,
+   "d": 1.85,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bed, bedroom 2",
+   "kind": "bed",
+   "x": 0.48,
+   "y": 3.03,
+   "w": 0.84,
+   "d": 1.85,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe, bedroom 2",
+   "kind": "wardrobe",
+   "x": 2.53,
+   "y": 1.34,
+   "w": 0.57,
+   "d": 2.8,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe, bedroom 3",
+   "kind": "wardrobe",
+   "x": 3.26,
+   "y": 1.34,
+   "w": 0.57,
+   "d": 2.8,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Double bed, bedroom 3",
+   "kind": "bed",
+   "x": 4.74,
+   "y": 3.2,
+   "w": 1.31,
+   "d": 1.75,
+   "h": 0.5,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Living, dining, kitchen and hall",
+   "name_he": "סלון, פינת אוכל, מטבח ומבואה",
+   "role": "living",
+   "x": 4.0,
+   "y": 13.51,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bedroom 1",
+   "name_he": "חדר שינה 1",
+   "role": "bedroom",
+   "x": 1.89,
+   "y": 9.72,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bathroom 1",
+   "name_he": "חדר רחצה 1",
+   "role": "bath",
+   "x": 1.16,
+   "y": 5.83,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bedroom 2",
+   "name_he": "חדר שינה 2",
+   "role": "bedroom",
+   "x": 1.79,
+   "y": 2.35,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bedroom 3 (parents)",
+   "name_he": "חדר הורים",
+   "role": "bedroom",
+   "x": 4.42,
+   "y": 4.04,
+   "ceiling_m": null
+  },
+  {
+   "name": "En-suite bathroom",
+   "name_he": "חדר רחצה הורים",
+   "role": "bath",
+   "x": 7.16,
+   "y": 2.88,
+   "ceiling_m": null
+  },
+  {
+   "name": "Safe room (probable)",
+   "name_he": "ממ\"ד (משוער)",
+   "role": "mamad",
+   "x": 7.16,
+   "y": 5.09,
+   "ceiling_m": null
+  },
+  {
+   "name": "Shared stairwell (not the flat)",
+   "name_he": "חדר מדרגות משותף",
+   "role": "outside",
+   "x": 7.16,
+   "y": 8.46,
+   "ceiling_m": null
+  },
+  {
+   "name": "Courtyard deck (shared)",
+   "name_he": "דק החצר המשותפת",
+   "role": "outside",
+   "x": 2.95,
+   "y": 0.56,
+   "ceiling_m": null
+  }
+ ]
+}

@@ -36,7 +36,7 @@ except Exception:  # pragma: no cover
 TILE = 72.0            # V8: 64 -> 72 px, centre-anchored (saved layouts do not shift)
 
 STRIP_TEXT = {"iosv": "IOSv", "iol-xe": "IOL-XE", "iosvl2": "IOSvL2", "vjunos": "Junos", "fortios": "FortiOS",
-              "alpine": "Linux", "asav": "ASAv"}
+              "alpine": "Linux", "asav": "ASAv", "ap": "AP"}
 
 
 def tile_kind(dtype: DeviceType) -> str:
@@ -48,6 +48,8 @@ def tile_kind(dtype: DeviceType) -> str:
         return "fortinet"
     if dtype.shape == "hub":
         return "switch"                         # unmanaged switch: grey, ports only
+    if dtype.shape == "ap":
+        return "ap"                             # placeholder access point: round puck, radio-wave glyph
     if dtype.shape == "switch":
         return "l2switch"                       # managed Cisco switch: blue front panel, port LEDs, L2 badge
     if dtype.vendor == "linux":
@@ -90,6 +92,8 @@ def tile_path(kind: str, size: float = TILE) -> QPainterPath:
         path.cubicTo(hw * 0.2, -hh * 1.08, hw * 0.86, -hh * 0.9, hw * 0.74, -hh * 0.06)
         path.cubicTo(hw * 1.1, -hh * 0.02, hw * 1.1, hh, hw * 0.70, hh)
         path.closeSubpath()
+    elif kind == "ap":                          # ceiling-mount puck
+        path.addEllipse(QRectF(-w / 2, -h / 2, w, h))
     elif kind == "switch":
         path.addRoundedRect(QRectF(-w / 2, -h / 2, w, h), size * 0.10, size * 0.10)
     elif kind == "l2switch":
@@ -119,7 +123,7 @@ def anchor_point(path: QPainterPath, direction: QPointF, gap: float = 3.0) -> QP
 
 # ============================================================================ glyphs
 def draw_glyph(p: QPainter, rect: QRectF, shape: str, color: QColor = QColor("white")):
-    """White device glyph (router / switch / host / cloud / firewall / hub) in rect."""
+    """White device glyph (router / switch / host / cloud / firewall / hub / ap) in rect."""
     p.save()
     pen = QPen(color, max(1.5, rect.width() * 0.07), Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
     p.setPen(pen)
@@ -152,6 +156,14 @@ def draw_glyph(p: QPainter, rect: QRectF, shape: str, color: QColor = QColor("wh
         for i in range(5):
             x = r.left() + r.width() * (i + 1) / 6
             p.drawLine(QPointF(x, r.top() + h * 0.08), QPointF(x, r.bottom() - h * 0.08))
+    elif shape == "ap":                         # radio waves over a dot (generic Wi-Fi mark, no vendor logo)
+        base = QPointF(c.x(), c.y() + h * 0.30)
+        for f in (0.24, 0.46, 0.68):
+            rr = w * f
+            p.drawArc(QRectF(base.x() - rr, base.y() - rr, 2 * rr, 2 * rr), 45 * 16, 90 * 16)
+        p.setPen(Qt.NoPen)
+        p.setBrush(color)
+        p.drawEllipse(base, w * 0.075, w * 0.075)
     elif shape == "host":
         r = QRectF(c.x() - w * 0.36, c.y() - h * 0.32, w * 0.72, h * 0.46)
         p.drawRoundedRect(r, w * 0.04, w * 0.04)

@@ -47,6 +47,19 @@ def test_type_for_cml_node():
     assert catalog.type_for_cml_node({"node_definition": "iosv"}).key == "iosv"
 
 
+def test_access_point_placeholder():
+    d = catalog.BY_KEY["ap"]
+    assert d.backend == "cml" and d.node_definition == "unmanaged_switch" and d.shape == "ap"
+    assert not d.counts_against_limit and d.tags == (catalog.AP_TAG,) and d.prefix == "AP"
+    assert d.node_definition in catalog.NON_COUNTING_DEFS
+    tagged = {"node_definition": "unmanaged_switch", "tags": ["labdesk-ap"]}
+    assert catalog.type_for_cml_node(tagged).key == "ap"
+    for plain in ({"node_definition": "unmanaged_switch"}, {"node_definition": "unmanaged_switch", "tags": None},
+                  {"node_definition": "unmanaged_switch", "tags": ["other"]}):
+        assert catalog.type_for_cml_node(plain).key == "unmanaged_switch"
+    assert catalog.next_label(d.prefix, {"AP1"}) == "AP2" and catalog.default_config(d, "AP1") == ""
+
+
 def test_load_env_file(tmp_path):
     p = tmp_path / "e.env"
     p.write_text("# c\n\nA=1\nB = 'two'\nC=\"x=y\"\n")

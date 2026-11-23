@@ -16,6 +16,7 @@ datas = [
     (os.path.join(ROOT, "templates"), "templates"),
     (os.path.join(ROOT, "labdesk.svg"), "."),
     (os.path.join(ROOT, "labdesk_app", "ui", "icons"), os.path.join("labdesk_app", "ui", "icons")),
+    (os.path.join(ROOT, "labdesk_app", "rooms"), os.path.join("labdesk_app", "rooms")),
 ]
 if os.path.exists(os.path.join(ROOT, "BUILD_INFO")):
     datas.append((os.path.join(ROOT, "BUILD_INFO"), "."))
@@ -30,7 +31,7 @@ excludes = [
     "PySide6.QtPdf", "PySide6.QtPdfWidgets", "PySide6.QtCharts", "PySide6.QtDataVisualization", "PySide6.QtGraphs",
     "PySide6.QtBluetooth", "PySide6.QtNfc", "PySide6.QtPositioning", "PySide6.QtLocation", "PySide6.QtSensors",
     "PySide6.QtSerialPort", "PySide6.QtSql", "PySide6.QtTest", "PySide6.QtDesigner", "PySide6.QtHelp",
-    "PySide6.QtOpenGL", "PySide6.QtOpenGLWidgets", "PySide6.QtPrintSupport", "PySide6.QtRemoteObjects",
+    "PySide6.QtOpenGLWidgets", "PySide6.QtPrintSupport", "PySide6.QtRemoteObjects",
     "PySide6.QtScxml", "PySide6.QtSpatialAudio", "PySide6.QtTextToSpeech", "PySide6.QtUiTools",
     "PySide6.QtXml", "PySide6.QtConcurrent", "PySide6.QtHttpServer", "PySide6.QtNetworkAuth",
 ]

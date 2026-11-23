@@ -1,0 +1,950 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Be'er Sheva new build with mamad, 5 rooms (Tzarfati BaPark, 2021)",
+  "title_he": "דירת 5 חדרים עם ממ\"ד, באר שבע (צרפתי בפארק, 2021)",
+  "kind": "home",
+  "city": "Be'er Sheva (Park HaNahal neighbourhood)",
+  "city_he": "באר שבע (שכונת פארק הנחל)",
+  "era": "2021 sales plan (dated 30/11/2021), built with a mamad under the post-1992 Civil Defence rules; flat 13 on floor 4 of a mid-rise block (not a tower)",
+  "source": {
+   "title": "Developer sales plan (תוכנית מכר) at 1:50: Tzarfati Shimon Ltd, 'Tzarfati BaPark', plot 132, building 16, flat 13, floor 4, type AB1-M, 5 rooms; Miloslavsky Architects, 30/11/2021",
+   "url": "https://park.s-sarfati.co.il/files/349/132/16/16-13.pdf",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Walls read from the 1:50 PDF rendered at 150 dpi (118.11 px/m), within about 0.05 m; checked against the written sizes (living 4.30, kitchen 3.50 x 3.45, master 3.56 x 3.17, bedroom 3 2.81 x 3.61, bedroom 4 3.20 x 2.80, mamad 3.05 x 3.05, sun balcony 6.43 x 2.29, overall depth 12.06)",
+   "Box 14.55 x 12.06 m: the sheet's 16.11 m overall width includes the open-air strip over the floor-1 terrace west of the flat, which is left out",
+   "Ceiling 2.70 m: the sheet gives no height (regulation minimum 2.50 m)",
+   "Hatched walls (facade, lobby and stair core, en-suite west wall) taken as reinforced concrete 20 cm, as the mamad is drawn with the same hatch; if the facade is 20 cm block with cladding instead, nothing indoors changes, because the router is inside and the facade only bounds outdoor areas",
+   "Grey partitions (about 10 cm) taken as plastered 10 cm block (12 dB at 5 GHz); if they are gypsum board (3 dB) every room behind them is about 9 dB stronger",
+   "Mamad walls from the Civil Defence rules: 20 cm inner (north, west to bedroom 4), 25 cm outer (east, west to the balcony), 30 cm at the blast window (south)",
+   "Mamad as in daily use: blast door open, steel window leaf open (mamad_glazing); the model has no diffraction, so the open door lights only the strip in line with the doorway, and an open versus shut comparison is not meaningful in this model",
+   "Mamad window 1.00 x 1.00 m at sill 1.00 (the rules allow at most 1.21 m2)",
+   "Front door is a steel security door (pladelet), closed",
+   "Bedroom doors open, bathroom and service balcony doors closed (hollow-core)",
+   "Trisim on the bedroom windows down with the slits open (daytime in the Negev sun); the living-room slider's shutter rolled up",
+   "Window sizes and sills (bedrooms 1.20 x 1.40 at 0.90, baths 0.60 x 0.60 at 1.50, kitchen 1.20 x 1.20 at 1.05, service balcony 1.70 x 1.30 at 0.90, living slider 2.50 x 2.30) are typical, not written on the sheet",
+   "Balcony railings taken as glass up to 1.05 m with open air above",
+   "Router at the entrance: the sheet draws the electrical board on the hall side of the kitchen's tall units next to the front door; the communications cabinet is taken to sit with it, router at 1.5 m, 5 GHz, 20 dBm",
+   "Beds, wardrobes, sofa, desks and the mamad's furnishing as a kid's room are assumed; the kitchen run, fridge space and the washing machine are drawn on the sheet",
+   "Storey count is not on the sheet: the neighbourhood has 5-8 storey blocks (search snippet, unverified)"
+  ],
+  "israeli_features": [
+   "Mamad (residential safe room) 3.05 x 3.05 m: reinforced-concrete walls, steel blast door, steel window leaf",
+   "Mamad counted as one of the five rooms ('ח.ממ\"ד 2' on the sheet), so it is furnished here as a kid's bedroom",
+   "Steel security front door (pladelet) from the common lobby",
+   "Electrical board by the front door (drawn on the sheet); the communications cabinet is assumed beside it",
+   "Service balcony (מרפסת שירות) for the washing machine, reached through the general bath, opening onto a laundry screen yard (מסתור כביסה)",
+   "Covered sun balcony (מרפסת שמש) 6.43 x 2.29 m off the living room",
+   "Trisim (roller shutters) on bedroom and living-room windows",
+   "Open-plan kitchen, dining and living (salon); en-suite parents' bath"
+  ],
+  "notes": "A 5-room flat on floor 4 of a 2021 mid-rise block in Be'er Sheva, with the ISP router where it is found: in the cabinet by the front door. On 5 GHz the open-plan salon and kitchen, bedrooms 3 and 4 and the baths off the corridor are well served, the master bedroom is only fair (about -70 dBm), and the en-suite (behind a concrete wall) and the mamad (20-30 cm reinforced concrete) get almost nothing except the strip in line with the mamad's open door. On 2.4 GHz each concrete wall costs about 13 dB less and the mamad comes up to about -71 dBm, so a 2.4 GHz device may work there; for 5 GHz put a second access point in the corridor by the mamad door, which this model shows in reach of the router on both bands (about -58 to -69 dBm on 5 GHz, -47 to -56 dBm on 2.4 GHz); mounted at 2.2 m it lifts the mamad to about -65 to -69 dBm on 5 GHz through its 20 cm wall."
+ },
+ "width": 14.55,
+ "depth": 12.06,
+ "height": 2.7,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 30.241,
+   "end_pct": 83.299,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "North wall (kitchen, laundry yard)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 38.889,
+   "end_pct": 84.08,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 18.165,
+     "width_m": 0.6,
+     "sill_m": 1.5,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 64.587,
+     "width_m": 1.2,
+     "sill_m": 0.9,
+     "height_m": 1.4,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.27,
+   "name": "East wall (master bedroom, en-suite)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 11.277,
+   "end_pct": 38.889,
+   "material": "mamad_25",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.37,
+   "name": "Mamad east wall (outer)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 21.725,
+   "end_pct": 72.056,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 88.797,
+     "width_m": 0.6,
+     "sill_m": 1.5,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.26,
+   "name": "West wall (guest bath, bedroom 3)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 29.072,
+   "end_pct": 75.601,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 50.0,
+     "sill_m": 1.05,
+     "height_m": 1.6500000000000001,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.06,
+   "name": "Sun balcony railing (south)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 21.725,
+   "start_pct": 0.0,
+   "end_pct": 75.601,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 14.818,
+     "width_m": 1.2,
+     "sill_m": 0.9,
+     "height_m": 1.4,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 52.0,
+     "width_m": 2.5,
+     "sill_m": 0.0,
+     "height_m": 2.3,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 84.727,
+     "width_m": 1.2,
+     "sill_m": 0.9,
+     "height_m": 1.4,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.27,
+   "name": "South facade (bedroom 3, living, bedroom 4)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 84.08,
+   "start_pct": 55.876,
+   "end_pct": 100.0,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 19.938,
+     "width_m": 1.7,
+     "sill_m": 0.9,
+     "height_m": 1.3,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.25,
+   "name": "North facade (service balcony, master bedroom)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 55.876,
+   "start_pct": 84.08,
+   "end_pct": 100.0,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 47.917,
+     "width_m": 1.2,
+     "sill_m": 1.05,
+     "height_m": 1.2,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Kitchen wall to the laundry yard"
+  },
+  {
+   "axis": "x",
+   "at_pct": 29.072,
+   "start_pct": 0.0,
+   "end_pct": 21.725,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 50.0,
+     "sill_m": 1.05,
+     "height_m": 1.6500000000000001,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.06,
+   "name": "Sun balcony railing (west)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 75.601,
+   "start_pct": 0.0,
+   "end_pct": 11.277,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 50.0,
+     "sill_m": 1.05,
+     "height_m": 1.6500000000000001,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.06,
+   "name": "Sun balcony railing (east)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 72.056,
+   "start_pct": 0.0,
+   "end_pct": 30.241,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 84.091,
+     "width_m": 0.95,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.26,
+   "name": "Wall to the common lobby (front door)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 30.241,
+   "start_pct": 72.056,
+   "end_pct": 100.0,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.3,
+   "name": "Kitchen wall to the stair core"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.889,
+   "start_pct": 75.601,
+   "end_pct": 100.0,
+   "material": "mamad_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 20.282,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.0,
+     "fill": "blast_door",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.26,
+   "name": "Mamad north wall (corridor, en-suite)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 75.601,
+   "start_pct": 21.725,
+   "end_pct": 38.889,
+   "material": "mamad_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.3,
+   "name": "Mamad west wall (bedroom 4)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 75.601,
+   "start_pct": 11.277,
+   "end_pct": 21.725,
+   "material": "mamad_25",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "Mamad west wall (sun balcony)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.277,
+   "start_pct": 75.601,
+   "end_pct": 100.0,
+   "material": "mamad_30",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 47.324,
+     "width_m": 1.0,
+     "sill_m": 1.0,
+     "height_m": 1.0,
+     "fill": "mamad_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.42,
+   "name": "Mamad south wall (blast window)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 85.155,
+   "start_pct": 38.889,
+   "end_pct": 55.804,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.2,
+   "name": "En-suite west wall (RC)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 55.804,
+   "start_pct": 55.876,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 19.47,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 56.854,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 86.76,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Bath / master bedroom / en-suite south wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 55.876,
+   "start_pct": 55.804,
+   "end_pct": 84.08,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Kitchen / service balcony and bath"
+  },
+  {
+   "axis": "y",
+   "at_pct": 71.393,
+   "start_pct": 55.876,
+   "end_pct": 73.333,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 52.756,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Service balcony / general bath"
+  },
+  {
+   "axis": "x",
+   "at_pct": 73.333,
+   "start_pct": 55.804,
+   "end_pct": 84.08,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Master bedroom west wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 21.168,
+   "start_pct": 63.101,
+   "end_pct": 72.056,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.1,
+   "name": "Guest bath east wall (upper)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 63.101,
+   "start_pct": 14.296,
+   "end_pct": 21.168,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.1,
+   "name": "Guest bath step"
+  },
+  {
+   "axis": "x",
+   "at_pct": 14.296,
+   "start_pct": 53.483,
+   "end_pct": 63.101,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.862,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.1,
+   "name": "Guest bath east wall (door)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 53.483,
+   "start_pct": 0.0,
+   "end_pct": 21.718,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 82.595,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Guest bath / bedroom 3 north wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 21.718,
+   "start_pct": 21.725,
+   "end_pct": 53.483,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Bedroom 3 / living"
+  },
+  {
+   "axis": "y",
+   "at_pct": 46.766,
+   "start_pct": 52.44,
+   "end_pct": 75.601,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 52.522,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.05,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.11,
+   "name": "Bedroom 4 north wall (corridor)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 52.44,
+   "start_pct": 21.725,
+   "end_pct": 46.766,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Bedroom 4 / living"
+  },
+  {
+   "axis": "x",
+   "at_pct": 75.601,
+   "start_pct": 38.889,
+   "end_pct": 46.766,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Bedroom 4 east wall (corridor end)"
+  }
+ ],
+ "aps": [
+  {
+   "name": "Router (entrance cabinet)",
+   "x": 4.86,
+   "y": 8.4,
+   "z": 1.5,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Kitchen run (sink, hob)",
+   "kind": "kitchen",
+   "x": 4.53,
+   "y": 11.34,
+   "w": 3.5,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchen run (west side)",
+   "kind": "kitchen",
+   "x": 4.53,
+   "y": 9.49,
+   "w": 0.6,
+   "d": 1.85,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Fridge",
+   "kind": "fridge",
+   "x": 4.55,
+   "y": 8.69,
+   "w": 0.7,
+   "d": 0.75,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table",
+   "kind": "table",
+   "x": 5.9,
+   "y": 7.21,
+   "w": 1.8,
+   "d": 0.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa",
+   "kind": "sofa",
+   "x": 3.3,
+   "y": 3.46,
+   "w": 0.9,
+   "d": 2.2,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee table",
+   "kind": "table",
+   "x": 4.45,
+   "y": 3.96,
+   "w": 0.6,
+   "d": 1.1,
+   "h": 0.45,
+   "loss_db_m": null
+  },
+  {
+   "name": "TV unit",
+   "kind": "table",
+   "x": 7.1,
+   "y": 3.46,
+   "w": 0.4,
+   "d": 1.8,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Washing machine",
+   "kind": "washer",
+   "x": 8.22,
+   "y": 9.38,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dryer (stacked on the washer)",
+   "kind": "washer",
+   "x": 8.22,
+   "y": 9.38,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null,
+   "z0": 0.85
+  },
+  {
+   "name": "Wardrobe (master)",
+   "kind": "wardrobe",
+   "x": 11.0,
+   "y": 9.41,
+   "w": 2.4,
+   "d": 0.6,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Double bed (master)",
+   "kind": "bed",
+   "x": 10.75,
+   "y": 7.46,
+   "w": 2.0,
+   "d": 1.6,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe (bedroom 3)",
+   "kind": "wardrobe",
+   "x": 0.28,
+   "y": 4.51,
+   "w": 0.6,
+   "d": 1.8,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bed (bedroom 3)",
+   "kind": "bed",
+   "x": 2.1,
+   "y": 3.16,
+   "w": 0.9,
+   "d": 2.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk (bedroom 3)",
+   "kind": "desk",
+   "x": 0.9,
+   "y": 2.81,
+   "w": 1.2,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe (bedroom 4)",
+   "kind": "wardrobe",
+   "x": 7.7,
+   "y": 3.71,
+   "w": 0.6,
+   "d": 1.8,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bed (bedroom 4)",
+   "kind": "bed",
+   "x": 9.95,
+   "y": 3.11,
+   "w": 0.9,
+   "d": 2.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bed (mamad, used as a kid's room)",
+   "kind": "bed",
+   "x": 13.25,
+   "y": 2.46,
+   "w": 0.9,
+   "d": 2.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk (mamad)",
+   "kind": "desk",
+   "x": 11.25,
+   "y": 1.66,
+   "w": 1.2,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bookshelf (mamad)",
+   "kind": "bookshelf",
+   "x": 11.22,
+   "y": 3.06,
+   "w": 0.3,
+   "d": 0.9,
+   "h": 2.0,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Kitchen, dining, living and hall (open plan)",
+   "name_he": "מטבח, פינת אוכל, חדר דיור ומבואה",
+   "role": "living",
+   "x": 5.4,
+   "y": 4.16,
+   "ceiling_m": null
+  },
+  {
+   "name": "General bath",
+   "name_he": "חדר רחצה כללי",
+   "role": "bath",
+   "x": 9.0,
+   "y": 7.31,
+   "ceiling_m": null
+  },
+  {
+   "name": "Service balcony",
+   "name_he": "מרפסת שירות",
+   "role": "service",
+   "x": 9.4,
+   "y": 9.36,
+   "ceiling_m": null
+  },
+  {
+   "name": "Master bedroom",
+   "name_he": "חדר שינה הורים",
+   "role": "bedroom",
+   "x": 12.6,
+   "y": 7.76,
+   "ceiling_m": null
+  },
+  {
+   "name": "En-suite bath",
+   "name_he": "חדר רחצה הורים",
+   "role": "bath",
+   "x": 13.5,
+   "y": 5.66,
+   "ceiling_m": null
+  },
+  {
+   "name": "Guest bath",
+   "name_he": "חדר רחצה",
+   "role": "bath",
+   "x": 1.1,
+   "y": 7.56,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bedroom 3",
+   "name_he": "חדר שינה 3",
+   "role": "bedroom",
+   "x": 1.6,
+   "y": 4.66,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bedroom 4",
+   "name_he": "חדר שינה 4",
+   "role": "bedroom",
+   "x": 9.2,
+   "y": 4.16,
+   "ceiling_m": null
+  },
+  {
+   "name": "Mamad (bedroom 2)",
+   "name_he": "ממ\"ד",
+   "role": "mamad",
+   "x": 12.6,
+   "y": 3.06,
+   "ceiling_m": null
+  },
+  {
+   "name": "Covered sun balcony",
+   "name_he": "מרפסת שמש מקורה",
+   "role": "outside",
+   "x": 6.2,
+   "y": 0.76,
+   "ceiling_m": null
+  },
+  {
+   "name": "Common lobby and stairs (not this flat)",
+   "name_he": "לובי קומתי וחדר מדרגות",
+   "role": "outside",
+   "x": 1.0,
+   "y": 9.16,
+   "ceiling_m": null
+  },
+  {
+   "name": "Laundry screen yard and open air",
+   "name_he": "מסתור כביסה ושטח פתוח",
+   "role": "outside",
+   "x": 11.3,
+   "y": 11.11,
+   "ceiling_m": null
+  },
+  {
+   "name": "Open air over the floor-1 terrace",
+   "name_he": "חלל פתוח מעל מרפסת קומה 1",
+   "role": "outside",
+   "x": 2.1,
+   "y": 1.26,
+   "ceiling_m": null
+  },
+  {
+   "name": "Open air",
+   "name_he": "שטח פתוח",
+   "role": "outside",
+   "x": 12.8,
+   "y": 0.66,
+   "ceiling_m": null
+  }
+ ]
+}

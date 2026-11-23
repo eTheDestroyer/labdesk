@@ -1,0 +1,1020 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Tel Aviv Bauhaus flat (Max Liebling House, 1937)",
+  "title_he": "דירת באוהאוס בתל אביב (בית מקס ליבלינג, 1937)",
+  "kind": "home",
+  "city": "Tel Aviv-Yafo (29 Idelson St, White City)",
+  "city_he": "תל אביב-יפו (רחוב אידלסון 29, העיר הלבנה)",
+  "era": "Designed 1936, built 1937 (architect Dov Karmi, engineer Zvi Barak); room book surveyed 2015",
+  "source": {
+   "title": "Max Liebling House conservation survey (Brenne Architekten for the Tel Aviv-Yafo Foundation, Getty 'Keeping It Modern'): Fig. 70 third-floor plan, PDF p. 44, 0-5 m scale bar; schedule of rooms 02.A-02.J, pp. 209-226; window and door type tables, sections 3.8-3.9; east elevation Fig. 79",
+   "url": "https://media.getty.edu/Text/f08fb0ee-ac1d-571a-95c2-a32dc1c7c645.pdf",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Walls read from Fig. 70 rendered at 300 dpi with the plan's own scale bar (88.6 px/m), about +-0.1 m; the box 13.36 x 11.39 m runs from the outer face of room A's west wall to the east facade and from the party wall with the rear flat's kitchen R to the outer face of room C's south wall",
+   "Title gives no room count: the survey says 'three rooms' (pp. 22 and 42) and 'four-room apartments' (p. 41); the plan shows rooms A-D, with B opened to the hall by a glass partition (a former waiting room)",
+   "Room uses are assumed (the survey names rooms by letter only): A living room, B study, C and D bedrooms; all loose furniture is assumed, the built-ins (drywall shelving in A and C, hall closet S.6, kitchen cabinet S.5 and counter, bathtub) are from the schedule of rooms; the fridge stands in the kitchen recess the room book says was 'possibly used for a refrigerator'; the server rack on room D's wall c is in the room book, its size (60 x 42 x 60 cm, wall-mounted at 1.6 m) and spot on the wall are assumed",
+   "Hall H / room B is modelled as the survey describes it (rooms 02.B and 02.H): a solid dwarf wall, assumed 1.0 m high and 12 cm block, with aluminium-framed clear glazing above it up to the 35 cm beam and a glazed single-leaf door, open; at the 1 m coverage plane the signal crosses it through the glass",
+   "One own loss only: the 0.45 m concrete pier at the H/B/I corner (concrete_20 wall) takes 20 dB at 5 GHz, the shared table's 'column' item (ITU-R P.526 estimate: a pier this narrow is passed round), instead of the 30.9 dB of a continuous 20 cm RC wall; every other wall, door and window uses the shared table",
+   "Interior walls (coarse sand block, 6 or 12 cm, plastered: survey p. 41) use block_10, 12 dB at 5 GHz; the table has no 6 cm block, so the thin walls may lose less (ITU-R P.2040 brick gives about 4 dB for 10 cm, homes council minutes): the 'block_10' choice is the cautious end. Sensitivity (5 GHz, router at the entrance): with 4 dB instead of 12 dB per block_10 wall the indoor floor at -67 dBm or better goes from 61% to 87%",
+   "Stairwell / room A wall is concrete_20: the room book calls wall 02.A-a 'interior wall, presumably concrete'; the 0.45 m pier at the H/B/I corner is the 'plastered concrete column' of rooms 02.B and 02.H",
+   "Exterior walls (silicate brick / coarse sand block on an RC frame, 25-30 cm drawn) use brick_bauhaus; the 12 cm walls onto the utility balcony use block_10",
+   "Window and balcony-door sizes from the survey's window type table (section 3.8, cm); interior door widths read from the plan (the door type table gives no sizes): A.02 158x209, C.04 82x209, G.10 70x209, A.01 and C.05 148x113, C.06 and D.07 179x67, E.08 110x99, F.09 40x100, G.12 43x122, D.27 93x26, V.26 209x125",
+   "Sills: C.06 and D.07 at 1.40 m measured on the east elevation (Fig. 79); the other windows are assumed to share the 2.09 m door head (sill 0.96 for 113 cm windows); B.03 (new aluminium slider, size not given) is assumed 1.45 x 1.13 m like the living-room windows; D.27 borrowed light sill 2.20 m assumed",
+   "Glass: single clear glass in wooden frames (survey) = 'glass' fill",
+   "Trisim in daily use (daytime): living room A and study B rolled up, bedrooms C and D down with the slits open; the kitchen, WC and bath have slatted folding shutters, not modelled",
+   "Doors in daily use: flat entrance (solid oak, D.1.2) closed, WC and bath closed, the others open",
+   "Loggia parapet 1.0 m high (rendered parapet, height not given), open above; loggia dropped ceiling 2.75 m",
+   "Kitchen-to-utility-balcony door G.10 closed; the laundry closet on the balcony and the radiators are not modelled",
+   "Router (ISP default, position assumed): in hall H on the stairwell wall just beside the flat door, where a line from the stairwell would enter, 1.5 m high, 5 GHz, 20 dBm. The room book also shows an electrical distribution box in corridor I (02.I, wall b) and a server rack on room D's wall c. Computed alternatives (indoor floor at -67 dBm or better): entrance 61%, distribution box in corridor I 67% (bedrooms C and D better, living room about the same at -69 dBm median, loggia -77), rack in room D 50%",
+   "Stairwell and the strip of the rear flat inside the box are marked outside, so the shares count only the flat (with its loggia and the utility balcony)",
+   "Ceiling 3.10 m (survey p. 22); the stairwell's curved north-west corner is drawn square"
+  ],
+  "israeli_features": [
+   "Tel Aviv White City (UNESCO) Bauhaus / International Style flat, built 1937",
+   "reinforced-concrete frame with silicate brick and coarse sand block walls, smooth white render",
+   "thin 6 / 12 cm plastered sand-block partitions",
+   "3.10 m ceilings with 35 cm down-stand beams",
+   "recessed street loggia with a dropped ceiling hiding the roller-shutter (trisim) boxes",
+   "wide, low strip windows (179 x 67 cm, sill 1.40 m) in the east bedrooms",
+   "shared rear utility balcony (mirpeset sherut) with the kitchen door and the bath and WC windows",
+   "terrazzo floors and original built-in cupboards; originally centrally heated (radiator recesses survive)",
+   "no mamad: the building's shelter is two basement rooms reinforced with steel beams and sheet steel"
+  ],
+  "notes": "A 1937 Bauhaus flat on the top floor of the Max Liebling House, with thin sand-block partitions, brick facades and a concrete stairwell wall along the living room. With the router by the front door, the hall, study, kitchen and bedroom D are fine and the living room is borderline (about -67 dBm, behind the stairwell corner), but bedroom C at the far corner, the bath and WC, the street loggia and the shared utility balcony sit two to four walls away and are the weak spots; a second access point or mesh node in corridor I by the bedrooms is the usual fix. The thin old partitions probably lose less than the 12 dB used here, so a site survey may read better."
+ },
+ "width": 13.36,
+ "depth": 11.39,
+ "height": 3.1,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 13.9596,
+   "end_pct": 83.4943,
+   "material": "brick_bauhaus",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 21.4646,
+     "width_m": 2.09,
+     "sill_m": 0.9,
+     "height_m": 1.25,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 87.6263,
+     "width_m": 1.48,
+     "sill_m": 0.96,
+     "height_m": 1.13,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.26,
+   "name": "West facade (stairwell, room A)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 83.4943,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 1.8600000000000008,
+     "sill_m": 1.0,
+     "height_m": 1.75,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.12,
+   "name": "Loggia parapet (west)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 62.6497,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 8.35,
+     "sill_m": 1.0,
+     "height_m": 1.75,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.12,
+   "name": "Loggia parapet (south)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 62.6497,
+   "end_pct": 100.0,
+   "material": "brick_bauhaus",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 16.6333,
+     "width_m": 1.48,
+     "sill_m": 0.96,
+     "height_m": 1.13,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade (room C)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "brick_bauhaus",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 46.1809,
+     "width_m": 1.79,
+     "sill_m": 1.4,
+     "height_m": 0.68,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 81.3872,
+     "width_m": 1.79,
+     "sill_m": 1.4,
+     "height_m": 0.68,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.25,
+   "name": "East facade (utility balcony, D, C)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 44.9102,
+   "end_pct": 72.4551,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.1,
+   "name": "Party wall to the rear flat (room R)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 83.4943,
+   "start_pct": 0.0,
+   "end_pct": 62.6497,
+   "material": "brick_bauhaus",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 25.8065,
+     "width_m": 1.58,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 74.6714,
+     "width_m": 1.45,
+     "sill_m": 0.96,
+     "height_m": 1.13,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.21,
+   "name": "Loggia back wall (A, B)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 62.6497,
+   "start_pct": 83.4943,
+   "end_pct": 100.0,
+   "material": "brick_bauhaus",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 34.0426,
+     "width_m": 0.82,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.22,
+   "name": "Room C wall to the loggia"
+  },
+  {
+   "axis": "x",
+   "at_pct": 72.4551,
+   "start_pct": 0.0,
+   "end_pct": 11.0623,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 21.4286,
+     "width_m": 0.43,
+     "sill_m": 0.87,
+     "height_m": 1.22,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 69.8413,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.12,
+   "name": "Kitchen wall to the utility balcony"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.0623,
+   "start_pct": 72.4551,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 19.0217,
+     "width_m": 0.4,
+     "sill_m": 1.09,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 76.9022,
+     "width_m": 1.1,
+     "sill_m": 1.1,
+     "height_m": 0.99,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.12,
+   "name": "WC and bath wall to the utility balcony"
+  },
+  {
+   "axis": "y",
+   "at_pct": 13.9596,
+   "start_pct": 0.0,
+   "end_pct": 44.9102,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.2,
+   "name": "Stairwell / rear flat"
+  },
+  {
+   "axis": "x",
+   "at_pct": 44.9102,
+   "start_pct": 0.0,
+   "end_pct": 38.2792,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 79.8165,
+     "width_m": 0.95,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.15,
+   "name": "Stairwell wall (kitchen, hall)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.2792,
+   "start_pct": 0.0,
+   "end_pct": 34.8054,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.25,
+   "name": "Stairwell / room A (concrete)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.2792,
+   "start_pct": 34.8054,
+   "end_pct": 44.9102,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.11,
+   "name": "Stairwell / corridor to A"
+  },
+  {
+   "axis": "x",
+   "at_pct": 34.8054,
+   "start_pct": 38.2792,
+   "end_pct": 49.0781,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 54.4715,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.1,
+   "name": "Corridor / room A"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.0781,
+   "start_pct": 34.8054,
+   "end_pct": 38.7725,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.08,
+   "name": "Corridor / room A (stub)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.0781,
+   "start_pct": 38.7725,
+   "end_pct": 59.2814,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 17.8832,
+     "width_m": 0.73,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 65.3285,
+     "width_m": 1.82,
+     "sill_m": 1.0,
+     "height_m": 1.75,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.12,
+   "name": "Hall H / room B: dwarf wall, aluminium glazing above"
+  },
+  {
+   "axis": "y",
+   "at_pct": 49.0781,
+   "start_pct": 59.2814,
+   "end_pct": 62.6497,
+   "material": "concrete_20",
+   "loss_db": 20.0,
+   "door": null,
+   "thickness_m": 0.31,
+   "name": "Concrete column (H / B / I)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 38.7725,
+   "start_pct": 49.0781,
+   "end_pct": 73.7489,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.09,
+   "name": "Room A / room B"
+  },
+  {
+   "axis": "x",
+   "at_pct": 38.7725,
+   "start_pct": 73.7489,
+   "end_pct": 81.6506,
+   "material": "gypsum_single",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.09,
+   "name": "Room A / B: old door D02.B.02 boarded with drywall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 38.7725,
+   "start_pct": 81.6506,
+   "end_pct": 83.4943,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.09,
+   "name": "Room A / room B (south end)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 24.144,
+   "start_pct": 44.9102,
+   "end_pct": 62.6497,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.08,
+   "name": "Kitchen / hall H"
+  },
+  {
+   "axis": "x",
+   "at_pct": 62.6497,
+   "start_pct": 19.9298,
+   "end_pct": 27.568,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.08,
+   "name": "Kitchen / lobby stub (column line)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 19.9298,
+   "start_pct": 62.6497,
+   "end_pct": 82.485,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 28.3019,
+     "width_m": 0.7,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "door_solid",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 64.5283,
+     "width_m": 0.6,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.08,
+   "name": "Kitchen and WC / lobby of corridor I"
+  },
+  {
+   "axis": "x",
+   "at_pct": 72.4551,
+   "start_pct": 11.0623,
+   "end_pct": 19.9298,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.1,
+   "name": "Kitchen / WC"
+  },
+  {
+   "axis": "x",
+   "at_pct": 82.485,
+   "start_pct": 11.0623,
+   "end_pct": 27.568,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 76.0638,
+     "width_m": 0.65,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.13,
+   "name": "WC / bath, bath / lobby"
+  },
+  {
+   "axis": "y",
+   "at_pct": 27.568,
+   "start_pct": 70.8832,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.07,
+   "name": "Room D / bath and lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 70.8832,
+   "start_pct": 27.568,
+   "end_pct": 64.1791,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 18.2254,
+     "width_m": 0.93,
+     "sill_m": 2.2,
+     "height_m": 0.26,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 73.3813,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "door_solid",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.08,
+   "name": "Room D / corridor I"
+  },
+  {
+   "axis": "y",
+   "at_pct": 59.2625,
+   "start_pct": 62.6497,
+   "end_pct": 70.8832,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 0.86,
+     "sill_m": 0.0,
+     "height_m": 2.09,
+     "fill": "door_solid",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.08,
+   "name": "End of corridor I (door to C)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 64.1791,
+   "start_pct": 70.8832,
+   "end_pct": 100.0,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.07,
+   "name": "Room D / room C"
+  },
+  {
+   "axis": "x",
+   "at_pct": 62.6497,
+   "start_pct": 49.0781,
+   "end_pct": 83.4943,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.08,
+   "name": "Room B / corridor I and room C"
+  }
+ ],
+ "aps": [
+  {
+   "name": "Router (entrance)",
+   "x": 6.15,
+   "y": 4.15,
+   "z": 1.5,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Kitchen run with ceramic sink (wall a)",
+   "kind": "kitchen",
+   "x": 6.38,
+   "y": 0.08,
+   "w": 2.4,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Built-in kitchen cabinet S.5, floor to ceiling (wall c)",
+   "kind": "wardrobe",
+   "x": 6.13,
+   "y": 2.25,
+   "w": 1.32,
+   "d": 0.46,
+   "h": 2.7,
+   "loss_db_m": null
+  },
+  {
+   "name": "Fridge (left recess of wall c)",
+   "kind": "fridge",
+   "x": 7.58,
+   "y": 2.0,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Kitchen table",
+   "kind": "table",
+   "x": 6.9,
+   "y": 0.95,
+   "w": 0.9,
+   "d": 0.6,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Hall wardrobe closet (S.6)",
+   "kind": "wardrobe",
+   "x": 7.22,
+   "y": 2.8,
+   "w": 1.05,
+   "d": 0.56,
+   "h": 2.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Built-in shelving (A, wall d)",
+   "kind": "bookshelf",
+   "x": 4.83,
+   "y": 5.66,
+   "w": 0.3,
+   "d": 3.78,
+   "h": 2.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bookcase (A)",
+   "kind": "bookshelf",
+   "x": 0.15,
+   "y": 4.95,
+   "w": 0.3,
+   "d": 1.8,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa (A)",
+   "kind": "sofa",
+   "x": 0.7,
+   "y": 4.52,
+   "w": 2.2,
+   "d": 0.9,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Coffee table (A)",
+   "kind": "table",
+   "x": 1.3,
+   "y": 5.8,
+   "w": 1.0,
+   "d": 0.6,
+   "h": 0.45,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table (A)",
+   "kind": "table",
+   "x": 2.3,
+   "y": 7.5,
+   "w": 1.6,
+   "d": 0.9,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk under the window (B)",
+   "kind": "desk",
+   "x": 5.6,
+   "y": 8.7,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bookcase (B)",
+   "kind": "bookshelf",
+   "x": 8.02,
+   "y": 6.9,
+   "w": 0.3,
+   "d": 1.8,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Sofa bed (B)",
+   "kind": "sofa",
+   "x": 5.25,
+   "y": 6.4,
+   "w": 0.9,
+   "d": 2.2,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Built-in drywall shelving (C, wall a)",
+   "kind": "wardrobe",
+   "x": 9.75,
+   "y": 7.36,
+   "w": 3.05,
+   "d": 0.32,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Double bed (C)",
+   "kind": "bed",
+   "x": 10.6,
+   "y": 8.7,
+   "w": 1.6,
+   "d": 2.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Double bed (D)",
+   "kind": "bed",
+   "x": 10.8,
+   "y": 3.24,
+   "w": 1.6,
+   "d": 2.0,
+   "h": 0.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wardrobe (D)",
+   "kind": "wardrobe",
+   "x": 10.3,
+   "y": 6.65,
+   "w": 1.8,
+   "d": 0.6,
+   "h": 2.4,
+   "loss_db_m": null
+  },
+  {
+   "name": "Desk (D)",
+   "kind": "desk",
+   "x": 12.35,
+   "y": 4.7,
+   "w": 0.7,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Wall-mounted server rack (D, wall c)",
+   "kind": "server_rack",
+   "x": 12.35,
+   "y": 6.85,
+   "w": 0.6,
+   "d": 0.42,
+   "h": 0.6,
+   "loss_db_m": null,
+   "z0": 1.6
+  },
+  {
+   "name": "Bathtub, enamelled steel (E)",
+   "kind": "metal_cabinet",
+   "x": 12.47,
+   "y": 1.47,
+   "w": 0.57,
+   "d": 1.5,
+   "h": 0.55,
+   "loss_db_m": null
+  },
+  {
+   "name": "Washing machine (utility balcony)",
+   "kind": "washer",
+   "x": 12.4,
+   "y": 0.3,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Loggia table",
+   "kind": "table",
+   "x": 3.8,
+   "y": 10.2,
+   "w": 1.0,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Room A (living room)",
+   "name_he": "חדר A (סלון)",
+   "role": "living",
+   "x": 2.5,
+   "y": 6.6,
+   "ceiling_m": null
+  },
+  {
+   "name": "Room B (study)",
+   "name_he": "חדר B (חדר עבודה)",
+   "role": "office",
+   "x": 8.0,
+   "y": 9.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Room C (bedroom)",
+   "name_he": "חדר C (חדר שינה)",
+   "role": "bedroom",
+   "x": 11.0,
+   "y": 9.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Room D (bedroom)",
+   "name_he": "חדר D (חדר שינה)",
+   "role": "bedroom",
+   "x": 11.4,
+   "y": 5.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Kitchen G",
+   "name_he": "מטבח G",
+   "role": "kitchen",
+   "x": 8.0,
+   "y": 1.5,
+   "ceiling_m": null
+  },
+  {
+   "name": "Bath E",
+   "name_he": "אמבטיה E",
+   "role": "bath",
+   "x": 12.3,
+   "y": 2.85,
+   "ceiling_m": null
+  },
+  {
+   "name": "WC F",
+   "name_he": "שירותים F",
+   "role": "wc",
+   "x": 10.35,
+   "y": 1.75,
+   "ceiling_m": null
+  },
+  {
+   "name": "Hall H and corridor I",
+   "name_he": "מבואה H ופרוזדור I",
+   "role": "hall",
+   "x": 7.0,
+   "y": 4.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "Loggia J",
+   "name_he": "לוג'יה J (מרפסת)",
+   "role": "balcony",
+   "x": 5.5,
+   "y": 10.5,
+   "ceiling_m": 2.75
+  },
+  {
+   "name": "Utility balcony (shared)",
+   "name_he": "מרפסת שירות (משותפת)",
+   "role": "service",
+   "x": 11.4,
+   "y": 0.4,
+   "ceiling_m": null
+  },
+  {
+   "name": "Common stairwell (not the flat)",
+   "name_he": "חדר מדרגות משותף",
+   "role": "outside",
+   "x": 3.0,
+   "y": 3.0,
+   "ceiling_m": null
+  },
+  {
+   "name": "Rear flat, room S (neighbours)",
+   "name_he": "הדירה האחורית (שכנים)",
+   "role": "outside",
+   "x": 3.0,
+   "y": 0.8,
+   "ceiling_m": null
+  }
+ ]
+}

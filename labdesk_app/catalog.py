@@ -9,7 +9,7 @@ class DeviceType:
     key: str
     title: str
     vendor: str            # cisco | juniper | fortinet | linux | generic
-    shape: str             # router | switch | host | cloud | firewall | hub
+    shape: str             # router | switch | host | cloud | firewall | hub | ap
     backend: str           # cml | kvm
     prefix: str            # default label prefix (R -> R1, R2 ...)
     node_definition: str = ""
@@ -32,6 +32,8 @@ line vty 0 4
 end
 """
 
+AP_TAG = "labdesk-ap"                  # CML node tag that marks an unmanaged switch as a placeholder access point
+
 DEVICE_TYPES: list[DeviceType] = [
     DeviceType("iosv", "Cisco IOSv router", "cisco", "router", "cml", "R", "iosv",
                note="IOS 15.9 - CML node"),
@@ -45,6 +47,12 @@ DEVICE_TYPES: list[DeviceType] = [
                "unmanaged_switch", note="Dumb L2 hub: no VLANs, no STP, no console. Does not count against the "
                                         "5-node limit",
                counts_against_limit=False),
+    DeviceType("ap", "Wireless access point (placeholder)", "generic", "ap", "cml", "AP",
+               "unmanaged_switch",
+               note="Placeholder access point: an L2 bridge in CML (an unmanaged switch tagged labdesk-ap). "
+                    "Cable its uplink to a switch or router and its clients to it. No radio, SSID or console "
+                    "yet. Does not count against the 5-node limit",
+               counts_against_limit=False, tags=(AP_TAG,)),
     DeviceType("ext_cloud", "Internet cloud (always answers 8.8.8.8 / 1.1.1.1)", "generic", "cloud", "cml", "INTERNET",
                "external_connector", configuration="System Bridge",
                note="Simulated Internet on this host (netns labcloud, 100.64.0.1/24): always answers ping to "
@@ -78,6 +86,8 @@ def type_for_cml_node(node: dict) -> DeviceType:
         if isinstance(cfg, list):
             cfg = " ".join(str(c.get("content", "")) for c in cfg if isinstance(c, dict))
         return BY_KEY["ext_nat"] if "NAT" in str(cfg or "") else BY_KEY["ext_bridge"]
+    if nd == "unmanaged_switch":            # same node definition, told apart by the tag (like the Internet cloud)
+        return BY_KEY["ap"] if AP_TAG in (node.get("tags") or []) else BY_KEY["unmanaged_switch"]
     for d in DEVICE_TYPES:
         if d.backend == "cml" and d.node_definition == nd:
             return d

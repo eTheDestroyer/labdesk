@@ -412,6 +412,8 @@ SECTIONS = {
         ("node:l2switch", "IOSvL2 managed switch", _tile("iosvl2", 15, ports=["up", "up", "blk", "up"]), None,
          "Cisco-blue front panel; the port LEDs are live: green forwarding, amber STP-blocked, red err-disabled"),
         ("node:switch", "unmanaged switch (grey)", _tile("unmanaged_switch", 17), None, ""),
+        ("node:ap", "access point (round, placeholder)", _tile("ap"), None,
+         "an L2 bridge in CML for now: no radio, SSID or console until the AP model is added"),
         ("node:juniper", "Juniper vJunos (hexagon)", _tile("vjunos"), None, ""),
         ("node:fortinet", "Fortinet FortiOS (shield)", _tile("fortios"), None, ""),
         ("node:host", "Linux host", _tile("alpine"), None, ""),

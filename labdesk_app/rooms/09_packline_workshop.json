@@ -1,0 +1,2314 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Pack Line production hall, Holon industrial zone",
+  "title_he": "אולם ייצור פאק ליין, אזור התעשייה חולון",
+  "kind": "workshop",
+  "city": "Holon",
+  "city_he": "חולון",
+  "era": "Older concrete-block industrial shed (1950s per the architects' text), converted in 2006 (Lea Katz Architecture)",
+  "source": {
+   "title": "ArchDaily: Pack Line / Lea Katz Architecture. Dimensioned ground level plan, pre-conversion plan, elevations and link-bridge section",
+   "url": "https://www.archdaily.com/78779/pack-line-lea-katz-architecture",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "assumptions": [
+   "Scale 25.4 px/m from the plan's own figures (overall depth 36.12 m, grids 9.47 / 9.62 m); walls read to about +-0.3 m",
+   "Box height 7.0 m: the drawings give the parapet at +8.58 and a 7.00 m cladding field, not the clear height under the roof trusses; 7.0 m is assumed (anything from about 6.5 to 8 m is possible)",
+   "Outer walls: 'concrete blocks wall' behind 'perforated steel panel' (SW elevation 07ee); the block taken as 20 cm (block_20, 16 dB at 5 GHz, table) plus 10 dB estimated for the skin, so loss_db 26 at 5 GHz on every facade. No measurement of the panels exists; a fine perforation acts like a mesh and could block 20 dB or more. Inside the box this only changes the yard, which is left out of the shares",
+   "East wall windows: two rows (sill 1.58 m and 5.58 m, 1.0 m high, 4.6 m in each bay) read from the two mullioned type-3 panel rows of the NE elevation (07f0); single glazing assumed, the perforated skin in front drawn as shutter 'slits' (10 dB, the nearest table entry)",
+   "No windows drawn on the north, south and west walls: the plan and the SE / SW elevations show none",
+   "Loading and exit doors are steel (door_steel) and closed; the interior storage double door is open",
+   "Gallery over the south half of the steel-work room: extent from the pre-conversion plan (07f2), whose stair is still on the 2006 plan; deck at 2.8 m, drawn as a 0.25 m 'column' (concrete) box = 20 dB at 5 GHz, the floor-slab row of the materials table",
+   "Office / service strip: steel-frame pods 2.95 m high (link-bridge section 07f8), with an upper level on a deck at 2.95 m (also 20 dB) that the link bridge reaches at +3.03; above 3.2 m the strip is open to the hall (railing assumed)",
+   "Pod walls gypsum_double, showers block_10, dining front glass, exit lobby block_10: assumed from the line weights of the plan",
+   "Welding zone has no wall to the hall; its edge is drawn as a full-height open passage only so it can carry its own label",
+   "Cabinet spines (detail B6: steel drawers, 1.43 x 2.77 m) as metal_cabinet; packing machines in assembly as the table's 'machine' (solid metal, 10 dB/m capped at 25 dB), so a partly open steel frame may block less; machine height 1.8 m assumed; no own loss values are set on any obstacle",
+   "Storage racks loaded with steel profiles drawn as racking_full (capped at 25 dB); bundles of steel bar can block more",
+   "Furniture not drawn on the plan is typical: parts washer and shelving in the cleaning zone, welding tables, lockers in the changing room, a server rack in the computer office",
+   "AP1 on the roof trusses at 6.8 m (ceiling - 0.2 m) over the aisle between the A/B cells and the C/D machines, near the middle of the building's length (west of the hall's own centre, to reach the storage and steel-work block too), where an installer would hang the first one",
+   "Storage / steel-work wall taken as concrete 20 (concrete_20): the plan gives only its 0.21 m thickness and the pre-conversion plan shows it as an existing wall",
+   "The west loading apron under the canopy and the two-storey office building to the south are outside the box"
+  ],
+  "israeli_features": [
+   "Shed in the Holon industrial zone. The architects' text (gated on the ArchDaily page, seen only as a quoted search snippet) calls it a 1950s shed used by five firms over 55 years, with its non-structural concrete walls removed",
+   "Old concrete-block walls kept and wrapped in a new skin of perforated steel panels (types 1-3 on the elevations, 'concrete blocks wall / perforated steel panel' on the SW elevation)",
+   "One 0.21 m wall of the old plan kept between storage and steel work",
+   "Steel-frame office and service pods along the south wall, with a two-storey link bridge to the office building",
+   "No protected space (mamak / mamam) is drawn: old sheds usually rely on a shared public shelter"
+  ],
+  "notes": "This is an old (1950s, per the architects) concrete-block shed with a perforated steel skin, not the usual steel-portal and sandwich-panel unit, so the outer walls stop more Wi-Fi than the inside walls but much less than solid steel cladding. One AP in the middle covers the open assembly field, but the rows of steel cabinet spines and machines cast long shadows, and the storage, steel-work room, front wing and south office strip sit behind block or concrete walls and need their own APs. The model has no reflections: in a real steel-filled hall the far ends can be up to about 15-18 dB stronger than shown, so treat the dark far corners as a pessimistic estimate (+-9 dB in a metal hall)."
+ },
+ "width": 66.45,
+ "depth": 36.12,
+ "height": 7.0,
+ "clutter": "light",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 28.8187,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Front wing north wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 28.8187,
+   "start_pct": 95.9856,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Front wing east wall (step)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 95.9856,
+   "start_pct": 28.8187,
+   "end_pct": 30.9255,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Stair box north wall (step)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 30.9255,
+   "start_pct": 80.2602,
+   "end_pct": 95.9856,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Stair box east wall (step)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 80.2602,
+   "start_pct": 30.9255,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 81.3725,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Hall north wall onto the yard, exit door at G2"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 0.0,
+   "end_pct": 80.2602,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 91.0314,
+     "width_m": 4.6,
+     "sill_m": 1.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 91.0314,
+     "width_m": 4.6,
+     "sill_m": 5.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 71.7144,
+     "width_m": 4.6,
+     "sill_m": 1.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 71.7144,
+     "width_m": 4.6,
+     "sill_m": 5.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 51.0176,
+     "width_m": 4.6,
+     "sill_m": 1.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 51.0176,
+     "width_m": 4.6,
+     "sill_m": 5.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 30.3208,
+     "width_m": 4.6,
+     "sill_m": 1.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 30.3208,
+     "width_m": 4.6,
+     "sill_m": 5.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 9.4515,
+     "width_m": 4.6,
+     "sill_m": 1.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 9.4515,
+     "width_m": 4.6,
+     "sill_m": 5.58,
+     "height_m": 1.0,
+     "fill": "glass",
+     "open": false,
+     "shutter": "slits",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "East wall (NE facade), two window rows behind perforated panels"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 27.389,
+     "width_m": 1.1,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 39.9699,
+     "width_m": 3.58,
+     "sill_m": 0.0,
+     "height_m": 2.95,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 83.9729,
+     "width_m": 1.1,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "South wall (SE facade): fire exits and the link-bridge passage"
+  },
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": 26.0,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 96.5393,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 77.2979,
+     "width_m": 4.6,
+     "sill_m": 0.0,
+     "height_m": 4.0,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 16.5282,
+     "width_m": 2.3,
+     "sill_m": 0.0,
+     "height_m": 3.0,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "West wall (SW facade): side door, output loading doors, main way in"
+  },
+  {
+   "axis": "y",
+   "at_pct": 83.6656,
+   "start_pct": 0.0,
+   "end_pct": 10.8352,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Cleaning zone south wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 10.8352,
+   "start_pct": 83.6656,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 18.6441,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Cleaning / welding wall, 2.00 m opening"
+  },
+  {
+   "axis": "x",
+   "at_pct": 21.4447,
+   "start_pct": 80.2602,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Welding zone / mechanics office"
+  },
+  {
+   "axis": "y",
+   "at_pct": 80.2602,
+   "start_pct": 0.0,
+   "end_pct": 21.4447,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 14.25,
+     "sill_m": 0.0,
+     "height_m": 7.0,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Welding zone: open to the hall (no wall; bay edge only)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 80.2602,
+   "start_pct": 21.4447,
+   "end_pct": 28.8187,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 30.6122,
+     "width_m": 1.5,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 77.551,
+     "width_m": 1.5,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Mechanics office front, 1.50 m door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 28.8187,
+   "start_pct": 80.2602,
+   "end_pct": 95.9856,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 78.8732,
+     "width_m": 2.4,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Mechanics office / stair, 2.4 m opening"
+  },
+  {
+   "axis": "y",
+   "at_pct": 80.2602,
+   "start_pct": 28.8187,
+   "end_pct": 30.9255,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 1.26,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stair foot, 1.26 m opening"
+  },
+  {
+   "axis": "y",
+   "at_pct": 60.2159,
+   "start_pct": 0.0,
+   "end_pct": 14.2965,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 38.0,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Storage north wall, 2.00 m double door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 60.2159,
+   "start_pct": 14.2965,
+   "end_pct": 28.8939,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 48.4536,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Steel work north wall, 0.90 m door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 14.2965,
+   "start_pct": 20.3212,
+   "end_pct": 60.2159,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.21,
+   "name": "Storage / steel work: original 0.21 m concrete wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 28.8939,
+   "start_pct": 20.3212,
+   "end_pct": 71.2071,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Steel work east wall (18.25 m)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 20.3212,
+   "start_pct": 0.0,
+   "end_pct": 14.2965,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 39.8947,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.5,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Storage south wall, 2.00 m opening"
+  },
+  {
+   "axis": "y",
+   "at_pct": 20.3212,
+   "start_pct": 14.2965,
+   "end_pct": 28.8939,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.2062,
+     "width_m": 2.0,
+     "sill_m": 0.0,
+     "height_m": 2.5,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Steel work south wall, 2.00 m opening"
+  },
+  {
+   "axis": "y",
+   "at_pct": 76.0244,
+   "start_pct": 74.5673,
+   "end_pct": 87.9609,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 94.382,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Exit lobby south wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 74.5673,
+   "start_pct": 76.0244,
+   "end_pct": 80.2602,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 49.6732,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Exit lobby west end, 1.00 m door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 87.9609,
+   "start_pct": 76.0244,
+   "end_pct": 80.2602,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Exit lobby east end"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.4064,
+   "start_pct": 0.0,
+   "end_pct": 37.2761,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 16.4312,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 38.9584,
+     "width_m": 8.56,
+     "sill_m": 0.0,
+     "height_m": 2.95,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 62.9794,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 73.3952,
+     "width_m": 1.1,
+     "sill_m": 0.0,
+     "height_m": 2.95,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 82.1155,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 24.77,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Strip front: storage office, trolleys bay, offices, fire exit"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.4064,
+   "start_pct": 37.2761,
+   "end_pct": 42.6637,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 3.58,
+     "sill_m": 0.0,
+     "height_m": 2.95,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 3.580000000000002,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Passage to the office building (under the link bridge)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.4064,
+   "start_pct": 42.6637,
+   "end_pct": 50.0828,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.93,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Showers and toilets front"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.4064,
+   "start_pct": 50.0828,
+   "end_pct": 57.1859,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 9.5339,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.719999999999999,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Changing room front, 0.90 m door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.4064,
+   "start_pct": 57.1859,
+   "end_pct": 75.696,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 65.2846,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 12.299999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Dining room and catering, glazed front"
+  },
+  {
+   "axis": "y",
+   "at_pct": 11.4064,
+   "start_pct": 75.696,
+   "end_pct": 100.0,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 18.1424,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 34.0557,
+     "width_m": 1.1,
+     "sill_m": 0.0,
+     "height_m": 2.95,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 79.0093,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 16.150000000000006,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Strip front: computer office, fire exit, offices"
+  },
+  {
+   "axis": "x",
+   "at_pct": 6.9225,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Storage office / trolleys bay"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.9932,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Trolleys bay / office 11.95"
+  },
+  {
+   "axis": "x",
+   "at_pct": 26.4861,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Office / west fire-exit passage"
+  },
+  {
+   "axis": "x",
+   "at_pct": 28.2167,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "West fire-exit passage / office 19.85"
+  },
+  {
+   "axis": "x",
+   "at_pct": 37.2761,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Office / passage to the office building"
+  },
+  {
+   "axis": "x",
+   "at_pct": 42.6637,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Passage / showers and toilets"
+  },
+  {
+   "axis": "x",
+   "at_pct": 50.0828,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 51.4563,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Showers / changing room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 57.1859,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Changing room / dining room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 75.696,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Catering / computer office"
+  },
+  {
+   "axis": "x",
+   "at_pct": 83.07,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Computer office / east fire-exit passage"
+  },
+  {
+   "axis": "x",
+   "at_pct": 84.8758,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "gypsum_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "East fire-exit passage / office 23.90"
+  },
+  {
+   "axis": "x",
+   "at_pct": 95.6358,
+   "start_pct": 0.0,
+   "end_pct": 11.4064,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 51.4563,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 4.119999999999997,
+     "sill_m": 3.2,
+     "height_m": 3.8,
+     "fill": "none",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Office 23.90 / small office, glass"
+  }
+ ],
+ "aps": [
+  {
+   "name": "AP1",
+   "x": 33.4,
+   "y": 16.12,
+   "z": 6.8,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Storage racks, steel profiles (west bank)",
+   "kind": "racking_full",
+   "x": 0.2,
+   "y": 7.72,
+   "w": 2.4,
+   "d": 13.8,
+   "h": 3.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Storage racks, steel profiles (centre bank)",
+   "kind": "racking_full",
+   "x": 4.7,
+   "y": 7.72,
+   "w": 3.3,
+   "d": 13.8,
+   "h": 3.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel stair to the gallery",
+   "kind": "racking_light",
+   "x": 8.05,
+   "y": 14.62,
+   "w": 1.3,
+   "d": 3.6,
+   "h": 2.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Gallery deck over steel work (steel beams, concrete topping)",
+   "kind": "column",
+   "x": 9.75,
+   "y": 7.52,
+   "w": 9.2,
+   "d": 10.5,
+   "h": 0.25,
+   "loss_db_m": null,
+   "z0": 2.8
+  },
+  {
+   "name": "Steel work: V-shaped bench 1",
+   "kind": "machine",
+   "x": 9.8,
+   "y": 19.52,
+   "w": 2.6,
+   "d": 1.9,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: V-shaped bench 2",
+   "kind": "machine",
+   "x": 16.0,
+   "y": 19.52,
+   "w": 2.8,
+   "d": 1.9,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 1",
+   "kind": "machine",
+   "x": 11.25,
+   "y": 16.92,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 2",
+   "kind": "machine",
+   "x": 11.25,
+   "y": 14.12,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 3",
+   "kind": "machine",
+   "x": 11.25,
+   "y": 11.22,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 4",
+   "kind": "machine",
+   "x": 11.25,
+   "y": 8.42,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 5",
+   "kind": "machine",
+   "x": 15.7,
+   "y": 16.92,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 6",
+   "kind": "machine",
+   "x": 15.7,
+   "y": 14.12,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 7",
+   "kind": "machine",
+   "x": 15.7,
+   "y": 11.22,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel work: fitting bench 8",
+   "kind": "machine",
+   "x": 15.7,
+   "y": 8.42,
+   "w": 1.5,
+   "d": 1.5,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Parts-washing machine",
+   "kind": "machine",
+   "x": 0.4,
+   "y": 34.22,
+   "w": 2.0,
+   "d": 1.5,
+   "h": 1.5,
+   "loss_db_m": null
+  },
+  {
+   "name": "Cleaning zone shelving",
+   "kind": "metal_cabinet",
+   "x": 3.0,
+   "y": 35.32,
+   "w": 3.6,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Welding table 1",
+   "kind": "machine",
+   "x": 8.0,
+   "y": 33.92,
+   "w": 2.0,
+   "d": 1.2,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Welding table 2",
+   "kind": "machine",
+   "x": 11.0,
+   "y": 33.92,
+   "w": 2.0,
+   "d": 1.2,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mechanics office desk",
+   "kind": "desk",
+   "x": 15.0,
+   "y": 34.42,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Mechanics office cabinet",
+   "kind": "metal_cabinet",
+   "x": 17.8,
+   "y": 35.32,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Assembly cabinet spine A/B (steel drawers, cable trays)",
+   "kind": "metal_cabinet",
+   "x": 27.885,
+   "y": 7.62,
+   "w": 1.43,
+   "d": 17.75,
+   "h": 2.77,
+   "loss_db_m": null
+  },
+  {
+   "name": "Assembly cabinet spine C/D (steel drawers, cable trays)",
+   "kind": "metal_cabinet",
+   "x": 37.285,
+   "y": 7.62,
+   "w": 1.43,
+   "d": 17.75,
+   "h": 2.77,
+   "loss_db_m": null
+  },
+  {
+   "name": "Assembly cabinet spine E/F (steel drawers, cable trays)",
+   "kind": "metal_cabinet",
+   "x": 46.785,
+   "y": 7.62,
+   "w": 1.43,
+   "d": 17.75,
+   "h": 2.77,
+   "loss_db_m": null
+  },
+  {
+   "name": "Assembly cabinet spine G/H (steel drawers, cable trays)",
+   "kind": "metal_cabinet",
+   "x": 56.334999999999994,
+   "y": 7.62,
+   "w": 1.43,
+   "d": 17.75,
+   "h": 2.77,
+   "loss_db_m": null
+  },
+  {
+   "name": "Assembly cabinet spine I (one-sided, east wall)",
+   "kind": "metal_cabinet",
+   "x": 65.3,
+   "y": 7.62,
+   "w": 0.83,
+   "d": 17.75,
+   "h": 2.77,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXM #1 (in assembly)",
+   "kind": "machine",
+   "x": 22.9,
+   "y": 23.22,
+   "w": 2.8,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXM #2 (in assembly)",
+   "kind": "machine",
+   "x": 22.9,
+   "y": 19.62,
+   "w": 2.8,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXM #3 (in assembly)",
+   "kind": "machine",
+   "x": 22.9,
+   "y": 16.02,
+   "w": 2.8,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXM #4 (in assembly)",
+   "kind": "machine",
+   "x": 22.9,
+   "y": 12.42,
+   "w": 2.8,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXM #5 (in assembly)",
+   "kind": "machine",
+   "x": 22.9,
+   "y": 8.82,
+   "w": 2.8,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG #1 (in assembly)",
+   "kind": "machine",
+   "x": 30.6,
+   "y": 22.72,
+   "w": 0.8,
+   "d": 2.0,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG #2 (in assembly)",
+   "kind": "machine",
+   "x": 30.6,
+   "y": 19.12,
+   "w": 0.8,
+   "d": 1.9,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG (C/D side) #1 (in assembly)",
+   "kind": "machine",
+   "x": 35.4,
+   "y": 22.72,
+   "w": 0.6,
+   "d": 2.0,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG (C/D side) #2 (in assembly)",
+   "kind": "machine",
+   "x": 35.4,
+   "y": 19.02,
+   "w": 0.6,
+   "d": 2.0,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG (C/D side) #3 (in assembly)",
+   "kind": "machine",
+   "x": 35.4,
+   "y": 15.42,
+   "w": 0.6,
+   "d": 2.0,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG (C/D side) #4 (in assembly)",
+   "kind": "machine",
+   "x": 35.4,
+   "y": 11.82,
+   "w": 0.6,
+   "d": 2.0,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PXG (C/D side) #5 (in assembly)",
+   "kind": "machine",
+   "x": 35.4,
+   "y": 8.22,
+   "w": 0.6,
+   "d": 2.0,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PDP-4 #1 (in assembly)",
+   "kind": "machine",
+   "x": 39.9,
+   "y": 22.82,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PDP-4 #2 (in assembly)",
+   "kind": "machine",
+   "x": 39.9,
+   "y": 19.22,
+   "w": 1.2,
+   "d": 1.65,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PDP-4 #3 (in assembly)",
+   "kind": "machine",
+   "x": 39.9,
+   "y": 15.62,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PDP-4 #4 (in assembly)",
+   "kind": "machine",
+   "x": 39.9,
+   "y": 12.02,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PDP-4 #5 (in assembly)",
+   "kind": "machine",
+   "x": 39.9,
+   "y": 8.42,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PFM #1 (in assembly)",
+   "kind": "machine",
+   "x": 44.6,
+   "y": 22.82,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PFM #2 (in assembly)",
+   "kind": "machine",
+   "x": 44.6,
+   "y": 19.22,
+   "w": 1.2,
+   "d": 1.65,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PFM #3 (in assembly)",
+   "kind": "machine",
+   "x": 44.6,
+   "y": 15.62,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PFM #4 (in assembly)",
+   "kind": "machine",
+   "x": 44.6,
+   "y": 12.02,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine PFM #5 (in assembly)",
+   "kind": "machine",
+   "x": 44.6,
+   "y": 8.42,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NB 080 #1 (in assembly)",
+   "kind": "machine",
+   "x": 49.4,
+   "y": 22.82,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NB 080 #2 (in assembly)",
+   "kind": "machine",
+   "x": 49.4,
+   "y": 19.22,
+   "w": 1.2,
+   "d": 1.65,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NB 080 #3 (in assembly)",
+   "kind": "machine",
+   "x": 49.4,
+   "y": 15.62,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NB 080 #4 (in assembly)",
+   "kind": "machine",
+   "x": 49.4,
+   "y": 12.02,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NB 080 #5 (in assembly)",
+   "kind": "machine",
+   "x": 49.4,
+   "y": 8.42,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (G/H side) #1 (in assembly)",
+   "kind": "machine",
+   "x": 58.8,
+   "y": 22.82,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (G/H side) #2 (in assembly)",
+   "kind": "machine",
+   "x": 58.8,
+   "y": 19.22,
+   "w": 1.2,
+   "d": 1.65,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (G/H side) #3 (in assembly)",
+   "kind": "machine",
+   "x": 58.8,
+   "y": 15.62,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (G/H side) #4 (in assembly)",
+   "kind": "machine",
+   "x": 58.8,
+   "y": 12.02,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (G/H side) #5 (in assembly)",
+   "kind": "machine",
+   "x": 58.8,
+   "y": 8.42,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (I side) #1 (in assembly)",
+   "kind": "machine",
+   "x": 63.3,
+   "y": 22.82,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (I side) #2 (in assembly)",
+   "kind": "machine",
+   "x": 63.3,
+   "y": 19.22,
+   "w": 1.2,
+   "d": 1.65,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (I side) #3 (in assembly)",
+   "kind": "machine",
+   "x": 63.3,
+   "y": 15.62,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (I side) #4 (in assembly)",
+   "kind": "machine",
+   "x": 63.3,
+   "y": 12.02,
+   "w": 1.2,
+   "d": 1.6,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Packing machine NWS (I side) #5 (in assembly)",
+   "kind": "machine",
+   "x": 63.3,
+   "y": 8.42,
+   "w": 1.2,
+   "d": 1.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Assembly bench, A/B cells 6-10",
+   "kind": "table",
+   "x": 30.6,
+   "y": 7.92,
+   "w": 0.8,
+   "d": 8.0,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Bench with small packing units 1-14",
+   "kind": "racking_light",
+   "x": 54.0,
+   "y": 7.92,
+   "w": 1.2,
+   "d": 16.7,
+   "h": 1.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel stair to the upper level (west)",
+   "kind": "racking_light",
+   "x": 28.5,
+   "y": 4.27,
+   "w": 4.7,
+   "d": 1.25,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Steel stair to the upper level (east)",
+   "kind": "racking_light",
+   "x": 46.7,
+   "y": 4.27,
+   "w": 2.7,
+   "d": 1.25,
+   "h": 2.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Upper-level deck over the strip and the link bridge",
+   "kind": "column",
+   "x": 0.1,
+   "y": 0.1,
+   "w": 66.25,
+   "d": 3.92,
+   "h": 0.25,
+   "loss_db_m": null,
+   "z0": 2.95
+  },
+  {
+   "name": "Storage office desk",
+   "kind": "desk",
+   "x": 0.4,
+   "y": 0.52,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Storage office shelving",
+   "kind": "metal_cabinet",
+   "x": 3.5,
+   "y": 2.62,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Electrical board 1 (steel switchgear)",
+   "kind": "metal_cabinet",
+   "x": 4.75,
+   "y": 0.32,
+   "w": 0.6,
+   "d": 3.4,
+   "h": 2.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Service trolleys x8 (steel)",
+   "kind": "racking_full",
+   "x": 6.65,
+   "y": 0.92,
+   "w": 7.0,
+   "d": 1.6,
+   "h": 1.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 11.95 desk",
+   "kind": "desk",
+   "x": 15.1,
+   "y": 1.02,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 11.95 cabinet",
+   "kind": "metal_cabinet",
+   "x": 14.1,
+   "y": 0.32,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 19.85 desk 1",
+   "kind": "desk",
+   "x": 19.6,
+   "y": 1.22,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 19.85 desk 2",
+   "kind": "desk",
+   "x": 22.0,
+   "y": 1.22,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Changing room lockers",
+   "kind": "metal_cabinet",
+   "x": 34.5,
+   "y": 0.22,
+   "w": 3.2,
+   "d": 0.5,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table 1 (front row)",
+   "kind": "table",
+   "x": 38.6,
+   "y": 2.82,
+   "w": 1.8,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table 4 (back row)",
+   "kind": "table",
+   "x": 38.6,
+   "y": 0.72,
+   "w": 1.8,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table 2 (front row)",
+   "kind": "table",
+   "x": 40.9,
+   "y": 2.82,
+   "w": 1.8,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table 5 (back row)",
+   "kind": "table",
+   "x": 40.9,
+   "y": 0.72,
+   "w": 1.8,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table 3 (front row)",
+   "kind": "table",
+   "x": 43.2,
+   "y": 2.82,
+   "w": 1.8,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Dining table 6 (back row)",
+   "kind": "table",
+   "x": 43.2,
+   "y": 0.72,
+   "w": 1.8,
+   "d": 0.8,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Electricity board 2 (steel switchgear)",
+   "kind": "metal_cabinet",
+   "x": 46.7,
+   "y": 3.52,
+   "w": 1.3,
+   "d": 0.4,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Catering island (steel ranges)",
+   "kind": "kitchen",
+   "x": 47.2,
+   "y": 2.12,
+   "w": 2.8,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Catering kitchen run",
+   "kind": "kitchen",
+   "x": 48.0,
+   "y": 0.22,
+   "w": 2.2,
+   "d": 0.6,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Catering fridge",
+   "kind": "fridge",
+   "x": 47.2,
+   "y": 0.22,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Computer office server rack",
+   "kind": "server_rack",
+   "x": 50.5,
+   "y": 2.82,
+   "w": 0.6,
+   "d": 1.0,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Computer office desk 1",
+   "kind": "desk",
+   "x": 51.5,
+   "y": 0.52,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Computer office desk 2",
+   "kind": "desk",
+   "x": 53.3,
+   "y": 0.52,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 23.90 desk 1",
+   "kind": "desk",
+   "x": 57.0,
+   "y": 0.72,
+   "w": 0.7,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 23.90 desk 2",
+   "kind": "desk",
+   "x": 58.8,
+   "y": 0.72,
+   "w": 0.7,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 23.90 desk 3",
+   "kind": "desk",
+   "x": 60.6,
+   "y": 0.72,
+   "w": 0.7,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Office 23.90 desk 4",
+   "kind": "desk",
+   "x": 62.4,
+   "y": 0.72,
+   "w": 0.7,
+   "d": 1.4,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small office desk",
+   "kind": "desk",
+   "x": 64.3,
+   "y": 0.82,
+   "w": 1.4,
+   "d": 0.7,
+   "h": 0.75,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Production hall",
+   "name_he": "אולם ייצור",
+   "role": "workshop",
+   "x": 42.6,
+   "y": 26.52,
+   "ceiling_m": null
+  },
+  {
+   "name": "Welding zone",
+   "name_he": "אזור ריתוך",
+   "role": "workshop",
+   "x": 10.7,
+   "y": 32.12,
+   "ceiling_m": null
+  },
+  {
+   "name": "Cleaning zone",
+   "name_he": "אזור ניקוי",
+   "role": "workshop",
+   "x": 3.6,
+   "y": 33.12,
+   "ceiling_m": null
+  },
+  {
+   "name": "Mechanics office",
+   "name_he": "משרד מכונאים",
+   "role": "office",
+   "x": 16.7,
+   "y": 32.62,
+   "ceiling_m": null
+  },
+  {
+   "name": "Stair",
+   "name_he": "חדר מדרגות",
+   "role": "stair",
+   "x": 19.85,
+   "y": 31.12,
+   "ceiling_m": null
+  },
+  {
+   "name": "Storage",
+   "name_he": "מחסן",
+   "role": "store",
+   "x": 3.6,
+   "y": 15.12,
+   "ceiling_m": null
+  },
+  {
+   "name": "Mechanic steel work",
+   "name_he": "מסגרייה",
+   "role": "workshop",
+   "x": 14.2,
+   "y": 18.62,
+   "ceiling_m": null
+  },
+  {
+   "name": "Exit lobby",
+   "name_he": "מבואת יציאה",
+   "role": "hall",
+   "x": 54.0,
+   "y": 28.22,
+   "ceiling_m": null
+  },
+  {
+   "name": "Storage office",
+   "name_he": "משרד מחסן",
+   "role": "office",
+   "x": 2.3,
+   "y": 2.62,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Trolleys bay",
+   "name_he": "עגלות שירות",
+   "role": "store",
+   "x": 9.3,
+   "y": 3.12,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Office W",
+   "name_he": "משרד מערבי",
+   "role": "office",
+   "x": 15.8,
+   "y": 2.92,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "W exit",
+   "name_he": "יציאה מערבית",
+   "role": "hall",
+   "x": 18.17,
+   "y": 2.12,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Office C",
+   "name_he": "משרד מרכזי",
+   "role": "office",
+   "x": 21.8,
+   "y": 2.92,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Link passage",
+   "name_he": "מעבר למשרדים",
+   "role": "hall",
+   "x": 26.56,
+   "y": 2.12,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Showers, WC",
+   "name_he": "מקלחות ושירותים",
+   "role": "bath",
+   "x": 30.8,
+   "y": 2.12,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Changing room",
+   "name_he": "חדר הלבשה",
+   "role": "other",
+   "x": 35.6,
+   "y": 2.62,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Dining and catering",
+   "name_he": "חדר אוכל והגשה",
+   "role": "kitchen",
+   "x": 42.5,
+   "y": 2.12,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Computer office",
+   "name_he": "משרד מחשוב",
+   "role": "office",
+   "x": 52.7,
+   "y": 2.32,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "E exit",
+   "name_he": "יציאה מזרחית",
+   "role": "hall",
+   "x": 55.8,
+   "y": 2.12,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Office E",
+   "name_he": "משרד מזרחי",
+   "role": "office",
+   "x": 59.9,
+   "y": 2.92,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Small office",
+   "name_he": "משרד קטן",
+   "role": "office",
+   "x": 65.0,
+   "y": 2.62,
+   "ceiling_m": 2.95
+  },
+  {
+   "name": "Yard",
+   "name_he": "חצר",
+   "role": "outside",
+   "x": 42.0,
+   "y": 32.62,
+   "ceiling_m": null
+  }
+ ]
+}

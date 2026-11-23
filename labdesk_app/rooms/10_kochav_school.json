@@ -1,0 +1,4021 @@
+{
+ "format": "labdesk-room",
+ "version": 2,
+ "meta": {
+  "title": "Kochav HaTsafon elementary school, Tel Aviv, first floor",
+  "title_he": "בית ספר יסודי כוכב הצפון, תל אביב, קומה א'",
+  "kind": "public",
+  "city": "Tel Aviv-Yafo",
+  "city_he": "תל אביב-יפו",
+  "era": "2015 (Auerbach Halevy Architects)",
+  "source": {
+   "title": "ArchDaily project page 'Elementary School in Tel Aviv / Auerbach Halevy Architects': first-floor plan (TLV_school_-_First_Floor.jpg, 2000 x 1255 px, no scale bar), ground-floor plan and section 1",
+   "url": "https://www.archdaily.com/776196/elementary-school-in-tel-aviv-auerbach-halevy-architects",
+   "license": "Published plan, used only as a reference for dimensions"
+  },
+  "plan_image": "https://images.adsttc.com/media/images/5631/5bef/e58e/ceb4/c400/0561/large_jpg/TLV_school_-_First_Floor.jpg",
+  "scale": "23.1 px/m, about +-6 %. Anchor: the south-east classroom's inner depth (160 px) = 7.0 m, the dimensioned depth of the Ministry of Education M21 classroom (meyda.education.gov.il M21models.pdf p.19). Checks at this scale: stair treads 6.8 px = 0.30 m; door swings 0.85 m; section 1 (same pixel width as the plan) gives a ground-floor storey of 3.9 m and 5.7 m from the first floor to the corridor roof.",
+  "assumptions": [
+   "Scale 23.1 px/m (+-6 %) from the M21 classroom depth, cross-checked by stair treads, door swings and the section's storey height; every length scales with it",
+   "Box 68.9 x 32.0 m = the whole first floor's bounding rectangle (plan px 237-1829 x 258-997)",
+   "Height 5.6 m = first floor to the corridor roof soffit read from section 1; classroom ceilings 3.3 m assumed (below the 4.1 m clerestory sill)",
+   "South-west wing is drawn rotated about 10 degrees; squared here about its centre, keeping its classroom sizes (15.0 x 7.0 m for S1 + S2)",
+   "Protected space inferred, not labelled on the plan: the science lab is the only classroom-size room with 0.30-0.45 m walls on all four sides, entered through a two-door lobby, and the same room repeats on the ground floor (protected spaces stack). In a school this is a mamam (institutional protected space), not a residential mamak. Net area 58 m2 between wall faces (65 m2 to wall centre lines), close to the 60 m2 per-space limit the council cited (s.236), within the scale error",
+   "Against the protected-space reading: the plan shows three 1.1 m windows in the lab's north wall (residential rules allow one window of at most 1.21 m2, a mamak none); modelled as mamad_glazing (steel leaves open, daily use)",
+   "Lab walls mamad_30 (44 dB at 5 GHz) on all sides: mamam rules ask 30 cm outside and 25 cm inside above 20 m2, and every side is drawn 0.30 m or thicker; blast door between the lobby and the lab open, as in daily use. The lobby's corridor door sits at plan y 523 as drawn",
+   "Staff suite (south-east) has 0.30 m walls towards the commons and classroom S4: modelled as RC concrete_25 (25 cm core plus plaster), not claimed as a protected space",
+   "Facades: plastered 20 cm block (block_20) drawn 0.30 m with insulation; the ArchDaily page lists concrete, wood and steel only",
+   "Stair core concrete_25 (drawn 0.35-0.39 m); lift shaft concrete_20; classroom party walls block_20; toilets and small rooms block_10",
+   "N1 / N2 folding partition modelled as wood; classroom fronts onto the corridor and commons are glass (section 1 shows glazed fronts with double doors)",
+   "Windows: uncoated double glazing, sill 0.9 m, height 1.5 m (toilets: high 0.6 m windows); no trisim, the south rooms are shaded by fixed precast fins (not modelled)",
+   "Light wells along the corridor, the stair opening and the library roof are voids with no floor on this level: labelled outside, left out of the shares; their glass balustrades are 1.1 m high (open above; Israeli rule of thumb for public-building guards, not read from the plan)",
+   "Room uses read from the drawn furniture; 'activity room' and 'prep room' names are assumed (group tables, sinks, kiln-like box)",
+   "Communications cabinet assumed in the closet of the staff-suite lobby",
+   "AP1 on the corridor ceiling between the N1 / N2 doors and bridge 1 (z 5.4 m, 5 GHz, 20 dBm): where an installer would put the first one; not shown on the plan",
+   "Fire doors of the stair hall held open; classroom doors closed",
+   "Desks, tables and sofas are drawn but have no radio loss; up to 40 pupils per classroom (20 double desks drawn; body loss) are not modelled"
+  ],
+  "israeli_features": [
+   "Mamam (institutional protected space) inferred in the science lab: RC walls, blast door and a two-door entry lobby; used as a classroom every day",
+   "Ministry-of-Education classrooms of about 50 m2 for 40 pupils (20 double desks), paired, with 'learning commons' between them",
+   "High central corridor (5.6 m) with clerestory windows and light wells to the ground floor",
+   "Separate boys' and girls' toilets, an accessible WC and a cleaner's store",
+   "Teachers' room with a kitchenette and a lounge corner"
+  ],
+  "notes": "A 2015 Tel Aviv primary school: a long, high corridor with classrooms on both sides, two courtyard wings and a teachers' wing at the west end. One ceiling AP in the corridor reaches the glass-fronted classrooms N1 and N2 and the corridor, but the 44 dB walls of the lab (the inferred mamam), the concrete stair core and the block party walls leave the far wings with little or no service. Readings far below -100 dBm are an artefact of straight-line paths (the model has no diffraction or corridor guiding); read them as 'no service'. A real school needs about one AP per classroom."
+ },
+ "width": 68.92,
+ "depth": 31.99,
+ "height": 5.6,
+ "clutter": "home",
+ "slice_z": 1.0,
+ "partitions": [
+  {
+   "axis": "x",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 21.9215,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "West facade, teachers' wing"
+  },
+  {
+   "axis": "y",
+   "at_pct": 0.0,
+   "start_pct": 0.0,
+   "end_pct": 20.4774,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 15.337,
+     "width_m": 2.6,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "North facade, teachers' wing"
+  },
+  {
+   "axis": "x",
+   "at_pct": 100.0,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 23.864,
+     "width_m": 1.7,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 58.523,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "East facade, activity room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 33.2286,
+   "end_pct": 54.9623,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 10.694,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 32.948,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 61.85,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 85.549,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade, classrooms S1 / S2 (ribbon windows between precast fins)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 100.0,
+   "start_pct": 65.1382,
+   "end_pct": 86.9347,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 14.409,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 35.447,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 64.265,
+     "width_m": 2.7,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 85.303,
+     "width_m": 3.1,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade, classrooms S3 / S4 (ribbon windows between precast fins)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.4774,
+   "start_pct": 0.0,
+   "end_pct": 21.9215,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 14.198,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "East facade, teachers' wing (exit door to the outside stair)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 21.9215,
+   "start_pct": 0.0,
+   "end_pct": 13.8191,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 24.091,
+     "width_m": 2.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade, teachers' wing (over library roof)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 21.9215,
+   "start_pct": 20.4774,
+   "end_pct": 33.0402,
+   "material": "glass_double",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.05,
+   "name": "Corridor glazing over the outside stair"
+  },
+  {
+   "axis": "x",
+   "at_pct": 13.8191,
+   "start_pct": 21.9215,
+   "end_pct": 31.935,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Service strip west wall (store)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 13.8191,
+   "start_pct": 31.935,
+   "end_pct": 38.1597,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Lift shaft west wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 13.8191,
+   "start_pct": 38.1597,
+   "end_pct": 52.3681,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.2,
+   "name": "Service shaft west wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 13.8191,
+   "end_pct": 16.897,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade, service shaft"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 16.897,
+   "end_pct": 20.6658,
+   "material": "glass_double",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.05,
+   "name": "Glazed south end of the west corridor (thin double line)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 20.6658,
+   "end_pct": 33.2286,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade under light well 1"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 33.2286,
+   "end_pct": 49.9372,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 60.15,
+     "width_m": 0.6,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 70.677,
+     "width_m": 1.0,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 88.722,
+     "width_m": 2.3,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "North wall of the south-west wing (onto light well 1) + glass door from bridge 1"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 49.9372,
+   "end_pct": 70.5402,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 21.646,
+     "width_m": 1.3,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 42.988,
+     "width_m": 0.8,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 60.366,
+     "width_m": 1.8,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 80.488,
+     "width_m": 0.95,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "Courtyard facade under light well 2"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 70.5402,
+   "end_pct": 78.2663,
+   "material": "glass_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 25.203,
+     "width_m": 2.4,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.05,
+   "name": "Glazed front of the right commons + glass door from bridge 2"
+  },
+  {
+   "axis": "y",
+   "at_pct": 52.3681,
+   "start_pct": 78.2663,
+   "end_pct": 86.9347,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "North facade of the staff suite"
+  },
+  {
+   "axis": "x",
+   "at_pct": 85.1131,
+   "start_pct": 38.1597,
+   "end_pct": 52.3681,
+   "material": "glass_double",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 83.81,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.05,
+   "name": "Corridor east end glazing + exit door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 85.1131,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "South facade, activity room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.0402,
+   "start_pct": 14.3437,
+   "end_pct": 30.7172,
+   "material": "mamad_30",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Lab (inferred mamam) west wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 14.3437,
+   "start_pct": 33.0402,
+   "end_pct": 46.1683,
+   "material": "mamad_30",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 22.01,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "mamad_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 50.239,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "mamad_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 78.469,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.2,
+     "fill": "mamad_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.35,
+   "name": "Lab (inferred mamam) north wall, three windows with steel leaves open"
+  },
+  {
+   "axis": "y",
+   "at_pct": 14.3437,
+   "start_pct": 46.1683,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 4.551,
+     "width_m": 2.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 10.968,
+     "width_m": 1.6,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 16.219,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 22.87,
+     "width_m": 1.7,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 29.405,
+     "width_m": 2.3,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 35.473,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 51.575,
+     "width_m": 1.0,
+     "sill_m": 1.6,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 63.477,
+     "width_m": 1.0,
+     "sill_m": 1.6,
+     "height_m": 0.6,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 75.263,
+     "width_m": 1.3,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 87.515,
+     "width_m": 1.7,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 94.049,
+     "width_m": 1.4,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "North facade, classrooms N1 / N2, stair, toilets, prep and activity rooms"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.2286,
+   "start_pct": 52.3681,
+   "end_pct": 77.8078,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 27.66,
+     "width_m": 1.9,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "West facade, small group room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.2286,
+   "start_pct": 77.8078,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "West facade, classroom S1"
+  },
+  {
+   "axis": "x",
+   "at_pct": 49.9372,
+   "start_pct": 52.3681,
+   "end_pct": 77.8078,
+   "material": "glass_double",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.05,
+   "name": "Glazed east wall of the left commons (courtyard)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.8078,
+   "start_pct": 49.9372,
+   "end_pct": 54.9623,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "Classroom S2 north facade (courtyard)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 54.9623,
+   "start_pct": 77.8078,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 60.366,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "Classroom S2 east facade (courtyard)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 70.5402,
+   "start_pct": 52.3681,
+   "end_pct": 77.4019,
+   "material": "glass_double",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.05,
+   "name": "Glazed west wall of the right commons (courtyard)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.4019,
+   "start_pct": 65.1382,
+   "end_pct": 70.5402,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "Classroom S3 north facade (courtyard notch)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 65.1382,
+   "start_pct": 77.4019,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "Classroom S3 west facade (courtyard)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 86.9347,
+   "start_pct": 52.3681,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 6.534,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 22.443,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "window",
+     "at_pct": 38.636,
+     "width_m": 1.1,
+     "sill_m": 0.9,
+     "height_m": 1.5,
+     "fill": "double_glazing",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "role": "outer",
+   "thickness_m": 0.3,
+   "name": "East facade, staff suite and classroom S4"
+  },
+  {
+   "axis": "x",
+   "at_pct": 15.2638,
+   "start_pct": 0.0,
+   "end_pct": 21.9215,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 90.741,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Teachers' room / staff lobby"
+  },
+  {
+   "axis": "y",
+   "at_pct": 5.6834,
+   "start_pct": 15.2638,
+   "end_pct": 18.8442,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "WC 1 / WC 2"
+  },
+  {
+   "axis": "y",
+   "at_pct": 12.3139,
+   "start_pct": 15.2638,
+   "end_pct": 18.8442,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "WC 2 / staff lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 18.8442,
+   "start_pct": 0.0,
+   "end_pct": 12.3139,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 26.374,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 73.626,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "WCs / passage"
+  },
+  {
+   "axis": "y",
+   "at_pct": 21.9215,
+   "start_pct": 13.8191,
+   "end_pct": 20.4774,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 84.906,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Teachers' wing / corridor"
+  },
+  {
+   "axis": "x",
+   "at_pct": 16.897,
+   "start_pct": 21.9215,
+   "end_pct": 31.935,
+   "material": "block_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 54.054,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Store / corridor"
+  },
+  {
+   "axis": "x",
+   "at_pct": 16.897,
+   "start_pct": 31.935,
+   "end_pct": 38.1597,
+   "material": "concrete_20",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_steel",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Lift landing door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 16.897,
+   "start_pct": 38.1597,
+   "end_pct": 52.3681,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Service shaft / corridor"
+  },
+  {
+   "axis": "y",
+   "at_pct": 31.935,
+   "start_pct": 13.8191,
+   "end_pct": 16.897,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Store / lift shaft"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 13.8191,
+   "end_pct": 16.897,
+   "material": "concrete_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Lift shaft / service shaft"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.9171,
+   "start_pct": 28.0108,
+   "end_pct": 37.6184,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 3.074,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stair opening balustrade W"
+  },
+  {
+   "axis": "x",
+   "at_pct": 29.9623,
+   "start_pct": 28.0108,
+   "end_pct": 37.6184,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 3.074,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stair opening balustrade E"
+  },
+  {
+   "axis": "y",
+   "at_pct": 28.0108,
+   "start_pct": 20.9171,
+   "end_pct": 29.9623,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 6.234,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stair opening balustrade N"
+  },
+  {
+   "axis": "y",
+   "at_pct": 37.6184,
+   "start_pct": 20.9171,
+   "end_pct": 29.9623,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 6.234,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Stair opening balustrade S"
+  },
+  {
+   "axis": "y",
+   "at_pct": 46.5494,
+   "start_pct": 20.7915,
+   "end_pct": 46.1683,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 17.489,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 1 balustrade"
+  },
+  {
+   "axis": "x",
+   "at_pct": 20.7915,
+   "start_pct": 46.5494,
+   "end_pct": 52.3681,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 1.861,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 1 balustrade W"
+  },
+  {
+   "axis": "x",
+   "at_pct": 46.1683,
+   "start_pct": 46.5494,
+   "end_pct": 52.3681,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 1.861,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 1 balustrade E"
+  },
+  {
+   "axis": "y",
+   "at_pct": 46.5494,
+   "start_pct": 49.9372,
+   "end_pct": 70.5402,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 14.199,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 2 balustrade"
+  },
+  {
+   "axis": "x",
+   "at_pct": 49.9372,
+   "start_pct": 46.5494,
+   "end_pct": 52.3681,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 1.861,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 2 balustrade W"
+  },
+  {
+   "axis": "x",
+   "at_pct": 70.5402,
+   "start_pct": 46.5494,
+   "end_pct": 52.3681,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 1.861,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 2 balustrade E"
+  },
+  {
+   "axis": "y",
+   "at_pct": 46.5494,
+   "start_pct": 74.4347,
+   "end_pct": 85.1131,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 7.359,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 3 balustrade"
+  },
+  {
+   "axis": "x",
+   "at_pct": 74.4347,
+   "start_pct": 46.5494,
+   "end_pct": 52.3681,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "window",
+     "at_pct": 50.0,
+     "width_m": 1.861,
+     "sill_m": 1.1,
+     "height_m": 4.5,
+     "fill": "glass",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Light well 3 balustrade W"
+  },
+  {
+   "axis": "x",
+   "at_pct": 46.1683,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "mamad_30",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.35,
+   "name": "Lab (mamam) / classroom N1"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 35.5528,
+   "end_pct": 46.1683,
+   "material": "mamad_30",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.35,
+   "name": "Lab (mamam) / corridor"
+  },
+  {
+   "axis": "y",
+   "at_pct": 30.7172,
+   "start_pct": 33.0402,
+   "end_pct": 35.5528,
+   "material": "mamad_30",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 50.0,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "blast_door",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.35,
+   "name": "Mamam blast door (open in daily use)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 35.5528,
+   "start_pct": 30.7172,
+   "end_pct": 38.1597,
+   "material": "mamad_30",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.35,
+   "name": "Mamam lobby / lab"
+  },
+  {
+   "axis": "x",
+   "at_pct": 33.0402,
+   "start_pct": 30.7172,
+   "end_pct": 38.1597,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Lobby / stair west wall (thin on the plan)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 35.8593,
+   "start_pct": 33.0402,
+   "end_pct": 35.5528,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 45.0,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Mamam lobby door from the corridor (plan y 523)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 56.5955,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "wood",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.12,
+   "name": "Folding partition N1 / N2"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 46.1683,
+   "end_pct": 56.5955,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 88.554,
+     "width_m": 1.2,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.06,
+   "name": "Classroom N1 glazed front + door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 56.5955,
+   "end_pct": 67.0226,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 10.843,
+     "width_m": 1.2,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "glass",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.06,
+   "name": "Classroom N2 glazed front + door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 67.0226,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.35,
+   "name": "Stair core west wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 71.9849,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.35,
+   "name": "Stair core east wall"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 67.0226,
+   "end_pct": 71.9849,
+   "material": "concrete_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 32.911,
+     "width_m": 1.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": true,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.35,
+   "name": "Stair hall double fire doors (held open)"
+  },
+  {
+   "axis": "x",
+   "at_pct": 77.0729,
+   "start_pct": 14.3437,
+   "end_pct": 28.6874,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Boys / girls toilets (shaft wall)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 28.6874,
+   "start_pct": 74.9372,
+   "end_pct": 79.1457,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilet lobby / toilets"
+  },
+  {
+   "axis": "x",
+   "at_pct": 74.9372,
+   "start_pct": 28.6874,
+   "end_pct": 38.1597,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 25.714,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Boys' toilets door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 79.1457,
+   "start_pct": 28.6874,
+   "end_pct": 38.1597,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 25.714,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 75.714,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Girls' toilets door, accessible WC door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 33.4235,
+   "start_pct": 71.9849,
+   "end_pct": 74.9372,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Cleaner's store / boys' toilets"
+  },
+  {
+   "axis": "y",
+   "at_pct": 33.4235,
+   "start_pct": 79.1457,
+   "end_pct": 82.3492,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Accessible WC / girls' toilets"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 71.9849,
+   "end_pct": 74.9372,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 48.936,
+     "width_m": 0.8,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Cleaner's store door"
+  },
+  {
+   "axis": "y",
+   "at_pct": 38.1597,
+   "start_pct": 79.1457,
+   "end_pct": 82.3492,
+   "material": "block_10",
+   "loss_db": null,
+   "door": null,
+   "name": "Accessible WC corridor wall"
+  },
+  {
+   "axis": "x",
+   "at_pct": 82.3492,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Toilets / prep room"
+  },
+  {
+   "axis": "y",
+   "at_pct": 30.3112,
+   "start_pct": 82.3492,
+   "end_pct": 87.7513,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 32.558,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Prep room door"
+  },
+  {
+   "axis": "x",
+   "at_pct": 87.7513,
+   "start_pct": 14.3437,
+   "end_pct": 38.1597,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 57.955,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 85.795,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Prep room, lobby / activity room"
+  },
+  {
+   "axis": "x",
+   "at_pct": 41.9598,
+   "start_pct": 52.3681,
+   "end_pct": 77.8078,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 17.021,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Small group room / left commons"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.8078,
+   "start_pct": 33.2286,
+   "end_pct": 41.9598,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Small group room / classroom S1"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.8078,
+   "start_pct": 41.9598,
+   "end_pct": 49.9372,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 9.449,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 56.693,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.06,
+   "name": "Left commons / classrooms S1, S2"
+  },
+  {
+   "axis": "x",
+   "at_pct": 44.1583,
+   "start_pct": 77.8078,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Classrooms S1 / S2"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.4019,
+   "start_pct": 70.5402,
+   "end_pct": 78.2663,
+   "material": "glass",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 54.472,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    },
+    {
+     "kind": "door",
+     "at_pct": 86.992,
+     "width_m": 1.0,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.06,
+   "name": "Right commons / classrooms S3, S4"
+  },
+  {
+   "axis": "x",
+   "at_pct": 76.005,
+   "start_pct": 77.4019,
+   "end_pct": 100.0,
+   "material": "block_20",
+   "loss_db": null,
+   "door": null,
+   "name": "Classrooms S3 / S4"
+  },
+  {
+   "axis": "x",
+   "at_pct": 78.2663,
+   "start_pct": 52.3681,
+   "end_pct": 77.4019,
+   "material": "concrete_25",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 71.892,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_solid",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "thickness_m": 0.3,
+   "name": "Staff suite west wall (RC, drawn 0.30 m)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 77.4019,
+   "start_pct": 78.2663,
+   "end_pct": 86.9347,
+   "material": "concrete_25",
+   "loss_db": null,
+   "door": null,
+   "thickness_m": 0.3,
+   "name": "Staff suite / classroom S4 (RC, drawn 0.30 m)"
+  },
+  {
+   "axis": "y",
+   "at_pct": 68.2003,
+   "start_pct": 78.2663,
+   "end_pct": 86.9347,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 15.942,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Staff office / suite lobby"
+  },
+  {
+   "axis": "x",
+   "at_pct": 80.9045,
+   "start_pct": 68.2003,
+   "end_pct": 77.4019,
+   "material": "block_10",
+   "loss_db": null,
+   "openings": [
+    {
+     "kind": "door",
+     "at_pct": 48.529,
+     "width_m": 0.9,
+     "sill_m": 0.0,
+     "height_m": 2.1,
+     "fill": "door_hollow",
+     "open": false,
+     "shutter": "none",
+     "loss_db": null
+    }
+   ],
+   "name": "Suite lobby / small office"
+  }
+ ],
+ "aps": [
+  {
+   "name": "AP1",
+   "x": 39.01,
+   "y": 13.51,
+   "z": 5.4,
+   "tx_dbm": 20.0,
+   "band": "5",
+   "enabled": true,
+   "from_lab": false
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "Teachers' table (8 seats)",
+   "kind": "table",
+   "x": 2.078,
+   "y": 1.255,
+   "w": 0.952,
+   "d": 1.818,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' table (8 seats)",
+   "kind": "table",
+   "x": 2.078,
+   "y": 4.156,
+   "w": 0.952,
+   "d": 1.818,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' table (8 seats)",
+   "kind": "table",
+   "x": 4.719,
+   "y": 1.255,
+   "w": 0.952,
+   "d": 1.818,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' table (8 seats)",
+   "kind": "table",
+   "x": 4.719,
+   "y": 4.156,
+   "w": 0.952,
+   "d": 1.818,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' lounge sofa",
+   "kind": "sofa",
+   "x": 7.23,
+   "y": 1.472,
+   "w": 1.558,
+   "d": 0.866,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' lounge sofa",
+   "kind": "sofa",
+   "x": 7.23,
+   "y": 4.632,
+   "w": 1.558,
+   "d": 0.866,
+   "h": 0.85,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' kitchenette run",
+   "kind": "kitchen",
+   "x": 9.827,
+   "y": 0.433,
+   "w": 0.606,
+   "d": 2.987,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Teachers' fridge",
+   "kind": "fridge",
+   "x": 9.741,
+   "y": 3.55,
+   "w": 0.693,
+   "d": 0.693,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lockers (staff pigeonholes)",
+   "kind": "metal_cabinet",
+   "x": 0.303,
+   "y": 1.818,
+   "w": 0.519,
+   "d": 1.732,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lift car (steel)",
+   "kind": "metal_cabinet",
+   "x": 9.827,
+   "y": 10.476,
+   "w": 1.255,
+   "d": 1.429,
+   "h": 2.2,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab group table (6 seats)",
+   "kind": "table",
+   "x": 23.594,
+   "y": 5.541,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab group table (6 seats)",
+   "kind": "table",
+   "x": 26.884,
+   "y": 5.541,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab group table (6 seats)",
+   "kind": "table",
+   "x": 23.594,
+   "y": 7.575,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab group table (6 seats)",
+   "kind": "table",
+   "x": 26.884,
+   "y": 7.575,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab group table (6 seats)",
+   "kind": "table",
+   "x": 26.884,
+   "y": 9.61,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab teacher's demonstration bench",
+   "kind": "kitchen",
+   "x": 30.347,
+   "y": 7.532,
+   "w": 0.866,
+   "d": 1.732,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Lab bench with sinks",
+   "kind": "kitchen",
+   "x": 26.018,
+   "y": 11.342,
+   "w": 2.684,
+   "d": 0.606,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Chemicals cabinet (steel)",
+   "kind": "metal_cabinet",
+   "x": 23.074,
+   "y": 5.195,
+   "w": 0.519,
+   "d": 0.909,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 32.642,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 32.642,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 32.642,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 32.642,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 32.642,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 33.854,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 33.854,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 33.854,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 33.854,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 33.854,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 35.109,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 35.109,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 35.109,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 35.109,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 35.109,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 36.322,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 36.322,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 36.322,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 36.322,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: double desk",
+   "kind": "desk",
+   "x": 36.322,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 41.17,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 41.17,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 41.17,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 41.17,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 41.17,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 42.382,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 42.382,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 42.382,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 42.382,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 42.382,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 43.594,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 43.594,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 43.594,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 43.594,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 43.594,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 44.807,
+   "y": 4.848,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 44.807,
+   "y": 6.407,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 44.807,
+   "y": 7.532,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 44.807,
+   "y": 9.394,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: double desk",
+   "kind": "desk",
+   "x": 44.807,
+   "y": 10.519,
+   "w": 0.606,
+   "d": 1.126,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: teacher's desk",
+   "kind": "desk",
+   "x": 37.534,
+   "y": 7.186,
+   "w": 0.693,
+   "d": 1.385,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: teacher's desk",
+   "kind": "desk",
+   "x": 39.742,
+   "y": 7.186,
+   "w": 0.693,
+   "d": 1.385,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 23.94,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 23.94,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 23.94,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 23.94,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 25.152,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 25.152,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 25.152,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 25.152,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 26.364,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 26.364,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 26.364,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 26.364,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 27.577,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 27.577,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 27.577,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 27.577,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 28.789,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 28.789,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 28.789,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: double desk",
+   "kind": "desk",
+   "x": 28.789,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 31.386,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 31.386,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 31.386,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 31.386,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 32.685,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 32.685,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 32.685,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 32.685,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 33.984,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 33.984,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 33.984,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 33.984,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 35.283,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 35.283,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 35.283,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 35.283,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 36.495,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 36.495,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 36.495,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: double desk",
+   "kind": "desk",
+   "x": 36.495,
+   "y": 30.475,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 46.452,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 46.452,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 46.452,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 46.452,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 47.621,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 47.621,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 47.621,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 47.621,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 48.833,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 48.833,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 48.833,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 48.833,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 50.002,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 50.002,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 50.002,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 50.002,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 51.214,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 51.214,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 51.214,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: double desk",
+   "kind": "desk",
+   "x": 51.214,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 52.945,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 52.945,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 52.945,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 52.945,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 54.114,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 54.114,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 54.114,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 54.114,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 55.326,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 55.326,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 55.326,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 55.326,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 56.495,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 56.495,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 56.495,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 56.495,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 57.708,
+   "y": 25.627,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 57.708,
+   "y": 27.228,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 57.708,
+   "y": 28.96,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: double desk",
+   "kind": "desk",
+   "x": 57.708,
+   "y": 30.605,
+   "w": 0.649,
+   "d": 1.082,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S1: cupboard",
+   "kind": "bookshelf",
+   "x": 23.161,
+   "y": 26.925,
+   "w": 0.303,
+   "d": 1.948,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S2: cupboard",
+   "kind": "bookshelf",
+   "x": 37.101,
+   "y": 26.925,
+   "w": 0.303,
+   "d": 1.948,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S3: cupboard",
+   "kind": "bookshelf",
+   "x": 45.153,
+   "y": 26.925,
+   "w": 0.303,
+   "d": 1.948,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom S4: cupboard",
+   "kind": "bookshelf",
+   "x": 59.093,
+   "y": 26.925,
+   "w": 0.303,
+   "d": 1.948,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N1: cupboard",
+   "kind": "bookshelf",
+   "x": 32.166,
+   "y": 11.342,
+   "w": 1.818,
+   "d": 0.563,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Classroom N2: cupboard",
+   "kind": "bookshelf",
+   "x": 43.854,
+   "y": 11.342,
+   "w": 1.818,
+   "d": 0.563,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 23.854,
+   "y": 18.138,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 23.854,
+   "y": 19.35,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 23.854,
+   "y": 20.519,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 23.854,
+   "y": 21.731,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 25.455,
+   "y": 18.138,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 25.455,
+   "y": 19.35,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 25.455,
+   "y": 20.519,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 25.455,
+   "y": 21.731,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 27.057,
+   "y": 18.138,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 27.057,
+   "y": 19.35,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 27.057,
+   "y": 20.519,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small group room: desk",
+   "kind": "desk",
+   "x": 27.057,
+   "y": 21.731,
+   "w": 1.082,
+   "d": 0.563,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Commons round table",
+   "kind": "table",
+   "x": 29.525,
+   "y": 21.211,
+   "w": 1.039,
+   "d": 1.039,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Commons round table",
+   "kind": "table",
+   "x": 32.815,
+   "y": 19.133,
+   "w": 1.039,
+   "d": 1.039,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Commons round table",
+   "kind": "table",
+   "x": 32.815,
+   "y": 22.12,
+   "w": 1.039,
+   "d": 1.039,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Commons round table",
+   "kind": "table",
+   "x": 49.396,
+   "y": 19.133,
+   "w": 1.039,
+   "d": 1.039,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Commons round table",
+   "kind": "table",
+   "x": 52.123,
+   "y": 20.172,
+   "w": 1.039,
+   "d": 1.039,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Commons round table",
+   "kind": "table",
+   "x": 49.396,
+   "y": 22.12,
+   "w": 1.039,
+   "d": 1.039,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff office desk",
+   "kind": "desk",
+   "x": 56.625,
+   "y": 18.268,
+   "w": 1.082,
+   "d": 0.779,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff office desk",
+   "kind": "desk",
+   "x": 58.573,
+   "y": 18.268,
+   "w": 1.082,
+   "d": 0.779,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff office desk",
+   "kind": "desk",
+   "x": 56.625,
+   "y": 19.263,
+   "w": 1.082,
+   "d": 0.779,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff office desk",
+   "kind": "desk",
+   "x": 54.331,
+   "y": 19.047,
+   "w": 1.082,
+   "d": 0.779,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Staff office filing cabinet",
+   "kind": "metal_cabinet",
+   "x": 58.79,
+   "y": 20.648,
+   "w": 0.866,
+   "d": 0.519,
+   "h": 1.95,
+   "loss_db_m": null
+  },
+  {
+   "name": "Small office desk",
+   "kind": "desk",
+   "x": 57.275,
+   "y": 22.164,
+   "w": 1.385,
+   "d": 0.779,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Communications cabinet (school network)",
+   "kind": "server_rack",
+   "x": 54.244,
+   "y": 23.982,
+   "w": 0.606,
+   "d": 0.606,
+   "h": 2.0,
+   "loss_db_m": null
+  },
+  {
+   "name": "Prep room counter with sink",
+   "kind": "kitchen",
+   "x": 56.972,
+   "y": 5.195,
+   "w": 0.606,
+   "d": 2.944,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Prep room fridge",
+   "kind": "fridge",
+   "x": 59.006,
+   "y": 4.848,
+   "w": 0.693,
+   "d": 0.693,
+   "h": 1.8,
+   "loss_db_m": null
+  },
+  {
+   "name": "Activity room sink counter",
+   "kind": "kitchen",
+   "x": 61.084,
+   "y": 4.762,
+   "w": 2.771,
+   "d": 0.606,
+   "h": 0.9,
+   "loss_db_m": null
+  },
+  {
+   "name": "Activity room group table (6 seats)",
+   "kind": "table",
+   "x": 61.863,
+   "y": 6.753,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Activity room group table (6 seats)",
+   "kind": "table",
+   "x": 65.154,
+   "y": 6.753,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Activity room group table (6 seats)",
+   "kind": "table",
+   "x": 61.863,
+   "y": 9.523,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Activity room group table (6 seats)",
+   "kind": "table",
+   "x": 65.154,
+   "y": 9.523,
+   "w": 2.251,
+   "d": 1.212,
+   "h": 0.75,
+   "loss_db_m": null
+  },
+  {
+   "name": "Activity room kiln / cabinet",
+   "kind": "metal_cabinet",
+   "x": 60.651,
+   "y": 7.186,
+   "w": 0.519,
+   "d": 0.866,
+   "h": 1.95,
+   "loss_db_m": null
+  }
+ ],
+ "labels": [
+  {
+   "name": "Teachers' room",
+   "name_he": "חדר מורים",
+   "role": "office",
+   "x": 4.03,
+   "y": 3.55,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Staff WC 1",
+   "name_he": "שירותי צוות 1",
+   "role": "wc",
+   "x": 11.73,
+   "y": 1.04,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Staff WC 2",
+   "name_he": "שירותי צוות 2",
+   "role": "wc",
+   "x": 11.73,
+   "y": 2.9,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Staff lobby",
+   "name_he": "מבואת צוות",
+   "role": "hall",
+   "x": 12.25,
+   "y": 5.71,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Store",
+   "name_he": "מחסן",
+   "role": "store",
+   "x": 10.56,
+   "y": 8.61,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Lift",
+   "name_he": "מעלית",
+   "role": "other",
+   "x": 10.56,
+   "y": 11.21,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Service shaft",
+   "name_he": "פיר מערכות",
+   "role": "other",
+   "x": 10.56,
+   "y": 14.8,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Main corridor",
+   "name_he": "מסדרון ראשי",
+   "role": "hall",
+   "x": 26.97,
+   "y": 13.51,
+   "ceiling_m": null
+  },
+  {
+   "name": "Stair opening (void)",
+   "name_he": "חלל המדרגות",
+   "role": "outside",
+   "x": 17.45,
+   "y": 10.48,
+   "ceiling_m": null
+  },
+  {
+   "name": "Light well 1",
+   "name_he": "פיר אור 1",
+   "role": "outside",
+   "x": 20.04,
+   "y": 15.89,
+   "ceiling_m": null
+  },
+  {
+   "name": "Light well 2",
+   "name_he": "פיר אור 2",
+   "role": "outside",
+   "x": 41.69,
+   "y": 15.89,
+   "ceiling_m": null
+  },
+  {
+   "name": "Light well 3",
+   "name_he": "פיר אור 3",
+   "role": "outside",
+   "x": 54.68,
+   "y": 15.89,
+   "ceiling_m": null
+  },
+  {
+   "name": "Science lab (inferred mamam)",
+   "name_he": "מעבדת מדעים (ממ\"מ משוער)",
+   "role": "mamad",
+   "x": 27.84,
+   "y": 8.31,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Mamam entry lobby",
+   "name_he": "מבואת כניסה לממ\"מ",
+   "role": "hall",
+   "x": 23.64,
+   "y": 10.69,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Classroom N1",
+   "name_he": "כיתה N1",
+   "role": "class",
+   "x": 35.63,
+   "y": 8.31,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Classroom N2",
+   "name_he": "כיתה N2",
+   "role": "class",
+   "x": 42.56,
+   "y": 8.31,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Stairwell",
+   "name_he": "חדר מדרגות",
+   "role": "stair",
+   "x": 47.88,
+   "y": 8.31,
+   "ceiling_m": null
+  },
+  {
+   "name": "Boys' toilets",
+   "name_he": "שירותי בנים",
+   "role": "wc",
+   "x": 51.21,
+   "y": 7.01,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Girls' toilets",
+   "name_he": "שירותי בנות",
+   "role": "wc",
+   "x": 54.89,
+   "y": 7.01,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Cleaner's store",
+   "name_he": "מחסן ניקיון",
+   "role": "store",
+   "x": 50.61,
+   "y": 11.43,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Accessible WC",
+   "name_he": "שירותים נגישים",
+   "role": "wc",
+   "x": 55.63,
+   "y": 11.43,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Prep room",
+   "name_he": "חדר הכנה",
+   "role": "kitchen",
+   "x": 58.57,
+   "y": 7.23,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Activity room",
+   "name_he": "חדר פעילות",
+   "role": "class",
+   "x": 64.63,
+   "y": 8.53,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Small group room",
+   "name_he": "חדר עבודה בקבוצות קטנות",
+   "role": "class",
+   "x": 25.89,
+   "y": 20.86,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "West commons",
+   "name_he": "מרחב למידה מערבי",
+   "role": "other",
+   "x": 31.65,
+   "y": 20.86,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Classroom S1",
+   "name_he": "כיתה S1",
+   "role": "class",
+   "x": 26.67,
+   "y": 28.44,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Classroom S2",
+   "name_he": "כיתה S2",
+   "role": "class",
+   "x": 34.16,
+   "y": 28.44,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "East commons",
+   "name_he": "מרחב למידה מזרחי",
+   "role": "other",
+   "x": 51.21,
+   "y": 20.86,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Staff office",
+   "name_he": "משרד צוות",
+   "role": "office",
+   "x": 56.93,
+   "y": 20.43,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Staff suite lobby",
+   "name_he": "מבואת משרדי הצוות",
+   "role": "hall",
+   "x": 54.85,
+   "y": 23.03,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Small office",
+   "name_he": "משרד קטן",
+   "role": "office",
+   "x": 57.84,
+   "y": 23.68,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Classroom S3",
+   "name_he": "כיתה S3",
+   "role": "class",
+   "x": 48.62,
+   "y": 28.44,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "Classroom S4",
+   "name_he": "כיתה S4",
+   "role": "class",
+   "x": 56.15,
+   "y": 28.44,
+   "ceiling_m": 3.3
+  },
+  {
+   "name": "North yard",
+   "name_he": "חצר צפונית",
+   "role": "outside",
+   "x": 33.03,
+   "y": 2.25,
+   "ceiling_m": null
+  },
+  {
+   "name": "West garden, library roof",
+   "name_he": "גינה מערבית, גג הספרייה",
+   "role": "outside",
+   "x": 4.89,
+   "y": 11.34,
+   "ceiling_m": null
+  },
+  {
+   "name": "Courtyard",
+   "name_he": "חצר פנימית",
+   "role": "outside",
+   "x": 41.26,
+   "y": 21.3,
+   "ceiling_m": null
+  },
+  {
+   "name": "East yard",
+   "name_he": "חצר מזרחית",
+   "role": "outside",
+   "x": 64.2,
+   "y": 23.46,
+   "ceiling_m": null
+  }
+ ]
+}

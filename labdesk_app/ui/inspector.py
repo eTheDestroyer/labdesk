@@ -79,7 +79,7 @@ def node_kind(dtype) -> str:
         return "switch"
     if dtype.shape == "host":
         return "host"
-    return "cloud"                    # Internet cloud, NAT / bridge connectors, unmanaged switch
+    return "cloud"                    # Internet cloud, NAT / bridge connectors, unmanaged switch, access point
 
 
 def _bar_icon(color: str) -> QIcon:
@@ -1356,7 +1356,11 @@ class Inspector(QWidget):
         if nv.dtype.key == "fortios":
             body.append(f"<span style='color:{T.status_text("warn").name()}'>Unlicensed FortiOS: routing/OSPF work, "
                         "but it does not forward traffic.</span>")
-        if not router and nt is not None and nt.switch is None and ev(nt.role) == "switch" and \
+        if nv.dtype.key == "ap":
+            body.append(f"<span style='color:{_gray()}'>Placeholder access point: an L2 bridge with no radio, SSID "
+                        "or console yet - the uplink and every client cabled to it are in one broadcast "
+                        "domain.</span>")
+        elif not router and nt is not None and nt.switch is None and ev(nt.role) == "switch" and \
                 nv.dtype.node_definition == "unmanaged_switch":
             body.append(f"<span style='color:{_gray()}'>Unmanaged switch: no console, no VLANs, no spanning tree - "
                         "every port is in one broadcast domain.</span>")

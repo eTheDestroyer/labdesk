@@ -18,6 +18,24 @@ While the lab runs, LabDesk polls the devices and draws what is actually configu
 - **Device credentials & hover card:** a username / password / enable secret per device (right-click ▸
   *Credentials…*), and a live info card when you rest the pointer on a device: interfaces, protocols, the stored
   login and the device's own accounts, with each password marked *encrypted (type 9 scrypt)* or *plain text*.
+- **Access points (placeholder):** drag *Wireless access point* from the palette's **Wireless** section and cable it
+  like any device. For now it is an L2 bridge in CML (an unmanaged switch tagged `labdesk-ap`): no radio, SSID or
+  console, and it does not count against the 5-node limit.
+- **3D site view (Wi-Fi heat map):** *View ▸ 3D site (Wi-Fi coverage)…* (Ctrl+3) opens the customer's building as a
+  3D box you can orbit. Start from the **Room library** (10 Israeli homes and workplaces drawn from published plans:
+  a Bauhaus flat, a shikun, a new flat with a mamad, a kibbutz house, a Jerusalem family house, a Tel Aviv high-tech
+  floor, a community centre, a clinic, a Holon workshop and a school) or draw your own: walls with any number of
+  doors and windows (trisim shutters, low-E glass, mamad blast doors and windows), Israeli wall materials (block,
+  mamad concrete, Jerusalem stone, Bauhaus brick, gypsum, sandwich panel) with their losses at 2.4, 5 and 6 GHz,
+  furniture, machines and racking, room names in English and Hebrew. Place access points and see a smooth heat
+  map on the floor with contour lines and waves leaving every access point (or a fog as thick as the signal).
+  Hover any spot for the reading, what the signal crosses on the way, the signal-to-noise, the expected speed and
+  how well the access point hears a phone back. Animated: each access point flashes as its waves leave, data packets
+  stream to the phone (thinning out through walls, fewer coming back when the phone's weaker signal limits the
+  link), and a phone can walk a path you draw, leaving a trail coloured by its signal and showing where it roams. With a graphics card (OpenGL 3.3) the card works out the signal on
+  about four million points; without one the heat map is computed and drawn in software. Rooms save as files to
+  share. It is a planning estimate (±5 dB indoors, ±9 dB in metal halls), not a site survey; the losses come
+  from a cited table (ITU-R P.2040 / P.1238, NIST and NYU measurements). `labdesk --site` opens it alone, without CML.
 - **Always-on Internet cloud:** an optional host network namespace that answers `8.8.8.8` / `1.1.1.1` from inside the lab.
 
 Also included: lab templates (3-router HSRP, hub-and-spoke HSRP/BGP/ACL, switching with LACP/PAgP), SSH/Telnet/HTTP
