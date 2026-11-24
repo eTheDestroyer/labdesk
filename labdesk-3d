@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# LabDesk 3D site: pulls the latest code, then opens the 3D Wi-Fi site view.
+#   ./labdesk-3d             update and open
+#   ./labdesk-3d --install   add "LabDesk 3D Site" to the application menu (search "3D", "Wi-Fi" or "LabDesk")
+#   ./labdesk-3d --no-update open without pulling
+set -uo pipefail
+
+HERE="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+DESKTOP_FILE="$HOME/.local/share/applications/labdesk-3d.desktop"
+LOG="${XDG_STATE_HOME:-$HOME/.local/state}/labdesk/labdesk-3d.log"
+cd "$HERE" || exit 1
+
+notify() {
+    command -v notify-send >/dev/null && notify-send -i "$HERE/labdesk.svg" "LabDesk 3D Site" "$1" || true
+    printf '%s\n' "$1" >&2
+}
+
+if [[ "${1:-}" == "--install" ]]; then
+    chmod +x "$HERE/labdesk-3d"
+    mkdir -p "$(dirname "$DESKTOP_FILE")"
+    cat > "$DESKTOP_FILE" <<EOF
+[Desktop Entry]
+Type=Application
+Name=LabDesk 3D Site
+GenericName=Wi-Fi site planner
+Comment=Plan Wi-Fi access points in a 3D model of a building (updates itself first)
+Exec=$HERE/labdesk-3d
+Path=$HERE
+Icon=$HERE/labdesk.svg
+Terminal=false
+Categories=Network;
+Keywords=3D;WiFi;Wi-Fi;wireless;site;survey;planner;access point;AP;LabDesk;
+StartupWMClass=labdesk
+Actions=NoUpdate;
+
+[Desktop Action NoUpdate]
+Name=Open without updating
+Exec=$HERE/labdesk-3d --no-update
+EOF
+    command -v update-desktop-database >/dev/null && update-desktop-database -q "$(dirname "$DESKTOP_FILE")" || true
+    echo "Added to the menu: $DESKTOP_FILE"
+    echo "Search for \"LabDesk 3D\" (or \"Wi-Fi\") in the menu to open it."
+    exit 0
+fi
+
+mkdir -p "$(dirname "$LOG")"
+exec >>"$LOG" 2>&1
+echo "=== $(date '+%F %T') ==="
+
+update=1
+[[ "${1:-}" == "--no-update" ]] && { update=0; shift; }
+
+# 1. latest code (quietly skipped when offline or when there are local changes)
+if (( update )) && [[ -d .git ]]; then
+    export GIT_TERMINAL_PROMPT=0
+    before="$(git rev-parse HEAD 2>/dev/null)"
+    if timeout 20 git pull --ff-only --quiet 2>&1; then
+        after="$(git rev-parse HEAD 2>/dev/null)"
+        [[ "$before" != "$after" ]] && notify "Updated to the latest version ($(git log -1 --format=%h))."
+    else
+        echo "git pull skipped or failed; opening the version already here"
+    fi
+fi
+
+# 2. virtualenv and packages (only when requirements.txt changed)
+if [[ ! -x .venv/bin/python ]]; then
+    notify "First run: installing Python packages, this takes a minute…"
+    python3 -m venv .venv || { notify "Couldn't create the virtualenv (sudo apt install python3-venv)."; exit 1; }
+fi
+stamp=".venv/.requirements.sha"
+want="$(sha1sum requirements.txt | cut -d' ' -f1)"
+if [[ "$(cat "$stamp" 2>/dev/null)" != "$want" ]]; then
+    if .venv/bin/python -m pip install --quiet -r requirements.txt; then
+        echo "$want" > "$stamp"
+    else
+        notify "Installing Python packages failed; see $LOG"
+    fi
+fi
+
+# 3. open the 3D site view
+.venv/bin/python -m labdesk_app.main --site "$@"
+code=$?
+[[ $code -ne 0 ]] && notify "LabDesk 3D Site closed with an error ($code); see $LOG"
+exit $code

@@ -16,7 +16,7 @@ warn() { printf '\033[1;33m !\033[0m %s\n' "$*"; }
 die()  { printf '\033[1;31m ✗ %s\033[0m\n' "$*" >&2; exit 1; }
 
 if [[ "$MODE" == "--uninstall" ]]; then
-    rm -f "$DESKTOP_FILE" && ok "menu entry removed"
+    rm -f "$DESKTOP_FILE" "$HOME/.local/share/applications/labdesk-3d.desktop" && ok "menu entries removed"
     rm -rf "$HERE/.venv" && ok "virtualenv removed"
     echo "Your credentials file ($CRED_FILE) and settings (~/.config/labdesk, ~/.config/LabDesk) were kept."
     exit 0
@@ -89,6 +89,7 @@ StartupWMClass=labdesk
 EOF
 command -v update-desktop-database >/dev/null && update-desktop-database -q "$(dirname "$DESKTOP_FILE")" || true
 ok "menu entry: $DESKTOP_FILE"
+"$HERE/labdesk-3d" --install >/dev/null && ok "menu entry: LabDesk 3D Site (search \"3D\" or \"Wi-Fi\")"
 
 # 5. quick check that CML answers --------------------------------------------------
 say "Checking that the CML controller answers"
