@@ -23,9 +23,9 @@ from pathlib import Path
 import numpy as np
 from PySide6.QtCore import QElapsedTimer, QPointF, QRectF, QSize, Qt, QTime, QTimer, Signal
 from PySide6.QtGui import QColor, QFont, QImage, QPainter, QPainterPath, QPen, QPixmap, QPolygonF, QTransform
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox,
-                               QHBoxLayout, QLabel, QListWidget, QPushButton, QScrollArea, QSlider, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
+                               QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListWidget, QProgressDialog, QPushButton,
+                               QScrollArea, QSlider, QVBoxLayout, QWidget)
 
 from .. import wifi_field as wf
 from .. import wifi_anim as wa
@@ -33,6 +33,7 @@ from .. import wifi_channels as wc
 from .. import wifi_interference as wi
 from .. import wifi_link as wl
 from .. import wifi_maps as wm
+from .. import wifi_planner as wp
 from .. import wifi_site as ws
 from . import theme as T
 
@@ -1848,7 +1849,7 @@ class SiteWindow(QWidget):
         pv.setContentsMargins(12, 12, 12, 12)
         pv.setSpacing(12)
         for box in (self._room_box(), self._view_box(), self._channels_box(), self._walk_box(), self._space_box(),
-                    self._walls_box(), self._obstacles_box(), self._aps_box()):
+                    self._walls_box(), self._obstacles_box(), self._aps_box(), self._plan_box()):
             pv.addWidget(box)
         pv.addStretch(1)
         scroll = QScrollArea()
@@ -2017,6 +2018,10 @@ class SiteWindow(QWidget):
         load_into(self.site, new)
         self.site.normalize()
         self.view.selected = self.view.selected_wall = -1
+        self._plan_undo = None                      # an Undo would bring another room's access points
+        self.p_undo.setEnabled(False)
+        self.p_result.setText("")
+        self.p_z.setValue(max(0.5, self.site.height - 0.3))
         self.reload()
         self.view.fit()
         self._save_timer.start()
@@ -2953,6 +2958,112 @@ class SiteWindow(QWidget):
             self.a_y.setValue(a.y)
             self._loading = False
         self._save_timer.start()
+
+    # ---------------------------------------------------------------- the access point planner
+    def _plan_box(self) -> QGroupBox:
+        box = QGroupBox("Plan access points")
+        v = QVBoxLayout(box)
+        intro = QLabel("How many access points the floor needs, and where: every spot in the colour you pick, "
+                       "with channels so that none of them disturbs another.")
+        intro.setWordWrap(True)
+        intro.setProperty("role", "caption")
+        v.addWidget(intro)
+        f = QFormLayout()
+        f.setContentsMargins(0, 0, 0, 0)
+        self.p_target = _combo([(t, f"{name} (−{abs(t):.0f} dBm)") for t, name in wp.TARGETS])
+        _set_combo(self.p_target, -60.0)
+        self.p_goal = _spin(80, 100, 1, " %", 0)
+        self.p_goal.setValue(98)
+        self.p_goal.setToolTip("Share of the indoor floor that has to reach it. 100 % can take many more access\n"
+                               "points for the last corners behind a mamad wall.")
+        self.p_band = _combo([(b, ws.BAND_TITLES[b]) for b in ("5", "6", "2.4")])
+        self.p_dual = QCheckBox("Also a 2.4 GHz radio on each")
+        self.p_dual.setChecked(True)
+        self.p_dual.setToolTip("For older devices. Turned down or off where it would share one of its three channels.")
+        self.p_tx = _spin(5, 27, 1, " dBm", 0)
+        self.p_tx.setValue(20)
+        self.p_tx.setToolTip("EIRP of each access point on the plan's band (kept under what its channel allows)")
+        self.p_z = _spin(0.5, ws.MAX_HEIGHT, 0.1, " m", 2)
+        self.p_z.setValue(max(0.5, self.site.height - 0.3))
+        self.p_keep = QCheckBox("Keep my access points and add to them")
+        f.addRow("Every spot", self.p_target)
+        f.addRow("On", self.p_goal)
+        f.addRow("Band", self.p_band)
+        f.addRow("Power", self.p_tx)
+        f.addRow("Mounting height", self.p_z)
+        f.addRow("", self.p_dual)
+        f.addRow("", self.p_keep)
+        v.addLayout(f)
+        row = QHBoxLayout()
+        self.p_run = QPushButton("Plan")
+        self.p_run.setProperty("role", "primary")
+        self.p_run.clicked.connect(self.plan_aps)
+        self.p_undo = QPushButton("Undo plan")
+        self.p_undo.setEnabled(False)
+        self.p_undo.clicked.connect(self.undo_plan)
+        row.addWidget(self.p_run)
+        row.addWidget(self.p_undo)
+        row.addStretch(1)
+        v.addLayout(row)
+        self.p_result = QLabel()
+        self.p_result.setWordWrap(True)
+        self.p_result.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        v.addWidget(self.p_result)
+        self._plan_undo: list | None = None
+        return box
+
+    def plan_options(self) -> wp.PlanOptions:
+        return wp.PlanOptions(target_dbm=float(self.p_target.currentData()), goal_pct=float(self.p_goal.value()),
+                              band=str(self.p_band.currentData()), dual_band=self.p_dual.isChecked(),
+                              tx_dbm=float(self.p_tx.value()), height=float(self.p_z.value()),
+                              keep=self.p_keep.isChecked())
+
+    def plan_aps(self, show_progress: bool = True) -> wp.Plan | None:
+        """Run the planner and put its access points on the site (the old ones can come back with Undo)."""
+        dlg = None
+        if show_progress:
+            dlg = QProgressDialog("Planning the access points…", "Stop", 0, 100, self)
+            dlg.setWindowTitle("Plan access points")
+            dlg.setWindowModality(Qt.WindowModal)
+            dlg.setMinimumDuration(300)
+
+        def progress(f: float, what: str) -> bool:
+            if dlg is None:
+                return True
+            dlg.setLabelText(what[:1].upper() + what[1:] + "…")
+            dlg.setValue(int(f * 100))
+            QApplication.processEvents()
+            return not dlg.wasCanceled()
+
+        before = [ws.AccessPoint.from_dict(a.to_dict()) for a in self.site.aps]
+        try:
+            result = wp.plan(self.site, self.plan_options(), progress)
+        except InterruptedError:
+            self.p_result.setText("Stopped: nothing was changed.")
+            return None
+        except ValueError as e:
+            self.p_result.setText(f"Cannot plan: {e}.")
+            return None
+        finally:
+            if dlg is not None:
+                dlg.close()
+        self._plan_undo = before
+        self.site.aps = result.aps
+        self.p_undo.setEnabled(True)
+        self.p_result.setText(result.summary())
+        self._fill_lists()
+        self._refresh(save=True)
+        return result
+
+    def undo_plan(self) -> None:
+        if self._plan_undo is None:
+            return
+        self.site.aps = self._plan_undo
+        self._plan_undo = None
+        self.p_undo.setEnabled(False)
+        self.p_result.setText("Your access points are back as they were.")
+        self._fill_lists()
+        self._refresh(save=True)
 
     def _add_ap(self) -> None:
         ap = self.site.add_ap()
