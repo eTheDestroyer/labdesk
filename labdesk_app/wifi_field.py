@@ -93,7 +93,8 @@ class FieldEngine:
         self.grid = Grid.for_budget(site.width, site.depth, site.height, budget)
         self._geometry = None                        # signature of everything but the access points
         self._walls: list[ws.Wall] = []
-        self._cache: dict[int, tuple] = {}           # index of the access point -> (key, dBm volume)
+        self._cache: dict[tuple, tuple] = {}         # (index of the access point, band) -> (key, dBm volume)
+        self.band: str | None = None                 # the band volume() shows (None = the strongest of any)
         self._best: np.ndarray | None = None
         self._best_key = None
         self.computed = 0                            # volumes actually recomputed (for the cache test)
@@ -158,8 +159,8 @@ class FieldEngine:
             np.minimum(seg, F32(cap), out=seg)
             out[:, ys, xs] -= seg
 
-    def ap_field(self, ap: ws.AccessPoint) -> np.ndarray:
-        """The dBm volume of one access point."""
+    def ap_field(self, ap) -> np.ndarray:
+        """The dBm volume of one access point or radio (anything with x, y, z, tx_dbm, band)."""
         g = self.grid
         n = ws.CLUTTER[self.site.clutter][1]
         dx, dy, dz = g.x - F32(ap.x), g.y - F32(ap.y), g.z - F32(ap.z)
@@ -201,20 +202,14 @@ class FieldEngine:
             self._walls = s.walls()
             self._cache.clear()
             self._best_key = None
-        live = {}
-        for i, ap in enumerate(s.aps):
-            if ap.enabled:
-                live[i] = (ap.x, ap.y, ap.z, ap.tx_dbm, ap.band)
-        for i in set(self._cache) - set(live):
-            del self._cache[i]
-        for i, key in live.items():
-            if self._cache.get(i, (None,))[0] != key:
-                self._cache[i] = (key, self.ap_field(s.aps[i]))
-                self.computed += 1
-        best_key = tuple(sorted(live.items()))
+        ems = s.emitters(self.band)
+        live = {(e.index, e.band): e for e in ems}
+        for k in [k for k in self._cache if k[0] >= len(s.aps)]:
+            del self._cache[k]
+        vols = [self._vol(e) for e in ems]
+        best_key = (self.band, tuple(sorted((k, self._cache[k][0]) for k in live)))
         if best_key != self._best_key or self._best is None:
             self._best_key = best_key
-            vols = [self._cache[i][1] for i in sorted(live)]
             if not vols:
                 self._best = np.full(self.grid.shape, ws.NO_SIGNAL, F32)
             else:
@@ -222,6 +217,32 @@ class FieldEngine:
                 for v in vols[1:]:
                     np.maximum(best, v, out=best)
                 self._best = best
+
+    def _vol(self, e) -> np.ndarray:
+        """The volume of one radio, from the cache when it has not moved."""
+        k, key = (e.index, e.band), (e.x, e.y, e.z, e.tx_dbm, e.band)
+        hit = self._cache.get(k)
+        if hit is None or hit[0] != key:
+            hit = self._cache[k] = (key, self.ap_field(e))
+            self.computed += 1
+        return hit[1]
+
+    def band_volumes(self, band: str) -> list[tuple]:
+        """[(Emitter, dBm volume)] of every radio on ``band``: yours and the neighbours' (for interference).
+        The arrays are the engine's own: do not modify them."""
+        self._sync()
+        return [(e, self._vol(e)) for e in self.site.emitters(band, own=True, neighbours=True)]
+
+    def at_slice(self, vol: np.ndarray, z: float | None = None) -> np.ndarray:
+        """Any ``[z, y, x]`` volume on this grid cut at height ``z``, as ``slice`` does."""
+        g = self.grid
+        z = self.site.slice_z if z is None else z
+        pos = ws.clamp(z / g.height * g.nz - 0.5, 0.0, g.nz - 1.0)
+        i0 = min(int(pos), g.nz - 2) if g.nz > 1 else 0
+        f = pos - i0
+        if g.nz == 1 or f <= 0.0:
+            return vol[i0]
+        return vol[i0] * F32(1.0 - f) + vol[i0 + 1] * F32(f)
 
     def volume(self) -> np.ndarray:
         """Strongest signal at every voxel, ``[z, y, x]`` float32 dBm (``NO_SIGNAL`` when nothing transmits).
@@ -232,15 +253,7 @@ class FieldEngine:
     def slice(self, z: float | None = None) -> np.ndarray:
         """The horizontal plane at height ``z`` (default: the site's measuring height), ``[y, x]``,
         interpolated between the two voxel layers around it: the same values a 3D texture lookup gives."""
-        vol = self.volume()
-        g = self.grid
-        z = self.site.slice_z if z is None else z
-        pos = ws.clamp(z / g.height * g.nz - 0.5, 0.0, g.nz - 1.0)
-        i0 = min(int(pos), g.nz - 2) if g.nz > 1 else 0
-        f = pos - i0
-        if g.nz == 1 or f <= 0.0:
-            return vol[i0]
-        return vol[i0] * F32(1.0 - f) + vol[i0 + 1] * F32(f)
+        return self.at_slice(self.volume(), z)
 
 
 def band_shares(plane: np.ndarray, mask: np.ndarray | None = None) -> list[float]:

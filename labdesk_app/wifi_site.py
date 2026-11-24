@@ -27,6 +27,8 @@ from __future__ import annotations
 import math
 from dataclasses import InitVar, dataclass, field
 
+from . import wifi_channels as wc
+
 FORMAT = "labdesk-room"
 VERSION = 2
 FORMATS_READ = ("labdesk-room", "labdesk-site")
@@ -493,7 +495,56 @@ def furniture(kind: str, name: str, x: float, y: float, rotated: bool = False, *
 
 
 @dataclass
+class Radio:
+    """One radio of an access point: a band, its power, its channel and how wide the channel is."""
+    band: str = "5"
+    tx_dbm: float = 20.0
+    channel: int = 0              # primary channel; 0 = picked from the access point's place in the list
+    width: int = 0                # MHz; 0 = the band's usual width (20 at 2.4 GHz, 80 at 5 and 6 GHz)
+    enabled: bool = True
+
+    def to_dict(self) -> dict:
+        return {"band": self.band, "tx_dbm": self.tx_dbm, "channel": self.channel, "width": self.width,
+                "enabled": self.enabled}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> Radio:
+        band = d.get("band") if d.get("band") in BAND_MHZ else "5"
+        return cls(band, clamp(_num(d.get("tx_dbm"), 20.0), 0.0, 36.0), _int(d.get("channel")), _int(d.get("width")),
+                   bool(d.get("enabled", True)))
+
+
+def _int(v) -> int:
+    return v if isinstance(v, int) and not isinstance(v, bool) and 0 <= v <= 400 else 0
+
+
+@dataclass(frozen=True)
+class Emitter:
+    """One radio that transmits, where it is, with its channel worked out (what the radio model and the field
+    engines see: it has an access point's name, x, y, z, tx_dbm and band)."""
+    name: str
+    x: float
+    y: float
+    z: float
+    tx_dbm: float
+    band: str
+    channel: int
+    width: int
+    neighbour: bool = False       # someone else's network: interferes, never serves
+    index: int = -1               # into Site.aps
+
+    @property
+    def centre_mhz(self) -> float:
+        return wc.centre_mhz(self.band, self.channel, self.width)
+
+    def channel_text(self) -> str:
+        return wc.channel_title(self.band, self.channel, self.width)
+
+
+@dataclass
 class AccessPoint:
+    """An access point.  ``band``, ``tx_dbm``, ``channel`` and ``width`` are its first radio; ``more`` holds
+    its radios on the other bands (a dual- or tri-band access point)."""
     name: str
     x: float
     y: float
@@ -502,20 +553,84 @@ class AccessPoint:
     band: str = "5"
     enabled: bool = True
     from_lab: bool = False        # mirrors an access point node of the open lab
+    channel: int = 0              # primary channel of the first radio; 0 = picked by its place in the list
+    width: int = 0                # MHz; 0 = the band's usual width
+    more: list[Radio] = field(default_factory=list)
+    neighbour: bool = False       # a neighbour's network: it interferes, it never serves your devices
+    extra: dict = field(default_factory=dict, compare=False, repr=False)
 
     def over_limit(self) -> bool:
-        """True when the EIRP is above what Israel allows in this band."""
-        return self.tx_dbm > LEGAL_EIRP_DBM.get(self.band, 99.0) + 1e-9
+        """True when the EIRP of a radio is above what Israel allows in its band."""
+        return any(r.tx_dbm > LEGAL_EIRP_DBM.get(r.band, 99.0) + 1e-9 for r in self.radios())
+
+    def radios(self, every: bool = False) -> list[Radio]:
+        """The radios, first one first, one per band; ``every`` also lists the ones switched off."""
+        out = [Radio(self.band, self.tx_dbm, self.channel, self.width, True)]
+        for r in self.more:
+            if r.band not in {o.band for o in out} and (every or r.enabled):
+                out.append(r)
+        return out
+
+    def radio(self, band: str) -> Radio | None:
+        """The radio on ``band`` that transmits (None when there is none)."""
+        return next((r for r in self.radios() if r.band == band), None)
+
+    def set_radio(self, band: str, on: bool, tx_dbm: float | None = None, channel: int | None = None,
+                  width: int | None = None) -> bool:
+        """Switch the radio on ``band`` on or off and set its numbers.  The last radio that is on cannot be
+        switched off (returns False); switching the first radio off makes the next one that is on the first."""
+        def apply(r: Radio) -> None:
+            if tx_dbm is not None:
+                r.tx_dbm = clamp(float(tx_dbm), 0.0, 36.0)
+            if channel is not None:
+                r.channel = int(channel)
+            if width is not None:
+                r.width = int(width)
+        if band == self.band:
+            first = Radio(self.band, self.tx_dbm, self.channel, self.width, True)
+            apply(first)
+            if not on:
+                nxt = next((r for r in self.more if r.enabled and r.band != band), None)
+                if nxt is None:
+                    return False
+                self.more = [r for r in self.more if r is not nxt] + [Radio(first.band, first.tx_dbm, first.channel,
+                                                                             first.width, False)]
+                first = nxt
+            self.band, self.tx_dbm, self.channel, self.width = first.band, first.tx_dbm, first.channel, first.width
+            return True
+        r = next((r for r in self.more if r.band == band), None)
+        if r is None:
+            if not on and tx_dbm is None and channel is None and width is None:
+                return True
+            r = Radio(band, min(self.tx_dbm, LEGAL_EIRP_DBM.get(band, 20.0)), 0, 0, on)
+            self.more.append(r)
+        r.enabled = bool(on)
+        apply(r)
+        return True
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "x": self.x, "y": self.y, "z": self.z, "tx_dbm": self.tx_dbm,
-                "band": self.band, "enabled": self.enabled, "from_lab": self.from_lab}
+        out = {**self.extra, "name": self.name, "x": self.x, "y": self.y, "z": self.z, "tx_dbm": self.tx_dbm,
+               "band": self.band, "enabled": self.enabled, "from_lab": self.from_lab}
+        if self.channel:
+            out["channel"] = self.channel
+        if self.width:
+            out["width"] = self.width
+        if self.more:
+            out["radios"] = [r.to_dict() for r in self.more]
+        if self.neighbour:
+            out["neighbour"] = True
+        return out
 
     @classmethod
     def from_dict(cls, d: dict) -> AccessPoint:
+        more = [Radio.from_dict(r) for r in d.get("radios") or [] if isinstance(r, dict)]
         return cls(str(d.get("name") or "AP"), _num(d.get("x"), 0.0), _num(d.get("y"), 0.0), _num(d.get("z"), 2.6),
                    clamp(_num(d.get("tx_dbm"), 20.0), 0.0, 36.0), d.get("band") if d.get("band") in BAND_MHZ else "5",
-                   bool(d.get("enabled", True)), bool(d.get("from_lab", False)))
+                   bool(d.get("enabled", True)), bool(d.get("from_lab", False)), _int(d.get("channel")),
+                   _int(d.get("width")), more, bool(d.get("neighbour", False)), _extra(d, _AP_KEYS))
+
+
+_AP_KEYS = {"name", "x", "y", "z", "tx_dbm", "band", "enabled", "from_lab", "channel", "width", "radios", "neighbour"}
 
 
 @dataclass
@@ -614,7 +729,8 @@ class Site:
         return bool(self.labels or self.meta or self.clutter not in ("open", "light", "dense")
                     or not all(p.is_v1() for p in self.partitions)
                     or any(o.z0 or o.kind not in V1_KINDS for o in self.obstacles)
-                    or any(a.band not in ("2.4", "5") for a in self.aps))
+                    or any(a.band not in ("2.4", "5") or a.channel or a.width or a.more or a.neighbour or a.extra
+                           for a in self.aps))
 
     def to_dict(self) -> dict:
         out = {**self.extra, "width": self.width, "depth": self.depth, "height": self.height, "clutter": self.clutter,
@@ -725,9 +841,19 @@ class Site:
                 out.append(f"Label {lb.name!r} is in the same room as {named[k]!r}: not shown")
             else:
                 named[k] = lb.name
-        for ap in self.aps:
-            if ap.over_limit():
-                out.append(f"{ap.name}: {ap.tx_dbm:g} dBm is above the legal limit. {LEGAL_NOTE[ap.band]}.")
+        for e in self.emitters(own=True, neighbours=True, every=True):
+            r = self.aps[e.index].radio(e.band)
+            if r is not None and r.channel and r.channel != e.channel:
+                out.append(f"{e.name}: channel {r.channel} is not allowed at {BAND_TITLES[e.band]} in Israel; "
+                           f"uses {e.channel}")
+            if r is not None and r.width and r.width != e.width:
+                out.append(f"{e.name}: {r.width} MHz is not possible on channel {e.channel}; uses {e.width} MHz")
+            if e.neighbour:
+                continue
+            limit = wc.legal_eirp(e.band, e.channel, e.width)
+            if e.tx_dbm > limit + 1e-9:
+                out.append(f"{e.name}: {e.tx_dbm:g} dBm on channel {e.channel} is above the legal limit of "
+                           f"{limit:g} dBm. {LEGAL_NOTE[e.band]}.")
         return out
 
     def rooms(self) -> list[Room]:
@@ -849,16 +975,40 @@ class Site:
         d = math.dist((ap.x, ap.y, ap.z), pt)
         return ap.tx_dbm - self.path_loss(d, ap.band) - self.wall_loss((ap.x, ap.y, ap.z), pt, ap.band, walls)
 
-    def best(self, pt: tuple, walls: list[Wall] | None = None) -> tuple[float, AccessPoint | None]:
-        """Strongest signal at ``pt`` and the access point it comes from."""
+    def best(self, pt: tuple, walls: list[Wall] | None = None, band: str | None = None) -> tuple[float, Emitter | None]:
+        """Strongest signal at ``pt`` (on ``band``, None = any band) and the radio it comes from.  Neighbours'
+        networks never serve."""
         walls = self.walls() if walls is None else walls
         top, who = NO_SIGNAL, None
-        for ap in self.aps:
-            if ap.enabled:
-                v = self.rssi(ap, pt, walls)
-                if v > top:
-                    top, who = v, ap
+        for e in self.emitters(band):
+            v = self.rssi(e, pt, walls)
+            if v > top:
+                top, who = v, e
         return top, who
+
+    def emitters(self, band: str | None = None, own: bool = True, neighbours: bool = False,
+                 every: bool = False) -> list[Emitter]:
+        """Every radio that transmits, as an ``Emitter`` with its channel worked out: ``band`` None = all bands;
+        ``own`` / ``neighbours`` pick whose; ``every`` also lists the access points switched off.
+
+        A radio without a channel gets the planner's list in turn (1, 6, 11 at 2.4 GHz; one 80 MHz block after
+        the other at 5 and 6 GHz), counted over the access points that have that band; a channel or a width
+        Israel does not allow is replaced by the nearest one that is."""
+        out = []
+        count: dict = {}
+        for i, ap in enumerate(self.aps):
+            for r in ap.radios():
+                k = count.get((r.band, ap.neighbour), 0)
+                count[(r.band, ap.neighbour)] = k + 1
+                if not (every or ap.enabled) or (band is not None and r.band != band):
+                    continue
+                if not (neighbours if ap.neighbour else own):
+                    continue
+                want = r.width if r.width in wc.WIDTHS[r.band] else wc.DEFAULT_WIDTH[r.band]
+                ch = r.channel if wc.is_channel(r.band, r.channel) else wc.default_channel(r.band, want, k)
+                out.append(Emitter(ap.name, ap.x, ap.y, ap.z, r.tx_dbm, r.band, ch, wc.fit_width(r.band, ch, want),
+                                   ap.neighbour, i))
+        return out
 
     def coverage(self, nx: int = 48, ny: int = 32, z: float | None = None) -> list[list[float]]:
         """Strongest RSSI at the centre of each cell of an ``nx`` x ``ny`` grid on the plane ``z``

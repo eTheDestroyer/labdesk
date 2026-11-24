@@ -12,12 +12,14 @@ The Radio realism council's link layer, kept deliberately simple and stated as a
   rate the weaker direction can sustain; rates are 2 spatial streams, 0.8 us guard interval.  Because the
   model's own spread is about +-5 dB (ITU-R P.1238), the speed is given as a range: the rate at the signal
   minus the spread and at the signal plus the spread.  Real throughput is about 60-70 % of the PHY rate.
-* **Channel widths** as installed by default: 20 MHz at 2.4 GHz, 80 MHz at 5 and 6 GHz.
-
-No interference from other networks or other access points on the same channel is counted.
+* **Channel widths**: the radio's own (``width``), else as installed by default: 20 MHz at 2.4 GHz, 80 MHz at
+  5 and 6 GHz.
+* **Interference** (``wifi_interference``), when given, adds to the noise: the rate then follows the SINR, as
+  if the signal were that much weaker.  Without it, no other network is counted.
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from . import wifi_site as ws
@@ -39,13 +41,17 @@ def _doublings(width: int) -> int:
     return {20: 0, 40: 1, 80: 2, 160: 3}.get(width, 0)
 
 
-def noise_floor(band: str) -> float:
-    return NOISE_20MHZ_DBM + 3.0 * _doublings(WIDTH_MHZ.get(band, 20))
+def _width(band: str, width: int | None) -> int:
+    return width if width in (20, 40, 80, 160) else WIDTH_MHZ.get(band, 20)
 
 
-def phy_rate(rssi: float, band: str) -> float:
+def noise_floor(band: str, width: int | None = None) -> float:
+    return NOISE_20MHZ_DBM + 3.0 * _doublings(_width(band, width))
+
+
+def phy_rate(rssi: float, band: str, width: int | None = None) -> float:
     """Highest 2x2 PHY rate (Mbit/s) a receiver gets at ``rssi`` dBm; 0 below the lowest rate."""
-    width = WIDTH_MHZ.get(band, 20)
+    width = _width(band, width)
     shift = 3.0 * _doublings(width)
     rate = 0.0
     for mcs, sens in enumerate(SENSITIVITY_20):
@@ -65,22 +71,33 @@ class Link:
     spread_db: float
     band: str
 
+    width: int = 0               # MHz (0 = the band's usual)
+    interference_db: float = 0.0  # how much interference raises the noise floor
+
     def speed_text(self) -> str:
         if self.rate_hi <= 0.0:
-            if self.uplink_limits and phy_rate(self.down_dbm + self.spread_db, self.band) > 0.0:
+            if self.uplink_limits and phy_rate(self.down_dbm + self.spread_db - self.interference_db, self.band,
+                                               self.width) > 0.0:
                 return "no link: the phone hears the AP, the AP cannot hear the phone"
             return "no connection"
         lo, hi = round(self.rate_lo), round(self.rate_hi)
         return f"up to {hi} Mbit/s" if lo == hi else (f"0-{hi} Mbit/s" if lo == 0 else f"{lo}-{hi} Mbit/s")
 
 
-def link(site: ws.Site, rssi: float, ap: ws.AccessPoint | None) -> Link | None:
-    """The link between ``ap`` and a phone where ``ap``'s signal is ``rssi`` dBm (None without an AP)."""
+def link(site: ws.Site, rssi: float, ap, interference_dbm: float | None = None) -> Link | None:
+    """The link between ``ap`` (an access point or an ``Emitter``) and a phone where its signal is ``rssi`` dBm
+    (None without one).  ``interference_dbm``: what other radios put into the channel, if counted."""
     if ap is None:
         return None
+    width = _width(ap.band, getattr(ap, "width", None))
     path_loss = ap.tx_dbm - rssi
     up = CLIENT_EIRP_DBM.get(ap.band, 15.0) - path_loss
     weaker = min(rssi, up)
     spread = ws.UNCERTAINTY_DB.get(site.clutter, 5.0)
-    return Link(rssi, up, weaker - noise_floor(ap.band), up < rssi, phy_rate(weaker - spread, ap.band),
-                phy_rate(weaker + spread, ap.band), spread, ap.band)
+    noise = noise_floor(ap.band, width)
+    rise = 0.0
+    if interference_dbm is not None and interference_dbm > ws.NO_SIGNAL:
+        rise = 10.0 * math.log10(1.0 + 10.0 ** ((interference_dbm - noise) / 10.0))
+    eff = weaker - rise
+    return Link(rssi, up, eff - noise, up < rssi, phy_rate(eff - spread, ap.band, width),
+                phy_rate(eff + spread, ap.band, width), spread, ap.band, width, rise)

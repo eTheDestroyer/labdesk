@@ -447,7 +447,7 @@ def field_grid(width: float, depth: float, height: float, budget: int = GPU_VOXE
             max(4, min(max_side, round(h / cell))))
 
 
-def field_tables(site) -> tuple:
+def field_tables(site, band: str | None = None) -> tuple:
     """The radio model of a site packed for the field shader: ``(texels, n_ap, n_wall, n_obstacle)`` with
     ``texels`` a float32 array of RGBA rows, in this order:
 
@@ -457,11 +457,12 @@ def field_tables(site) -> tuple:
     * obstacle (4 texels): (x0, y0, z0, 0), (x1, y1, z1, 0), (dB/m at 2.4, 5, 6, 0), (cap at 2.4, 5, 6, 0);
     * opening (2 texels, after the obstacles): (run from, run to, sill, head), (loss at 2.4, 5, 6, 0).
 
-    Only the access points that transmit and the obstacles that take something away are listed.  The numbers
+    Only the radios that transmit (on ``band``, None = every band; never the neighbours' networks) and the
+    obstacles that take something away are listed.  The numbers
     are the ones ``Site.rssi`` uses (band index = ``wifi_site.bi``)."""
     n = ws.CLUTTER.get(site.clutter, ws.CLUTTER["light"])[1]
     rows: list = []
-    aps = [ap for ap in site.aps if ap.enabled]
+    aps = site.emitters(band) if hasattr(site, "emitters") else [ap for ap in site.aps if ap.enabled]
     for ap in aps:
         ref = 20.0 * math.log10(ws.BAND_MHZ.get(ap.band, ws.BAND_MHZ["5"])) - 27.55
         rows += [(ap.x, ap.y, ap.z, ap.tx_dbm), (ref, n, float(ws.bi(ap.band)), 0.0)]
@@ -1020,7 +1021,7 @@ class SceneRenderer:
             self.last_error = f"field not usable: {type(e).__name__}: {e}"
             return False
 
-    def compute_field(self, site, budget: int = GPU_VOXEL_BUDGET) -> bool:
+    def compute_field(self, site, budget: int = GPU_VOXEL_BUDGET, band: str | None = None) -> bool:
         """Work out the signal of ``site`` on the graphics card, straight into the field texture, on a grid
         about twenty times finer than the CPU's (``field_grid``).  The numbers are those of ``Site.rssi``.
         Returns False (and keeps the previous field) when it cannot; the caller then hands over a volume
@@ -1031,7 +1032,7 @@ class SceneRenderer:
                 return False
             nx, ny, nz = field_grid(site.width, site.depth, site.height, budget,
                                     min(MAX_FIELD_SIDE, max(16, self._max_3d)))
-            texels, n_ap, n_wall, n_obs = field_tables(site)
+            texels, n_ap, n_wall, n_obs = field_tables(site, band)
             self._upload_geo(texels)
             self._alloc_field(nx, ny, nz)
             fn, xfn = self._fn, self._xfn

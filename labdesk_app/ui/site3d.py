@@ -15,29 +15,38 @@ on top.  The model lives in ``labdesk_app.wifi_site``, the fast field in ``labde
 """
 from __future__ import annotations
 
+import copy
 import math
 import os
 from pathlib import Path
 
 import numpy as np
-from PySide6.QtCore import QElapsedTimer, QPointF, QRectF, QSize, Qt, QTimer, Signal
-from PySide6.QtGui import QColor, QImage, QPainter, QPen, QPixmap, QPolygonF, QTransform
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout, QGroupBox, QHBoxLayout,
-                               QLabel, QListWidget, QPushButton, QScrollArea, QSlider, QVBoxLayout, QWidget)
+from PySide6.QtCore import QElapsedTimer, QPointF, QRectF, QSize, Qt, QTime, QTimer, Signal
+from PySide6.QtGui import QColor, QFont, QImage, QPainter, QPainterPath, QPen, QPixmap, QPolygonF, QTransform
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout, QGridLayout, QGroupBox,
+                               QHBoxLayout, QLabel, QListWidget, QPushButton, QScrollArea, QSlider, QVBoxLayout,
+                               QWidget)
 
 from .. import wifi_field as wf
 from .. import wifi_anim as wa
+from .. import wifi_channels as wc
+from .. import wifi_interference as wi
 from .. import wifi_link as wl
+from .. import wifi_maps as wm
 from .. import wifi_site as ws
 from . import theme as T
 
 NEAR = 0.05                       # near clipping plane (m)
+EYE_HEIGHT = 1.6                  # the walker's eyes above the floor, in the phone's-eye view (m)
+POV_FOV = 68.0                    # its field of view (degrees, top to bottom)
+STROKE_STEP = 0.10                # a freehand route takes a point every this many metres of pointer travel
 FOG_FRAME_MS = 50                 # how often drifting fog is redrawn
 WAVE_FRAME_MS = 33                # how often moving waves are redrawn (smoother: the fronts are sharp)
 AIR_MODES = {"waves": "Waves from the access points", "fog": "Fog"}
 
 # ---------------------------------------------------------------------------- heat-map colours
-RAMP_LO, RAMP_HI = -85.0, -40.0   # below RAMP_LO there is no service: the floor shows through
+RAMP_LO, RAMP_HI = wm.RAMP_LO, wm.RAMP_HI     # below RAMP_LO there is no service: the floor shows through
+BAND_CHOICES = [(None, "Every band (strongest)")] + [(b, ws.BAND_TITLES[b]) for b in ws.BANDS]
 CONTOURS = tuple(b[0] for b in ws.SIGNAL_BANDS if b[0] > RAMP_LO)        # lines at the band limits
 # name -> (title, stops (dBm, colour) from weak to strong).  'classic' is what Wi-Fi planning tools show;
 # 'safe' keeps its order for viewers who cannot tell red from green (lightness rises with the signal).
@@ -191,6 +200,8 @@ class SiteView(QWidget):
     edited = Signal()             # the site was changed in the view (an access point was dragged)
     ap_picked = Signal(int)       # index of the access point that was clicked
     walk_changed = Signal()       # the phone walk's path, state or reading changed
+    probe_changed = Signal()      # the spot the spectrum listens at moved (pointer or phone)
+    map_changed = Signal()        # the band, the map or the channel shown changed
 
     def __init__(self, site: ws.Site, parent=None, gl: bool | None = None):
         """``gl``: True / False forces the graphics-card or the software renderer; None picks the graphics
@@ -206,6 +217,11 @@ class SiteView(QWidget):
         self.drift = True             # the waves move out / the fog's billows drift (looks only)
         self.air = "waves"            # what fills the air: AIR_MODES
         self.packets = True           # data packets stream between the serving access point and the phone
+        self.band: str | None = None  # the band the maps show (None = every band)
+        self.map_kind = "signal"        # what the floor shows: wifi_maps.METRICS
+        self.map_channel: tuple | None = None    # (band, channel) for the channel map
+        self._heat_vol = None         # ramp-dBm volume of a map other than the signal (None = the signal)
+        self._heat_plane = np.zeros((2, 2), np.float32)
         self.walk_path: list[tuple[float, float]] = []      # floor points the phone walks through
         self.walk_drawing = False     # clicks on the floor add points to the path
         self.walking = False
@@ -214,6 +230,13 @@ class SiteView(QWidget):
         self._walk_hold = 0.0         # seconds left to wait at the end of the path before walking it again
         self._walk_key = None
         self._walk_cache: list = []
+        self._stroke: int | None = None   # while a route is drawn freehand: how many points it had at the press
+        self.pov = False              # the phone's-eye view: the camera walks the route with the phone
+        self._orbit_cam: tuple | None = None     # the orbit camera to go back to after it
+        self._pov_yaw: float | None = None       # where the walker faces (smoothed), radians
+        self._pov_look = [0.0, math.radians(12.0)]   # looking around: yaw offset, pitch down
+        self._phone_key = None
+        self._phone_rd = None
         self._flow_key = None
         self._flow = None
         self._last_tick = 0.0
@@ -243,6 +266,7 @@ class SiteView(QWidget):
         self._static_key = None
         self._static_pm: QPixmap | None = None
         self._hover = None            # (x, y) on the floor under the pointer
+        self._hover_z = 0.0           # height of what the pointer is on (a table top, a shelf: > 0)
         self._hover_pos = QPointF()
         self._drag = None             # ('orbit' | 'pan' | 'ap', last QPointF)
         self.setMouseTracking(True)
@@ -265,9 +289,21 @@ class SiteView(QWidget):
             self._geom_rev += 1
             self._walls = s.walls()
             self._rooms = s.rooms()
+        self.engine.band = self.band
         self.engine.volume()
         self._plane = self.engine.slice()
-        self.shares = wf.band_shares(self._plane, wf.indoor_mask(s, self.engine.grid))
+        mask = wf.indoor_mask(s, self.engine.grid)
+        if self.map_kind == "channel" and self.map_channel is None:
+            ch = wm.channel_choices(s, self.band)
+            self.map_channel = ch[0][0] if ch else ("5", 36)
+        vals, ramp = wm.map_volumes(self.engine, self.map_kind, self.band, self.map_channel)
+        if vals is None:
+            self._heat_vol, self._heat_plane = None, self._plane
+            self.shares = wf.band_shares(self._plane, mask)
+        else:
+            self._heat_vol = ramp
+            self._heat_plane = self.engine.at_slice(ramp)
+            self.shares = self.scale.shares(self.engine.at_slice(vals), mask)
         self._rev += 1
         self._sync_fog_timer()                         # an access point may have come on or gone off
         self.update()
@@ -278,8 +314,47 @@ class SiteView(QWidget):
         return self._plane
 
     @property
+    def heat_plane(self) -> np.ndarray:
+        """What the floor is painted with, ``[y, x]`` in the ramp's dBm (the signal itself on the signal map)."""
+        return self._heat_plane
+
+    @property
+    def scale(self) -> wm.Scale:
+        return wm.SCALES.get(self.map_kind, wm.SIGNAL)
+
+    @property
     def rooms(self) -> list[ws.Room]:
         return self._rooms
+
+    def set_map(self, band=..., kind: str | None = None, channel: tuple | None = None) -> None:
+        """Choose the band (None = every band), the map (``wifi_maps.METRICS``) and the channel of the channel
+        map; anything not given stays."""
+        if band is not ... and (band is None or band in ws.BANDS):
+            self.band = band
+        if kind in wm.METRICS:
+            self.map_kind = kind
+        if channel is not None and channel[0] in ws.BANDS and channel[1] in wc.CHANNELS[channel[0]]:
+            self.map_channel = (channel[0], int(channel[1]))
+            if self.band is not None and self.band != channel[0]:
+                self.band = channel[0]
+        elif self.map_kind == "channel" and self.map_channel and self.band and self.map_channel[0] != self.band:
+            self.map_channel = None
+        self._walk_key = None
+        self.site_changed()
+        self.map_changed.emit()
+
+    def wave_sources(self) -> tuple:
+        """Where your radios on the band shown are (one per access point)."""
+        seen, out = set(), []
+        for e in self.site.emitters(self.band):
+            if e.index not in seen:
+                seen.add(e.index)
+                out.append((e.x, e.y, e.z))
+        return tuple(out)
+
+    def probe(self) -> tuple | None:
+        """The spot the spectrum listens at: the phone (walking, or under the pointer)."""
+        return self.phone()
 
     @property
     def uses_gl(self) -> bool:
@@ -360,11 +435,15 @@ class SiteView(QWidget):
         self.walk_dist = 0.0
         if len(self.walk_path) < 2:
             self.walking = False
+            self.set_pov(False)
+        self._pov_yaw = None
+        self._apply_pov(0.0)
         self._sync_fog_timer()
         self.walk_changed.emit()
         self.update()
 
     def start_drawing_walk(self) -> None:
+        self.set_pov(False)                         # draw from above
         self.walking = False
         self.walk_drawing = True
         self.walk_path = []
@@ -379,8 +458,11 @@ class SiteView(QWidget):
         if not self.walk_drawing:
             return
         self.walk_drawing = False
+        self._stroke = None
         self.setCursor(Qt.ArrowCursor)
+        self.walk_path = wa.simplify(self.walk_path)          # a hand-drawn line keeps only the points that matter
         self.walk_dist = 0.0
+        self._pov_yaw = None
         self.set_walking(len(self.walk_path) >= 2)
 
     def set_walking(self, on: bool) -> None:
@@ -388,15 +470,76 @@ class SiteView(QWidget):
         if self.walking and self.walk_dist >= wa.path_length(self.walk_path):
             self.walk_dist = 0.0
         self._last_tick = self._clock.elapsed() / 1000.0
+        self._apply_pov(0.0)
         self._sync_fog_timer()
         self.walk_changed.emit()
         self.update()
+
+    def add_route_point(self, x: float, y: float, min_step: float = 0.0) -> bool:
+        """Add a floor point to the route being drawn (not closer than ``min_step`` to the last one)."""
+        s = self.site
+        pt = (ws.clamp(x, 0.0, s.width), ws.clamp(y, 0.0, s.depth))
+        if self.walk_path and math.dist(pt, self.walk_path[-1]) < max(min_step, 1e-3):
+            return False
+        self.walk_path.append(pt)
+        self.walk_changed.emit()
+        return True
+
+    # ---------------------------------------------------------------- the phone's-eye view
+    def set_pov(self, on: bool) -> None:
+        """Look through the walker's eyes: the camera follows the route; off goes back to the orbit camera."""
+        on = bool(on) and len(self.walk_path) >= 2
+        if on == self.pov:
+            return
+        c = self.cam
+        if on:
+            self._orbit_cam = (c.yaw, c.pitch, c.dist, c.target, c.fov)
+            self.pov = True
+            self._pov_yaw = None
+            self._pov_look = [0.0, math.radians(12.0)]
+            c.fov = math.radians(POV_FOV)
+            self._apply_pov(0.0)
+        else:
+            self.pov = False
+            if self._orbit_cam is not None:
+                c.yaw, c.pitch, c.dist, c.target, c.fov = self._orbit_cam
+            self._orbit_cam = None
+        self.walk_changed.emit()
+        self.update()
+
+    def _apply_pov(self, dt: float) -> None:
+        """Put the camera at the walker's eyes, above the phone, facing along the route (turning
+        smoothly; ``dt`` 0 snaps)."""
+        if not self.pov or len(self.walk_path) < 2:
+            return
+        s = self.site
+        x, y = wa.walk_position(self.walk_path, self.walk_dist)
+        h = wa.heading(self.walk_path, self.walk_dist)
+        if h is not None:
+            want = math.atan2(h[1], h[0])
+            if self._pov_yaw is None or dt <= 0.0:
+                self._pov_yaw = want
+            else:
+                diff = (want - self._pov_yaw + math.pi) % (2 * math.pi) - math.pi
+                self._pov_yaw += diff * (1.0 - math.exp(-dt * 4.0))
+        yaw = (self._pov_yaw or 0.0) + self._pov_look[0]
+        pitch = self._pov_look[1]
+        fx, fy = math.cos(yaw), math.sin(yaw)
+        eye = (ws.clamp(x, 0.05, s.width - 0.05), ws.clamp(y, 0.05, s.depth - 0.05),
+               min(EYE_HEIGHT, s.height - 0.1))          # right above the phone: in the room the phone is in
+        c = self.cam
+        c.dist = 1.0
+        c.yaw = yaw + math.pi                       # the orbit camera sits on the far side of its target
+        c.pitch = pitch
+        cp = math.cos(pitch)
+        c.target = (eye[0] + fx * cp, eye[1] + fy * cp, eye[2] - math.sin(pitch))
 
     def advance_walk(self, dt: float) -> None:
         total = wa.path_length(self.walk_path)
         if total <= 0.0:
             self.walking = False
             return
+        before = self.walk_dist
         if self._walk_hold > 0.0:
             self._walk_hold -= dt
             if self._walk_hold <= 0.0:
@@ -405,39 +548,66 @@ class SiteView(QWidget):
             self.walk_dist = min(total, self.walk_dist + dt * self.walk_speed)
             if self.walk_dist >= total:
                 self._walk_hold = 1.5                       # a breath at the end, then round again
+        self._apply_pov(0.0 if self.walk_dist < before else dt)      # back at the start: no spin
         self.walk_changed.emit()
+        self.probe_changed.emit()
 
     def walk_samples(self) -> list:
-        key = (tuple(self.walk_path), self._rev, self.site.slice_z)
+        key = (tuple(self.walk_path), self._rev, self.site.slice_z, self.band)
         if key != self._walk_key:
             self._walk_key = key
-            self._walk_cache = wa.walk_samples(self.site, self.walk_path, self.site.slice_z)
+            self._walk_cache = wa.walk_samples(self.site, self.walk_path, self.site.slice_z, band=self.band)
         return self._walk_cache
 
     def phone(self) -> tuple | None:
         """Where the phone is: on the walk when there is one in progress, else under the pointer."""
-        if len(self.walk_path) >= 2 and (self.walking or self.walk_dist > 0.0):
-            x, y = wa.walk_position(self.walk_path, self.walk_dist)
-            return (x, y, self.site.slice_z)
+        on = self.on_walk()
+        if on is not None:
+            return on
         if self._hover is not None and self._drag is None and not self.walk_drawing:
             return (self._hover[0], self._hover[1], self.site.slice_z)
         return None
+
+    def phone_reading(self, pt: tuple):
+        """What the phone at ``pt`` connects to (``wifi_interference.Reading``), cached while it stands still."""
+        key = (round(pt[0], 2), round(pt[1], 2), round(pt[2], 3), self._rev, self.band)
+        if key != self._phone_key:
+            self._phone_key = key
+            self._phone_rd = (wa.phone_reading(self.site, pt, self.band, self._walls),
+                              wa.heard(self.site, pt, self._walls))
+        return self._phone_rd[0]
+
+    def phone_heard(self, pt: tuple) -> list:
+        """Every radio the phone at ``pt`` hears, on every band (its network list)."""
+        self.phone_reading(pt)
+        return self._phone_rd[1]
+
+    def on_walk(self) -> tuple | None:
+        """Where the walking phone is (x, y, z), or None when no walk is under way."""
+        if len(self.walk_path) < 2 or not (self.walking or self.walk_dist > 0.0 or self.pov):
+            return None
+        x, y = wa.walk_position(self.walk_path, self.walk_dist)
+        return (x, y, self.site.slice_z)
 
     def walk_status(self) -> str:
         """'−63 dBm · Good · AP1 · 288-649 Mbit/s · 12.5 of 30.0 m' for the panel."""
         if self.walk_drawing:
             n = len(self.walk_path)
-            return f"Click on the floor to add points ({n} so far); double-click, Enter or right-click to finish."
+            return (f"Click on the floor to add points, or hold the button and draw the route ({n} so far); "
+                    "let go, double-click, Enter or right-click to finish.")
         if len(self.walk_path) < 2:
             return "Draw a path through the rooms; a phone walks it and reads the signal as it goes."
         x, y = wa.walk_position(self.walk_path, self.walk_dist)
-        v, ap = self.site.best((x, y, self.site.slice_z), self._walls)
+        pt = (x, y, self.site.slice_z)
+        rd = self.phone_reading(pt)
+        v, ap = rd.signal, rd.serving
         total = wa.path_length(self.walk_path)
         where = f"{self.walk_dist:.1f} of {total:.1f} m"
         if ap is None:
             return f"No access point · {where}"
-        lk = wl.link(self.site, v, ap)
-        return f"{fmt_dbm(v)} · {ws.band_title(v)} · {ap.name} · {lk.speed_text()} · {where}"
+        lk = wl.link(self.site, v, ap, rd.interference)
+        return (f"{fmt_dbm(v)} · {ws.band_title(v)} · {ap.name} · {ws.BAND_TITLES[ap.band]} ch {ap.channel} · "
+                f"{lk.speed_text()} · {where}")
 
     def showEvent(self, ev):
         super().showEvent(ev)
@@ -479,31 +649,39 @@ class SiteView(QWidget):
             self._fog_t = self._clock.elapsed() / 1000.0
         key = (self.cam.key(), self._rev, self._geom_rev, T.generation(), self.width(), self.height(), scale,
                self.show_heat, round(self.glow, 3), self.ramp, self.selected_wall, self.site.slice_z,
-               round(self._fog_t, 3), self.air, tuple((a.x, a.y, a.z) for a in self.site.aps if a.enabled))
+               round(self._fog_t, 3), self.air, self.wave_sources())
         if key == self._gl_key and self._gl_img is not None:
             return self._gl_img
         try:
             from .site3d_gl import RenderOpts
-            if self._gl_site_rev != self._geom_rev:
-                gl.set_site(self.site)
-                self._gl_site_rev = self._geom_rev
+            hidden = self.hidden_obstacles()
+            if self._gl_site_rev != (self._geom_rev, hidden):
+                shown = self.site
+                if hidden:                                  # the walker is inside a cupboard: leave it out
+                    shown = copy.copy(self.site)
+                    shown.obstacles = [o for i, o in enumerate(self.site.obstacles) if i not in hidden]
+                gl.set_site(shown)
+                self._gl_site_rev = (self._geom_rev, hidden)
             if self._gl_field_rev != self._rev:
                 # the graphics card works the field out itself, on a grid about twenty times finer than the
                 # CPU's; the CPU volume is the fallback (and stays the source of the numbers on the panel)
-                if not gl.compute_field(self.site):
+                if self._heat_vol is not None:              # a map worked out on the CPU (interference)
+                    gl.set_field(self._heat_vol)
+                elif not gl.compute_field(self.site, band=self.band):
                     gl.set_field(self.engine.volume())
                 self._gl_field_rev = self._rev
             if self._gl_ramp != self.ramp:
                 gl.set_ramp(ramp_image(self.ramp))
                 self._gl_ramp = self.ramp
             fr = self._frame()
-            opts = RenderOpts(slice_z=self.site.slice_z, heat=self.show_heat, glow=self.glow, contours=CONTOURS,
+            contours = tuple(self.scale.to_ramp(c) for c in self.scale.contours)
+            opts = RenderOpts(slice_z=self.site.slice_z, heat=self.show_heat, glow=self.glow, contours=contours,
                               lo_dbm=RAMP_LO, hi_dbm=RAMP_HI, background=_rgb(tk.base), floor=_rgb(tk.N(3)),
                               wall=_rgb(tk.N(10) if tk.dark else tk.N(8)), obstacle=_rgb(OBSTACLE_COLOR),
                               door=_rgb("#a9794a"),
                               line=_rgb(INK), selected_wall=self.selected_wall, accent=_rgb(tk.accent_ring),
                               fog_time=self._fog_t, air=self.air,
-                              sources=tuple((a.x, a.y, a.z) for a in self.site.aps if a.enabled))
+                              sources=self.wave_sources())
             img = gl.render(self.width(), self.height(), fr.eye, self.cam.target, self.cam.fov, opts, scale)
         except Exception as e:  # noqa: BLE001
             self._drop_gl(f"{type(e).__name__}: {e}")
@@ -550,7 +728,8 @@ class SiteView(QWidget):
             p.setRenderHint(QPainter.Antialiasing)
             self._paint_sorted(p, fr, tk, solids=True)
             self._paint_front_edges(p, fr, tk)
-        self._paint_dimensions(p, fr, tk)
+        if not self.pov:
+            self._paint_dimensions(p, fr, tk)
         self._paint_room_labels(p, fr, tk)
         if self.show_heat and self._drag is None:
             self._paint_contour_labels(p, fr, tk)
@@ -560,9 +739,11 @@ class SiteView(QWidget):
             self._paint_packets(p, fr, now)
         if img is not None:
             self._paint_sorted(p, fr, tk, solids=False)
-        self._paint_phone(p, fr, tk)
+        if not self.pov:
+            self._paint_phone(p, fr, tk)
         self._paint_hover(p, fr, tk)
         self._paint_legend(p, tk)
+        self._paint_phone_screen(p, tk)
         self._paint_hud(p, tk)
         p.end()
 
@@ -577,14 +758,16 @@ class SiteView(QWidget):
         return sum((fr.eye[i] - pt[i]) * n[i] for i in range(3)) > 0     # the eye is on the room's side
 
     def contours(self) -> dict[float, list]:
-        """Contour lines of the measuring plane in metres: level -> [((x0, y0), (x1, y1)), ...]."""
+        """Contour lines of the map on the measuring plane in metres: level (in the map's own unit) ->
+        [((x0, y0), (x1, y1)), ...]."""
         if self._contours_rev != self._rev:
             s = self.site
-            ny, nx = self._plane.shape
+            ny, nx = self._heat_plane.shape
             cw, cd = s.width / nx, s.depth / ny
+            sc = self.scale
             self._contours = {
                 lv: [(((a[0] + 0.5) * cw, (a[1] + 0.5) * cd), ((b[0] + 0.5) * cw, (b[1] + 0.5) * cd))
-                     for a, b in wf.contour_segments(self._plane, lv)] for lv in CONTOURS}
+                     for a, b in wf.contour_segments(self._heat_plane, sc.to_ramp(lv))] for lv in sc.contours}
             self._contours_rev = self._rev
         return self._contours
 
@@ -610,7 +793,7 @@ class SiteView(QWidget):
             p.setBrush(tk.N(3))
             p.drawPolygon(floor)
         if self.show_heat and None not in corners:
-            img = heat_image(self._plane, self.ramp)
+            img = heat_image(self._heat_plane, self.ramp)
             src = QPolygonF([QPointF(0, 0), QPointF(img.width(), 0), QPointF(img.width(), img.height()),
                              QPointF(0, img.height())])
             warp = QTransform()
@@ -708,7 +891,7 @@ class SiteView(QWidget):
             if sp is None or any(abs(sp.x() - u.x()) < 70 and abs(sp.y() - u.y()) < 18 for u in used):
                 continue
             used.append(sp)
-            T.draw_pill(p, sp, fmt_dbm(level), tk, text_color=tk.ink, bold=True)
+            T.draw_pill(p, sp, self.scale.fmt(level), tk, text_color=tk.ink, bold=True)
 
     # ................................................................ walls, doors, obstacles, access points
     def _wall_pt(self, wall: ws.Wall, run: float, z: float) -> tuple:
@@ -763,12 +946,26 @@ class SiteView(QWidget):
                                   self._draw_poly(p, poly, fill, pen)))
         return items
 
+    def hidden_obstacles(self) -> frozenset:
+        """Furniture the phone's-eye camera is in or right next to (indices): not drawn, so a route drawn over a
+        wardrobe does not fill the view with its inside."""
+        if not self.pov:
+            return frozenset()
+        e = self._frame().eye
+        m = 0.3
+        return frozenset(i for i, o in enumerate(self.site.obstacles)
+                         if o.x - m <= e[0] <= o.x + o.w + m and o.y - m <= e[1] <= o.y + o.d + m
+                         and o.z0 - m <= e[2] <= o.z0 + o.h + m)
+
     def _obstacle_items(self, fr: Frame, tk) -> list[tuple]:
         """Software renderer: the visible faces of every obstacle box, shaded by which way they face."""
         items = []
         base = QColor(OBSTACLE_COLOR).lighter(125)
         pen = QPen(QColor(INK), 1.0)
-        for o in self.site.obstacles:
+        hidden = self.hidden_obstacles()
+        for i_, o in enumerate(self.site.obstacles):
+            if i_ in hidden:
+                continue
             x0, y0, x1, y1, h = o.x, o.y, o.x + o.w, o.y + o.d, o.h
             faces = [([(x0, y0, h), (x1, y0, h), (x1, y1, h), (x0, y1, h)], 100, (0, 0, 1)),
                      ([(x0, y0, 0), (x1, y0, 0), (x1, y0, h), (x0, y0, h)], 118, (0, -1, 0)),
@@ -815,6 +1012,18 @@ class SiteView(QWidget):
                 p.setBrush(stem)
                 p.drawPolygon(ring)
         r = self.ap_radius(fr, ap)
+        ems = self.ap_emitters(idx)
+        if ap.neighbour:                                     # someone else's network: grey, dashed, no beacon
+            p.setPen(QPen(tk.N(9), 1.6, Qt.DashLine))
+            p.setBrush(T.alpha(tk.card, 0.85))
+            p.drawEllipse(top, r, r)
+            g = r * 1.15
+            draw_glyph(p, QRectF(top.x() - g / 2, top.y() - g / 2, g, g), "ap", QColor(tk.muted))
+            chans = " · ".join(f"ch {e.channel}" for e in ems)
+            text = f"{ap.name} · neighbours'" + (f" · {chans}" if chans and sel else "") + ("" if ap.enabled else " · off")
+            T.draw_pill(p, QPointF(top.x(), top.y() - r - 12), text, tk, text_color=tk.muted, bold=sel,
+                        border=tk.accent_ring if sel else None)
+            return
         if ap.enabled and self.drift:                        # the beacon: a flash as each wave leaves
             from .site3d_gl import WAVE_SPACING, WAVE_SPEED
             b = wa.beacon(self._clock.elapsed() / 1000.0, WAVE_SPACING / WAVE_SPEED)
@@ -835,9 +1044,18 @@ class SiteView(QWidget):
                    QColor(tk.ink if ap.enabled else tk.muted))
         text = ap.name if ap.enabled else f"{ap.name} · off"
         if sel:
-            text += f" · {ws.BAND_TITLES[ap.band]} · {ap.tx_dbm:g} dBm"
+            text += "".join(f" · {ws.BAND_TITLES[e.band]} ch {e.channel}/{e.width} {e.tx_dbm:g} dBm" for e in ems)
+        elif self.band is not None or self.map_kind != "signal":
+            text += "".join(f" · {e.channel}" for e in ems if self.band is None or e.band == self.band)
         T.draw_pill(p, QPointF(top.x(), top.y() - r - 12), text, tk, text_color=tk.ink, bold=sel,
                     border=tk.accent_ring if sel else None)
+
+    def ap_emitters(self, idx: int) -> list:
+        """The radios of access point ``idx`` with their channels worked out (switched-off ones included)."""
+        if getattr(self, "_em_rev", None) != self._rev:
+            self._em_rev = self._rev
+            self._ems = self.site.emitters(own=True, neighbours=True, every=True)
+        return [e for e in self._ems if e.index == idx]
 
     def _paint_sorted(self, p: QPainter, fr: Frame, tk, solids: bool) -> None:
         """Access points, and for the software renderer (``solids``) also walls, doors and obstacles, far to
@@ -866,12 +1084,13 @@ class SiteView(QWidget):
         ph = self.phone()
         if ph is None:
             return
-        _v, ap = self.site.best(ph, self._walls)
+        _v, ap = self.site.best(ph, self._walls, self.band)
         if ap is None:
             return
-        key = (id(ap), ap.x, ap.y, ap.z, ap.tx_dbm, ap.band, round(ph[0], 2), round(ph[1], 2), ph[2], self._rev)
+        key = (ap, round(ph[0], 2), round(ph[1], 2), ph[2], self._rev)
         if key != self._flow_key:
-            self._flow_key, self._flow = key, wa.Flow(self.site, ap, ph, self._walls)
+            rd = wi.reading(self.site, ph, ap.band, self._walls)
+            self._flow_key, self._flow = key, wa.Flow(self.site, ap, ph, self._walls, rd.interference)
         p.setPen(Qt.NoPen)
         for pk in self._flow.packets(now):
             sp = fr.proj((pk.x, pk.y, pk.z))
@@ -904,6 +1123,14 @@ class SiteView(QWidget):
         floor = [fr.proj((x, y, 0.03)) for x, y in pts]
         if self.walk_drawing and self._hover is not None and pts:
             floor.append(fr.proj((self._hover[0], self._hover[1], 0.03)))
+        if self.walk_drawing and self._hover is not None and self._hover_z > 0.05:
+            # the pointer is on a table or a shelf: the route goes on the floor right under it
+            top, foot = fr.proj((self._hover[0], self._hover[1], self._hover_z)), fr.proj((*self._hover, 0.03))
+            if top is not None and foot is not None:
+                p.setPen(QPen(T.alpha(ink, 0.8), 1.2, Qt.DotLine))
+                p.drawLine(top, foot)
+                p.setBrush(Qt.NoBrush)
+                p.drawEllipse(foot, 5.0, 5.0)
         pen = QPen(T.alpha(ink, 0.75), 1.6, Qt.DashLine)
         p.setPen(pen)
         for a, b in zip(floor, floor[1:]):
@@ -924,11 +1151,14 @@ class SiteView(QWidget):
             for sm in wa.roams(done):
                 sp = fr.proj((sm.x, sm.y, 0.03))
                 if sp is not None:
-                    T.draw_pill(p, QPointF(sp.x(), sp.y() - 16), f"Roams to {sm.ap}", tk, text_color=tk.ink,
+                    T.draw_pill(p, QPointF(sp.x(), sp.y() - 16), wa.roam_text(done, sm), tk, text_color=tk.ink,
                                 border=tk.accent_ring)
         p.setPen(QPen(tk.card, 1.5))
         p.setBrush(ink)
-        for sp in floor[:len(pts)]:
+        ends = floor[:len(pts)]
+        if len(ends) > 12:                             # a hand-drawn route: only where it starts and ends
+            ends = [ends[0], ends[-1]]
+        for sp in ends:
             if sp is not None:
                 p.drawEllipse(sp, 3.5, 3.5)
 
@@ -941,7 +1171,8 @@ class SiteView(QWidget):
         top, foot = fr.proj((x, y, z)), fr.proj((x, y, 0.03))
         if top is None:
             return
-        v, ap = self.site.best((x, y, z), self._walls)
+        rd = self.phone_reading((x, y, z))
+        v, ap = rd.signal, rd.serving
         if foot is not None:
             p.setPen(QPen(T.alpha(QColor(INK), 0.7), 1.0, Qt.DashLine))
             p.drawLine(foot, top)
@@ -952,8 +1183,247 @@ class SiteView(QWidget):
         p.setPen(Qt.NoPen)
         p.setBrush(ramp_color(self.ramp, v) if ap is not None else tk.N(6))
         p.drawRoundedRect(body.adjusted(2.0, 3.0, -2.0, -4.0), 1.5, 1.5)
-        text = f"{fmt_dbm(v)} · {ap.name}" if ap is not None else "No signal"
+        text = f"{fmt_dbm(v)} · {ap.name} · ch {ap.channel}" if ap is not None else "No signal"
         T.draw_pill(p, QPointF(top.x(), top.y() - 24), text, tk, text_color=tk.ink, bold=True)
+
+    # ---------------------------------------------------------------- the phone's screen
+    @staticmethod
+    def wifi_bars(dbm: float) -> int:
+        """0..4 bars, the way phones show Wi-Fi."""
+        return sum(dbm >= t for t in (-82.0, -75.0, -67.0, -55.0))
+
+    def phone_screen_rect(self) -> QRectF | None:
+        """Where the phone is drawn on the view (bottom right; held up from the bottom edge in the phone's-eye
+        view), or None when no walk is under way or the view is too small."""
+        if self.on_walk() is None or self.walk_drawing:
+            return None
+        h = min(380.0 if self.pov else 330.0, self.height() * (0.66 if self.pov else 0.5))
+        w = h * 0.5
+        if h < 200 or self.width() < w + 340:
+            return None
+        if self.pov:
+            return QRectF(self.width() - w - 40, self.height() - h * 0.94, w, h)
+        return QRectF(self.width() - w - 16, self.height() - h - 34, w, h)
+
+    def _paint_phone_screen(self, p: QPainter, tk) -> None:
+        """A phone in the hand: the Wi-Fi screen of the walking phone with the access point it is on, the band,
+        the channel, the signal, SINR and speed, a graph of the signal along the route and the other radios it
+        hears."""
+        r = self.phone_screen_rect()
+        if r is None:
+            return
+        x, y, z = self.on_walk()
+        rd = self.phone_reading((x, y, z))
+        ap, v = rd.serving, rd.signal
+        k = r.height() / 380.0                         # everything scales with the phone
+        p.save()
+        p.setRenderHint(QPainter.Antialiasing)
+        if self.pov:                                    # a slight tilt, as it sits in a hand
+            p.translate(r.center())
+            p.rotate(-4.0)
+            p.translate(-r.center())
+        # body, screen, camera hole
+        p.setPen(Qt.NoPen)
+        p.setBrush(QColor(0, 0, 0, 70))
+        p.drawRoundedRect(r.translated(4 * k, 6 * k), 26 * k, 26 * k)
+        p.setPen(QPen(QColor("#3a3d44"), 2.0 * k))
+        p.setBrush(QColor("#16181c"))
+        p.drawRoundedRect(r, 26 * k, 26 * k)
+        scr = r.adjusted(7 * k, 7 * k, -7 * k, -7 * k)
+        dark = tk.dark
+        bg, ink, muted = ((QColor("#0e1014"), QColor("#f2f4f7"), QColor("#9aa1ac")) if dark else
+                          (QColor("#f4f5f8"), QColor("#14171c"), QColor("#6b7280")))
+        card = QColor("#1b1f26") if dark else QColor("#ffffff")
+        p.setPen(Qt.NoPen)
+        p.setBrush(bg)
+        p.drawRoundedRect(scr, 20 * k, 20 * k)
+        p.setBrush(QColor("#000000"))
+        p.drawEllipse(QPointF(scr.center().x(), scr.top() + 11 * k), 4.5 * k, 4.5 * k)
+        p.setClipRect(scr)
+
+        def font(px: float, weight: int = 500, tab: bool = False) -> QFont:
+            f = QFont(T.tabular("body") if tab else T.type("body"))
+            f.setPixelSize(max(6, int(round(px * k))))
+            f.setWeight(QFont.Weight(weight))
+            return f
+
+        pad = 12 * k
+        cx0, cw = scr.left() + pad, scr.width() - 2 * pad
+        col = ramp_color(self.ramp, v) if ap is not None else muted
+        # status bar: clock, Wi-Fi fan, battery
+        top = scr.top() + 4 * k
+        p.setFont(font(10.5, 600, True))
+        p.setPen(ink)
+        p.drawText(QRectF(cx0 + 4 * k, top, 50 * k, 16 * k), Qt.AlignLeft | Qt.AlignVCenter,
+                   QTime.currentTime().toString("HH:mm"))
+        bars = self.wifi_bars(v) if ap is not None else 0
+        self._wifi_fan(p, QPointF(scr.right() - 46 * k, top + 13 * k), 10 * k, bars, ink, muted)
+        bat = QRectF(scr.right() - 32 * k, top + 4 * k, 18 * k, 9 * k)
+        p.setPen(QPen(ink, 1.0 * k))
+        p.setBrush(Qt.NoBrush)
+        p.drawRoundedRect(bat, 2 * k, 2 * k)
+        p.setPen(Qt.NoPen)
+        p.setBrush(ink)
+        p.drawRoundedRect(bat.adjusted(1.6 * k, 1.6 * k, -6 * k, -1.6 * k), 1 * k, 1 * k)
+        yy = top + 26 * k
+        p.setFont(font(17, 700))
+        p.setPen(ink)
+        p.drawText(QRectF(cx0, yy, cw, 22 * k), Qt.AlignLeft | Qt.AlignVCenter, "Wi-Fi")
+        yy += 28 * k
+        # the network it is on
+        c = QRectF(cx0, yy, cw, 96 * k)
+        p.setPen(Qt.NoPen)
+        p.setBrush(card)
+        p.drawRoundedRect(c, 12 * k, 12 * k)
+        ci = c.adjusted(10 * k, 8 * k, -10 * k, -8 * k)
+        if ap is None:
+            p.setFont(font(13, 600))
+            p.setPen(muted)
+            p.drawText(ci, Qt.AlignCenter, "No Wi-Fi here\nSearching…")
+        else:
+            self._wifi_fan(p, QPointF(ci.right() - 10 * k, ci.top() + 17 * k), 10 * k, bars, col, muted)
+            p.setFont(font(14.5, 700))
+            p.setPen(ink)
+            p.drawText(QRectF(ci.left(), ci.top(), ci.width() - 26 * k, 20 * k), Qt.AlignLeft | Qt.AlignVCenter,
+                       T.fm(p.font()).elidedText(ap.name, Qt.ElideRight, ci.width() - 26 * k))
+            p.setFont(font(10.5, 500))
+            p.setPen(QColor("#2fb36b"))
+            p.drawText(QRectF(ci.left(), ci.top() + 20 * k, ci.width(), 15 * k), Qt.AlignLeft | Qt.AlignVCenter,
+                       "Connected" + (f" · {ws.BAND_TITLES[ap.band]}" if ap.band else ""))
+            p.setPen(muted)
+            p.drawText(QRectF(ci.left(), ci.top() + 36 * k, ci.width(), 15 * k), Qt.AlignLeft | Qt.AlignVCenter,
+                       T.fm(p.font()).elidedText(f"Channel {wc.channel_title(ap.band, ap.channel, ap.width)}",
+                                                 Qt.ElideRight, ci.width()))
+            big = font(22, 700, True)
+            text = fmt_dbm(v)
+            while T.fm(big).horizontalAdvance(text) > ci.width() * 0.62 and big.pixelSize() > 8:
+                big.setPixelSize(big.pixelSize() - 1)
+            p.setFont(big)
+            p.setPen(col)
+            tw = T.fm(big).horizontalAdvance(text)
+            p.drawText(QRectF(ci.left(), ci.top() + 52 * k, tw + 2, 28 * k), Qt.AlignLeft | Qt.AlignVCenter, text)
+            p.setFont(font(10.5, 600))
+            p.setPen(ink)
+            room = ci.width() - tw - 8 * k
+            if room > 24 * k:
+                p.drawText(QRectF(ci.right() - room, ci.top() + 52 * k, room, 28 * k), Qt.AlignRight | Qt.AlignVCenter,
+                           T.fm(p.font()).elidedText(ws.band_title(v), Qt.ElideRight, room))
+        yy = c.bottom() + 8 * k
+        # SINR and speed
+        rows = []
+        if ap is not None:
+            lk = wl.link(self.site, v, ap, rd.interference)
+            rows.append(("SINR", f"{rd.sinr:.0f} dB · {wm.SINR.class_name(rd.sinr)}"))
+            if lk is not None:
+                rows.append(("Speed", lk.speed_text()))
+            others = len(rd.sharing)
+            rows.append(("Channel", "to itself" if not others else f"shared with {others}"))
+        p.setFont(font(10.5, 500))
+        for name, val in rows:
+            p.setPen(muted)
+            p.drawText(QRectF(cx0 + 2 * k, yy, cw * 0.32, 16 * k), Qt.AlignLeft | Qt.AlignVCenter, name)
+            p.setPen(ink)
+            p.drawText(QRectF(cx0 + cw * 0.3, yy, cw * 0.7 - 2 * k, 16 * k), Qt.AlignRight | Qt.AlignVCenter,
+                       T.fm(p.font()).elidedText(val, Qt.ElideRight, cw * 0.7 - 2 * k))
+            yy += 17 * k
+        yy += 4 * k
+        # the signal along the route so far
+        g = QRectF(cx0, yy, cw, 62 * k)
+        p.setPen(Qt.NoPen)
+        p.setBrush(card)
+        p.drawRoundedRect(g, 10 * k, 10 * k)
+        p.setFont(font(9, 600))
+        p.setPen(muted)
+        p.drawText(QRectF(g.left() + 8 * k, g.top() + 3 * k, g.width(), 13 * k), Qt.AlignLeft | Qt.AlignVCenter,
+                   "Signal along the route")
+        gp = g.adjusted(8 * k, 18 * k, -8 * k, -6 * k)
+        samples = [sm for sm in self.walk_samples() if sm.dist <= self.walk_dist + 1e-6]
+        span = 15.0                                     # metres shown
+        lo_d = max(0.0, self.walk_dist - span)
+        samples = [sm for sm in samples if sm.dist >= lo_d]
+
+        def gpt(sm) -> QPointF:
+            fx = (sm.dist - lo_d) / span
+            fy = (ws.clamp(sm.dbm, -95.0, -30.0) + 95.0) / 65.0
+            return QPointF(gp.left() + fx * gp.width(), gp.bottom() - fy * gp.height())
+        p.setPen(QPen(T.alpha(muted, 0.35), 1.0 * k, Qt.DashLine))
+        for lvl in (-67.0, -82.0):
+            yl = gp.bottom() - (lvl + 95.0) / 65.0 * gp.height()
+            p.drawLine(QPointF(gp.left(), yl), QPointF(gp.right(), yl))
+        for a, b in zip(samples, samples[1:]):
+            p.setPen(QPen(ramp_color(self.ramp, b.dbm) if b.ap else muted, 2.2 * k, Qt.SolidLine, Qt.RoundCap))
+            p.drawLine(gpt(a), gpt(b))
+        p.setPen(QPen(T.alpha(ink, 0.6), 1.0 * k, Qt.DotLine))
+        for sm in wa.roams(samples):
+            q = gpt(sm)
+            p.drawLine(QPointF(q.x(), gp.top()), QPointF(q.x(), gp.bottom()))
+        yy = g.bottom() + 8 * k
+        # the other radios it hears
+        p.setFont(font(9, 600))
+        p.setPen(muted)
+        p.drawText(QRectF(cx0 + 2 * k, yy, cw, 13 * k), Qt.AlignLeft | Qt.AlignVCenter, "OTHER NETWORKS")
+        yy += 15 * k
+        p.setFont(font(10, 500))
+        heard = [(e, d) for e, d in self.phone_heard((x, y, z)) if e != ap and d > -95.0][:4]
+        if not heard:
+            p.setPen(muted)
+            p.drawText(QRectF(cx0 + 2 * k, yy, cw, 15 * k), Qt.AlignLeft | Qt.AlignVCenter, "None in range")
+        for e, d in heard:
+            if yy + 15 * k > scr.bottom() - 14 * k:
+                break
+            self._wifi_fan(p, QPointF(cx0 + 8 * k, yy + 12 * k), 6.5 * k, self.wifi_bars(d),
+                           muted if e.neighbour else ink, T.alpha(muted, 0.4))
+            p.setPen(muted if e.neighbour else ink)
+            name = e.name + (" (neighbour)" if e.neighbour else "")
+            right = f"ch {e.channel} · {d:.0f}"
+            rw = T.fm(p.font()).horizontalAdvance(right) + 4 * k
+            badge = QRectF(cx0 + 18 * k, yy + 2.5 * k, 19 * k, 10 * k)     # the band, as a small tag
+            p.save()
+            p.setPen(QPen(muted, 0.8 * k))
+            p.setBrush(Qt.NoBrush)
+            p.drawRoundedRect(badge, 3 * k, 3 * k)
+            p.setFont(font(7.5, 700))
+            p.drawText(badge, Qt.AlignCenter, e.band)
+            p.restore()
+            nx = badge.right() + 4 * k
+            p.setPen(muted if e.neighbour else ink)
+            p.drawText(QRectF(nx, yy, cx0 + cw - rw - nx, 15 * k), Qt.AlignLeft | Qt.AlignVCenter,
+                       T.fm(p.font()).elidedText(name, Qt.ElideRight, cx0 + cw - rw - nx - 2 * k))
+            p.setPen(muted)
+            p.drawText(QRectF(cx0 + cw - rw, yy, rw - 2 * k, 15 * k), Qt.AlignRight | Qt.AlignVCenter, right)
+            yy += 16 * k
+        # a roam just happened: a banner on top
+        recent = [sm for sm in wa.roams(samples) if self.walk_dist - sm.dist < 2.5]
+        if recent:
+            sm = recent[-1]
+            b = QRectF(scr.left() + 8 * k, scr.top() + 24 * k, scr.width() - 16 * k, 30 * k)
+            p.setPen(Qt.NoPen)
+            p.setBrush(T.alpha(tk.accent_ring, 0.95))
+            p.drawRoundedRect(b, 10 * k, 10 * k)
+            p.setFont(font(10.5, 700))
+            p.setPen(QColor("#ffffff"))
+            msg = wa.roam_text(samples, sm)
+            p.drawText(b, Qt.AlignCenter, T.fm(p.font()).elidedText(msg, Qt.ElideRight, b.width() - 12 * k))
+        # home bar
+        p.setClipping(False)
+        p.setPen(Qt.NoPen)
+        p.setBrush(T.alpha(ink, 0.5))
+        p.drawRoundedRect(QRectF(scr.center().x() - 30 * k, scr.bottom() - 8 * k, 60 * k, 3.5 * k), 2 * k, 2 * k)
+        p.restore()
+
+    @staticmethod
+    def _wifi_fan(p: QPainter, at: QPointF, size: float, bars: int, on: QColor, off: QColor) -> None:
+        """The Wi-Fi symbol: a dot and three arcs, lit up to ``bars`` (0..4)."""
+        p.save()
+        p.setBrush(Qt.NoBrush)
+        for i in range(3, 0, -1):
+            rr = size * i / 3.0
+            p.setPen(QPen(on if bars > i else off, max(1.2, size * 0.2), Qt.SolidLine, Qt.RoundCap))
+            p.drawArc(QRectF(at.x() - rr, at.y() - rr, 2 * rr, 2 * rr), 45 * 16, 90 * 16)
+        p.setPen(Qt.NoPen)
+        p.setBrush(on if bars > 0 else off)
+        p.drawEllipse(at, size * 0.14, size * 0.14)
+        p.restore()
 
     def _paint_hover(self, p: QPainter, fr: Frame, tk) -> None:
         """The reading under the pointer: the straight path from the serving access point, everything it
@@ -963,7 +1433,12 @@ class SiteView(QWidget):
         s = self.site
         x, y = self._hover
         pt = (x, y, s.slice_z)
-        v, ap = s.best(pt, self._walls)
+        if self.map_kind in ("sinr", "sharing"):
+            rd = wi.best_reading(s, pt, self.band, self._walls)       # the band a phone would pick here
+            v, ap = rd.signal, rd.serving
+        else:
+            v, ap = s.best(pt, self._walls, self.band)
+            rd = wi.reading(s, pt, ap.band, self._walls) if ap is not None else None
         floor_pt, at = fr.proj((x, y, 0.0)), fr.proj(pt)
         if at is None or floor_pt is None:
             return
@@ -988,20 +1463,30 @@ class SiteView(QWidget):
         p.setBrush(tk.ink)
         p.drawEllipse(at, 3.5, 3.5)
         if ap is None:
-            text = "No access point is transmitting"
+            text = "No access point is transmitting" + (f" on {ws.BAND_TITLES[self.band]}" if self.band else "")
         else:
             dist = math.dist((ap.x, ap.y, ap.z), pt)
-            text = f"{fmt_dbm(v)} · {ws.band_title(v)} · from {ap.name}, {dist:.1f} m"
-        w = T.pill_width(text, pt=8.5, bold=True, height=20.0, pad=8.0)
-        cx = ws.clamp(self._hover_pos.x() + 14 + w / 2, w / 2 + 6, self.width() - w / 2 - 6)
-        cy = ws.clamp(self._hover_pos.y() + 22, 16, self.height() - 40)
-        T.draw_pill(p, QPointF(cx, cy), text, tk, text_color=tk.ink, pt=8.5, bold=True, height=20.0, pad=8.0)
-        lk = wl.link(s, v, ap)
+            text = (f"{fmt_dbm(v)} · {ws.band_title(v)} · from {ap.name}, {dist:.1f} m · "
+                    f"{ws.BAND_TITLES[ap.band]} ch {ap.channel}")
+        lines = [text]
+        lk = wl.link(s, v, ap, rd.interference if rd is not None else None)
         if lk is not None:
-            more = self.link_text(lk)
-            w2 = T.pill_width(more, pt=8.0, height=18.0, pad=8.0)
-            cx2 = ws.clamp(self._hover_pos.x() + 14 + w2 / 2, w2 / 2 + 6, self.width() - w2 / 2 - 6)
-            T.draw_pill(p, QPointF(cx2, cy + 21), more, tk, text_color=tk.ink, pt=8.0, height=18.0, pad=8.0)
+            lines.append(self.link_text(lk))
+        if rd is not None and rd.serving is not None and len(rd.heard) > 1:
+            lines.append(f"SINR {rd.sinr:.0f} dB ({wm.SINR.class_name(rd.sinr)}) · {rd.sharing_text()}")
+        if self.map_kind == "channel" and self.map_channel:
+            b, ch = self.map_channel
+            lvl = wi.channel_level(s, pt, b, ch, 20, self._walls)
+            lines.append(f"{ws.BAND_TITLES[b]} channel {ch} here: "
+                         + ("silent" if lvl <= ws.NO_SIGNAL else f"{fmt_dbm(lvl)} · {wm.CHANNEL.class_name(lvl)}"))
+        cy = ws.clamp(self._hover_pos.y() + 22, 16, self.height() - 20 - 21 * len(lines))
+        for k, line in enumerate(lines):
+            first = k == 0
+            pt_, hh = (8.5, 20.0) if first else (8.0, 18.0)
+            w = T.pill_width(line, pt=pt_, bold=first, height=hh, pad=8.0)
+            cx = ws.clamp(self._hover_pos.x() + 14 + w / 2, w / 2 + 6, self.width() - w / 2 - 6)
+            T.draw_pill(p, QPointF(cx, cy + 21 * k), line, tk, text_color=tk.ink, pt=pt_, bold=first, height=hh,
+                        pad=8.0)
 
     @staticmethod
     def link_text(lk) -> str:
@@ -1012,15 +1497,24 @@ class SiteView(QWidget):
         return f"SNR {lk.snr_db:.0f} dB · {lk.speed_text()} · {up} · ±{lk.spread_db:g} dB"
 
     def legend_rect(self) -> QRectF:
-        h = 62 + 20 * (len(ws.SIGNAL_BANDS) + 1) + 30
+        h = 62 + 20 * len(self.scale.rows()) + 30
         return QRectF(12, self.height() - h - 34, 286, h)      # bottom left: the corner the room leaves free
 
+    def legend_subtitle(self) -> str:
+        band = f"{ws.BAND_TITLES[self.band]}, " if self.band else ""
+        at = f"{self.site.slice_z:g} m above the floor"
+        if self.map_kind == "channel" and self.map_channel:
+            b, ch = self.map_channel
+            return f"{ws.BAND_TITLES[b]} channel {ch}: every radio's power, {at}"
+        return f"{wm.SUBTITLES.get(self.map_kind, '')}, {band}{at}"
+
     def _paint_legend(self, p: QPainter, tk) -> None:
-        """The key, on the picture itself: a colour bar, the bands with their share of the floor, and what
+        """The key, on the picture itself: a colour bar, the classes with their share of the floor, and what
         kind of number this is."""
         r = self.legend_rect()
         if self.width() < r.width() + 160 or self.height() < r.height() + 60:
             return
+        sc = self.scale
         p.save()
         p.setPen(QPen(tk.card_border, 1.0))
         p.setBrush(T.alpha(tk.card, 0.94))
@@ -1028,20 +1522,22 @@ class SiteView(QWidget):
         x, y, w = r.left() + 12, r.top() + 10, r.width() - 24
         p.setPen(tk.ink)
         p.setFont(T.type("label"))
-        p.drawText(QRectF(x, y, w, 18), Qt.AlignLeft | Qt.AlignVCenter, "Wi-Fi signal strength")
+        p.drawText(QRectF(x, y, w, 18), Qt.AlignLeft | Qt.AlignVCenter, sc.title)
         p.setFont(T.type("caption", weight=500))
         p.setPen(tk.muted)
+        sub = self.legend_subtitle()
         p.drawText(QRectF(x, y + 18, w, 16), Qt.AlignLeft | Qt.AlignVCenter,
-                   f"Strongest access point, {self.site.slice_z:g} m above the floor")
+                   T.fm(T.type("caption", weight=500)).elidedText(sub, Qt.ElideRight, w))
         bar = QRectF(x, y + 40, w, 9)
         p.setRenderHint(QPainter.SmoothPixmapTransform)
         p.drawImage(bar, ramp_image(self.ramp))
         p.setPen(QPen(tk.card_border, 1.0))
         p.setBrush(Qt.NoBrush)
         p.drawRect(bar)
-        cols = band_colors(self.ramp) + [tk.N(3)]
-        rows = [(t, f"{fmt_dbm(f)} or better") for f, t, _u in ws.SIGNAL_BANDS]
-        rows.append((ws.NO_SERVICE, f"below {fmt_dbm(ws.SIGNAL_BANDS[-1][0])}"))
+        rows = sc.rows()
+        cols = [ramp_color(self.ramp, sc.swatch(i)) for i in range(len(sc.classes))]
+        if sc.none_row:
+            cols.append(tk.N(3))
         f_name, f_num = T.type("caption"), T.tabular("caption")
         ry = bar.bottom() + 8
         for i, (name, limit) in enumerate(rows):
@@ -1053,26 +1549,37 @@ class SiteView(QWidget):
             p.drawText(QRectF(x + 20, ry, 76, 20), Qt.AlignLeft | Qt.AlignVCenter, name)
             p.setFont(f_num)
             p.setPen(tk.muted)
-            p.drawText(QRectF(x + 96, ry, 118, 20), Qt.AlignLeft | Qt.AlignVCenter, limit)
+            p.drawText(QRectF(x + 96, ry, 128, 20), Qt.AlignLeft | Qt.AlignVCenter,
+                       T.fm(f_num).elidedText(limit, Qt.ElideRight, 128))
             p.setPen(tk.ink)
-            share = self.shares[i]
+            share = self.shares[i] if i < len(self.shares) else 0.0
             p.drawText(QRectF(x + w - 46, ry, 46, 20), Qt.AlignRight | Qt.AlignVCenter,
                        "< 1 %" if 0 < share < 0.5 else f"{share:.0f} %")
             ry += 20
         p.setFont(T.type("caption", weight=500))
         p.setPen(tk.muted)
-        p.drawText(QRectF(x, ry + 2, w, 30), Qt.AlignLeft | Qt.TextWordWrap,
-                   f"% = share of the {'indoor ' if self.site.outside_rects() else ''}floor. Predicted "
-                   f"±{ws.UNCERTAINTY_DB.get(self.site.clutter, 5.0):g} dB from distance, walls and obstacles: "
-                   "an estimate, not a site survey.")
+        floor = f"% = share of the {'indoor ' if self.site.outside_rects() else ''}floor"
+        if self.map_kind == "signal":
+            foot = (f"{floor}. Predicted ±{ws.UNCERTAINTY_DB.get(self.site.clutter, 5.0):g} dB from distance, walls "
+                    "and obstacles: an estimate, not a site survey.")
+        else:
+            foot = (f"{floor}{' with service' if self.map_kind == 'sharing' else ''}. Every radio counted as sending "
+                    "at once: the busy hour.")
+        p.drawText(QRectF(x, ry + 2, w, 30), Qt.AlignLeft | Qt.TextWordWrap, foot)
         p.restore()
 
     def _paint_hud(self, p: QPainter, tk) -> None:
         f = T.type("caption", weight=500)
         p.setFont(f)
         p.setPen(tk.muted)
-        hint = "Drag: orbit · Wheel: zoom · Right-drag: pan · Drag an access point to move it · " \
-               "Double-click: fit"
+        if self.pov:
+            hint = "Phone's-eye view · Drag: look around · Wheel: field of view · Double-click: look ahead"
+        elif self.walk_drawing:
+            hint = "Hold the button and draw the route, or click points · let go, Enter or right-click: done · " \
+                   "Esc: cancel"
+        else:
+            hint = "Drag: orbit · Wheel: zoom · Right-drag: pan · Drag an access point to move it · " \
+                   "Double-click: fit"
         if self._gl is None and self._gl_tried and self._want_gl:
             hint = f"No waves or fog in the air: no usable graphics card ({self.gl_reason}). " + hint
         p.drawText(QRectF(10, self.height() - 24, self.width() - 20, 18), Qt.AlignLeft | Qt.AlignVCenter,
@@ -1081,7 +1588,7 @@ class SiteView(QWidget):
         if note:
             p.drawText(QRectF(10, 8, self.width() - 20, 18), Qt.AlignRight | Qt.AlignVCenter,
                        T.fm(f).elidedText(note, Qt.ElideLeft, self.width() - 20))
-        if not any(a.enabled for a in self.site.aps):
+        if not any(a.enabled and not a.neighbour for a in self.site.aps):
             p.setFont(T.type("label"))
             p.drawText(QRectF(0, 10, self.width(), 24), Qt.AlignCenter,
                        "No access point is transmitting – add one in the panel")
@@ -1107,17 +1614,50 @@ class SiteView(QWidget):
         self.selected_wall = idx
         self.update()
 
+    def pick(self, pos: QPointF) -> tuple | None:
+        """What the pointer is on: (x, y, z) of the first furniture top or side, or of the floor, the view ray
+        meets inside the room; None off the floor."""
+        fr = self._frame()
+        e, d = fr.eye, fr.ray(pos.x(), pos.y())
+        s = self.site
+        best = math.inf
+        for o in s.obstacles:
+            lo, hi = (o.x, o.y, o.z0), (o.x + o.w, o.y + o.d, o.z0 + o.h)
+            t0, t1 = 0.0, math.inf
+            for i in range(3):
+                if abs(d[i]) < 1e-12:
+                    if not lo[i] <= e[i] <= hi[i]:
+                        t0 = math.inf
+                        break
+                    continue
+                a, b = (lo[i] - e[i]) / d[i], (hi[i] - e[i]) / d[i]
+                t0, t1 = max(t0, min(a, b)), min(t1, max(a, b))
+            if t0 <= t1 and 0.0 < t0 < best:
+                best = t0
+        hit = fr.on_plane(pos.x(), pos.y(), 0.0)
+        if hit is not None and math.dist(e, hit) < best:
+            best = math.dist(e, hit)
+        if not math.isfinite(best):
+            return None
+        x, y, z = (e[i] + d[i] * best for i in range(3))
+        if not (0 <= x <= s.width and 0 <= y <= s.depth):
+            return None
+        return (x, y, max(0.0, z))
+
     def mousePressEvent(self, ev):
         pos = ev.position()
         if self.walk_drawing:
             if ev.button() == Qt.LeftButton:
-                hit = self._frame().on_plane(pos.x(), pos.y(), 0.0)
-                s = self.site
-                if hit is not None and 0 <= hit[0] <= s.width and 0 <= hit[1] <= s.depth:
-                    self.walk_path.append((hit[0], hit[1]))
-                    self.walk_changed.emit()
+                hit = self.pick(pos)
+                self._stroke = len(self.walk_path)
+                if hit is not None:
+                    self.add_route_point(hit[0], hit[1])
             elif ev.button() == Qt.RightButton:
                 self.finish_drawing_walk()
+            self.update()
+            return
+        if self.pov and ev.button() in (Qt.LeftButton, Qt.RightButton, Qt.MiddleButton):
+            self._drag = ("look", pos)
             self.update()
             return
         if ev.button() == Qt.LeftButton:
@@ -1136,13 +1676,22 @@ class SiteView(QWidget):
         pos = ev.position()
         if self._drag is None:
             self._set_hover(pos)
+            if self.walk_drawing and self._stroke is not None and ev.buttons() & Qt.LeftButton \
+                    and self._hover is not None:
+                if self.add_route_point(*self._hover, min_step=STROKE_STEP):   # drawing the route freehand
+                    self.update()
             if not self.walk_drawing:
                 self.setCursor(Qt.PointingHandCursor if self.ap_at(pos) >= 0 else Qt.ArrowCursor)
             return
         mode, last = self._drag
         dx, dy = pos.x() - last.x(), pos.y() - last.y()
         cam = self.cam
-        if mode == "orbit":
+        if mode == "look":
+            lk = self._pov_look
+            lk[0] = (lk[0] + dx * 0.006 + math.pi) % (2 * math.pi) - math.pi
+            lk[1] = ws.clamp(lk[1] + dy * 0.006, math.radians(-40), math.radians(70))
+            self._apply_pov(0.0)
+        elif mode == "orbit":
             cam.yaw -= dx * 0.008
             cam.pitch = ws.clamp(cam.pitch + dy * 0.008, math.radians(6), math.radians(88))
         elif mode == "pan":
@@ -1163,13 +1712,23 @@ class SiteView(QWidget):
         self._drag = (mode, pos)
         self.update()
 
-    def mouseReleaseEvent(self, _ev):
+    def mouseReleaseEvent(self, ev):
+        if self.walk_drawing and self._stroke is not None and ev.button() == Qt.LeftButton:
+            drawn = len(self.walk_path) - self._stroke
+            self._stroke = None
+            if drawn >= 4 and len(self.walk_path) >= 2:      # a line was drawn (not a click): that is the route
+                self.finish_drawing_walk()
         self._drag = None
         self.update()
 
     def mouseDoubleClickEvent(self, ev):
         if self.walk_drawing:
             self.finish_drawing_walk()
+            return
+        if self.pov:
+            self._pov_look = [0.0, math.radians(12.0)]
+            self._apply_pov(0.0)
+            self.update()
             return
         if self.ap_at(ev.position()) < 0:
             self.fit()
@@ -1185,6 +1744,11 @@ class SiteView(QWidget):
             super().keyPressEvent(ev)
 
     def wheelEvent(self, ev):
+        if self.pov:
+            self.cam.fov = ws.clamp(self.cam.fov * 0.93 ** (ev.angleDelta().y() / 120.0), math.radians(30),
+                                    math.radians(100))
+            self.update()
+            return
         s = self.site
         diag = math.sqrt(s.width ** 2 + s.depth ** 2 + s.height ** 2)
         self.cam.dist = ws.clamp(self.cam.dist * 0.9 ** (ev.angleDelta().y() / 120.0), 0.8, diag * 12)
@@ -1194,14 +1758,18 @@ class SiteView(QWidget):
         if self._hover is not None:
             self._hover = None
             self.update()
+            self.probe_changed.emit()
 
     def _set_hover(self, pos: QPointF) -> None:
-        hit = self._frame().on_plane(pos.x(), pos.y(), 0.0)
-        s = self.site
-        hover = (hit[0], hit[1]) if hit is not None and 0 <= hit[0] <= s.width and 0 <= hit[1] <= s.depth else None
+        hit = self.pick(pos)                        # on a table or a shelf: the floor under the spot clicked
+        hover = (hit[0], hit[1]) if hit is not None else None
+        self._hover_z = hit[2] if hit is not None else 0.0
         if hover != self._hover or hover is not None:
+            moved = hover != self._hover
             self._hover, self._hover_pos = hover, pos
             self.update()
+            if moved:
+                self.probe_changed.emit()
 
 
 # ============================================================================ window: view + panel
@@ -1248,16 +1816,28 @@ class SiteWindow(QWidget):
                            air=ui.get("air") if isinstance(ui.get("air"), str) else None,
                            glow=ui.get("glow") if isinstance(ui.get("glow"), (int, float)) else None)
         self.view.packets = bool(ui.get("packets", True))
+        mc = ui.get("map_channel")
+        self.view.band = ui.get("band") if ui.get("band") in ws.BANDS else None
+        self.view.map_kind = ui.get("map") if ui.get("map") in wm.METRICS else "signal"
+        if isinstance(mc, list) and len(mc) == 2 and mc[0] in ws.BANDS and mc[1] in wc.CHANNELS[mc[0]]:
+            self.view.map_channel = (mc[0], int(mc[1]))
+        self.view.site_changed()
         walk = ui.get("walk")
         if isinstance(walk, list):
             try:
-                self.view.set_walk_path([(float(a), float(b)) for a, b in walk][:200])
+                self.view.set_walk_path([(float(a), float(b)) for a, b in walk][:2000])
             except (TypeError, ValueError):
                 pass
         if isinstance(ui.get("walk_speed"), (int, float)) and 0.1 <= ui["walk_speed"] <= 50:
             self.view.walk_speed = float(ui["walk_speed"])
         self.view.edited.connect(self._view_edited)
         self.view.ap_picked.connect(self._ap_picked)
+        self._spec_timer = QTimer(self)
+        self._spec_timer.setSingleShot(True)
+        self._spec_timer.setInterval(40)
+        self._spec_timer.timeout.connect(self.update_spectrum)
+        self.view.probe_changed.connect(self._spec_timer.start)
+        self.view.map_changed.connect(self._map_changed)
         self._save_timer = QTimer(self)
         self._save_timer.setSingleShot(True)
         self._save_timer.setInterval(500)
@@ -1267,8 +1847,8 @@ class SiteWindow(QWidget):
         pv = QVBoxLayout(panel)
         pv.setContentsMargins(12, 12, 12, 12)
         pv.setSpacing(12)
-        for box in (self._room_box(), self._view_box(), self._walk_box(), self._space_box(), self._walls_box(),
-                    self._obstacles_box(), self._aps_box()):
+        for box in (self._room_box(), self._view_box(), self._channels_box(), self._walk_box(), self._space_box(),
+                    self._walls_box(), self._obstacles_box(), self._aps_box()):
             pv.addWidget(box)
         pv.addStretch(1)
         scroll = QScrollArea()
@@ -1288,7 +1868,9 @@ class SiteWindow(QWidget):
     def ui_state(self) -> dict:
         return {"heat": self.view.show_heat, "glow": self.view.glow, "ramp": self.view.ramp, "drift": self.view.drift,
                 "air": self.view.air, "packets": self.view.packets,
-                "walk": [[round(x, 3), round(y, 3)] for x, y in self.view.walk_path], "walk_speed": self.view.walk_speed}
+                "walk": [[round(x, 3), round(y, 3)] for x, y in self.view.walk_path], "walk_speed": self.view.walk_speed,
+                "band": self.view.band, "map": self.view.map_kind,
+                "map_channel": list(self.view.map_channel) if self.view.map_channel else None}
 
     # ---------------------------------------------------------------- panel sections
     def _packets_toggled(self, on: bool) -> None:
@@ -1300,9 +1882,10 @@ class SiteWindow(QWidget):
         box = QGroupBox("Phone walk")
         v = QVBoxLayout(box)
         row = QHBoxLayout()
-        self.k_draw = QPushButton("Draw a path")
+        self.k_draw = QPushButton("Draw a route")
         self.k_draw.setCheckable(True)
-        self.k_draw.setToolTip("Click points on the floor; double-click, Enter or right-click to finish (Esc cancels)")
+        self.k_draw.setToolTip("Hold the mouse button and draw the route on the floor (over furniture too), or click\n"
+                               "points one by one; let go, double-click, Enter or right-click to finish (Esc cancels)")
         self.k_walk = QPushButton("Walk")
         self.k_walk.setCheckable(True)
         self.k_clear = QPushButton("Clear")
@@ -1313,15 +1896,21 @@ class SiteWindow(QWidget):
         speed_row.addWidget(QLabel("Pace"))
         self.k_speed = _combo([(1.4, "Walking (1.4 m/s)"), (4.2, "3 x"), (14.0, "10 x")])
         speed_row.addWidget(self.k_speed, 1)
+        self.k_pov = QCheckBox("Phone's-eye view")
+        self.k_pov.setToolTip("Walk the route yourself: the camera goes along at eye height, with the phone in your\n"
+                              "hand showing the access point it is on, the band, the channel and the signal.\n"
+                              "Drag to look around, wheel for a wider view, double-click to look ahead again.")
         self.k_status = QLabel()
         self.k_status.setWordWrap(True)
         v.addLayout(row)
         v.addLayout(speed_row)
+        v.addWidget(self.k_pov)
         v.addWidget(self.k_status)
         self.k_draw.toggled.connect(self._walk_draw_toggled)
         self.k_walk.toggled.connect(self._walk_play_toggled)
         self.k_clear.clicked.connect(lambda: (self.view.set_walk_path([]), self._save_timer.start()))
         self.k_speed.currentIndexChanged.connect(self._walk_speed_changed)
+        self.k_pov.toggled.connect(self._pov_toggled)
         self.view.walk_changed.connect(self._walk_changed)
         i = min(range(self.k_speed.count()), key=lambda k: abs(self.k_speed.itemData(k) - self.view.walk_speed))
         self.k_speed.setCurrentIndex(i)
@@ -1339,19 +1928,27 @@ class SiteWindow(QWidget):
         if on != self.view.walking:
             self.view.set_walking(on)
 
+    def _pov_toggled(self, on: bool) -> None:
+        v = self.view
+        if on and not v.walking and len(v.walk_path) >= 2:
+            v.set_walking(True)                     # going into the walker's eyes starts the walk
+        v.set_pov(on)
+        v.setFocus()
+
     def _walk_speed_changed(self) -> None:
         self.view.walk_speed = float(self.k_speed.currentData())
         self._save_timer.start()
 
     def _walk_changed(self) -> None:
         v = self.view
-        for btn, state in ((self.k_draw, v.walk_drawing), (self.k_walk, v.walking)):
+        for btn, state in ((self.k_draw, v.walk_drawing), (self.k_walk, v.walking), (self.k_pov, v.pov)):
             if btn.isChecked() != state:
                 btn.blockSignals(True)
                 btn.setChecked(state)
                 btn.blockSignals(False)
         self.k_walk.setEnabled(len(v.walk_path) >= 2 and not v.walk_drawing)
         self.k_clear.setEnabled(bool(v.walk_path))
+        self.k_pov.setEnabled(len(v.walk_path) >= 2 and not v.walk_drawing)
         self.k_status.setText(v.walk_status())
         if not v.walking:
             self._save_timer.start()
@@ -1499,6 +2096,151 @@ class SiteWindow(QWidget):
         self.v_slice.valueChanged.connect(self._view_edited_panel)
         self.v_clutter.currentIndexChanged.connect(self._view_edited_panel)
         return box
+
+    def _channels_box(self) -> QGroupBox:
+        box = QGroupBox("Bands, channels and interference")
+        v = QVBoxLayout(box)
+        f = QFormLayout()
+        f.setContentsMargins(0, 0, 0, 0)
+        self.c_band = _combo(BAND_CHOICES)
+        self.c_band.setToolTip("Which band the maps, the walk and the packets use. Every band: the strongest\n"
+                               "signal of any band (on the interference maps: the band with the best SINR,\n"
+                               "as a phone picks it).")
+        self.c_metric = _combo(list(wm.METRICS.items()))
+        self.c_metric.setToolTip("Signal strength: the strongest of your access points.\n"
+                                 "SINR: the signal against noise plus every other radio that lands in its channel\n"
+                                 "(your other access points and the neighbours'): this decides the speed.\n"
+                                 "Radios sharing the channel: how many others a device here waits for before it\n"
+                                 "may talk (heard at -82 dBm on its channel, or -62 dBm of any energy).\n"
+                                 "Interference on one channel: how loud that channel is everywhere.")
+        self.c_chan = _combo([])
+        self.c_chan.setToolTip("The channel the channel map shows (or click a channel in the spectrum below)")
+        f.addRow("Band", self.c_band)
+        f.addRow("Map", self.c_metric)
+        f.addRow("Channel", self.c_chan)
+        v.addLayout(f)
+        from .spectrum import SpectrumView
+        self.spectrum = SpectrumView()
+        self.spectrum.channel_clicked.connect(self._spectrum_clicked)
+        v.addWidget(self.spectrum)
+        self.c_probe = QLabel()
+        self.c_probe.setWordWrap(True)
+        self.c_probe.setProperty("role", "caption")
+        v.addWidget(self.c_probe)
+        self.c_plan = QLabel()
+        self.c_plan.setWordWrap(True)
+        self.c_plan.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        v.addWidget(self.c_plan)
+        row = QHBoxLayout()
+        self.c_auto = QPushButton("Auto channels")
+        self.c_auto.setToolTip("Give your radios the channels that interfere least with each other and with the\n"
+                               "neighbours' networks (widths are kept; DFS channels only when they help)")
+        self.c_auto.clicked.connect(self.auto_channels)
+        self.c_neigh = QPushButton("Add neighbours' network")
+        self.c_neigh.setToolTip("A network that is not yours (the flat next door, the shop downstairs): it\n"
+                                "interferes and takes airtime, it never serves your devices. Put it where its\n"
+                                "router is, behind the wall that separates you.")
+        self.c_neigh.clicked.connect(self._add_neighbour)
+        row.addWidget(self.c_auto)
+        row.addWidget(self.c_neigh)
+        row.addStretch(1)
+        v.addLayout(row)
+        self.c_band.currentIndexChanged.connect(self._map_edited)
+        self.c_metric.currentIndexChanged.connect(self._map_edited)
+        self.c_chan.currentIndexChanged.connect(self._map_edited)
+        return box
+
+    def _sync_map_controls(self) -> None:
+        vw = self.view
+        self._loading = True
+        try:
+            _set_combo(self.c_band, vw.band)
+            _set_combo(self.c_metric, vw.map_kind)
+            self.c_chan.clear()
+            for key, title in wm.channel_choices(self.site, vw.band):
+                self.c_chan.addItem(title, key)
+            if vw.map_channel:
+                i = next((k for k in range(self.c_chan.count()) if self.c_chan.itemData(k) == vw.map_channel), 0)
+                self.c_chan.setCurrentIndex(i)
+            self.c_chan.setEnabled(vw.map_kind == "channel")
+        finally:
+            self._loading = False
+
+    def _map_edited(self) -> None:
+        if self._loading:
+            return
+        ch = self.c_chan.currentData() if self.sender() is self.c_chan else None
+        self.view.set_map(band=self.c_band.currentData(), kind=self.c_metric.currentData(),
+                          channel=tuple(ch) if ch else None)
+        self._save_timer.start()
+
+    def _map_changed(self) -> None:
+        self._sync_map_controls()
+        self.update_spectrum()
+
+    def _spectrum_clicked(self, band: str, ch: int) -> None:
+        self.view.set_map(kind="channel", channel=(band, ch))
+        self._save_timer.start()
+
+    def update_spectrum(self) -> None:
+        """The analyser: every radio as heard at the phone, the pointer, or the selected access point."""
+        vw, s = self.view, self.site
+        pt = vw.probe()
+        skip = None
+        if pt is not None:
+            where = "On the phone's walk" if vw.walking or vw.walk_dist > 0.0 else "At the pointer"
+            where += f" ({pt[0]:.1f}, {pt[1]:.1f} m)"
+        elif 0 <= self.ap_list.currentRow() < len(s.aps):
+            ap = s.aps[self.ap_list.currentRow()]
+            pt, skip = (ap.x, ap.y, ap.z), self.ap_list.currentRow()
+            where = f"At {ap.name}: what it hears from the others (point at the floor to listen there)"
+        else:
+            pt = (s.width / 2, s.depth / 2, s.slice_z)
+            where = "In the middle of the floor (point at the floor to listen there)"
+        bands = [vw.band] if vw.band else [b for b in ws.BANDS if s.emitters(b, own=True, neighbours=True)] or ["5"]
+        walls = s.walls()
+        lines = {}
+        for b in bands:
+            ems = [e for e in s.emitters(b, own=True, neighbours=True) if e.index != skip]
+            rd = wi.reading(s, pt, b, walls, ems)
+            lines[b] = [(e, v, e is rd.serving) for e, v in rd.heard]
+        sel = vw.map_channel if vw.map_kind == "channel" else None
+        self.spectrum.set_data(bands, lines, where, sel)
+        self.c_probe.setText(where)
+
+    def channel_plan_text(self) -> str:
+        s = self.site
+        out = []
+        for b in ws.BANDS:
+            ems = s.emitters(b)
+            if ems:
+                out.append(f"{ws.BAND_TITLES[b]}: " + ", ".join(f"{e.name} {e.channel}" + (f"/{e.width}" if e.width > 20
+                                                                                        else "") for e in ems))
+        conflicts = wi.channel_conflicts(s)
+        out += [c.text() + "." for c in conflicts]
+        if not conflicts and out:
+            out.append("No access point waits for another one.")
+        return "\n".join(out)
+
+    def auto_channels(self) -> list:
+        changes = wi.auto_channels(self.site)
+        self._fill_lists()
+        self._refresh(save=True)
+        done = ", ".join(f"{n} {ws.BAND_TITLES[b]} {a} → {c}" for n, b, a, c in changes)
+        self.c_plan.setText(("Auto channels: " + done if changes else "Auto channels: the plan was already the best "
+                             "one found.") + "\n" + self.channel_plan_text())
+        return changes
+
+    def _add_neighbour(self) -> None:
+        used = {a.name for a in self.site.aps}
+        n = 1
+        while f"Neighbour {n}" in used:
+            n += 1
+        ap = self.site.add_ap(f"Neighbour {n}", neighbour=True, tx_dbm=20.0)
+        ap.set_radio("2.4", True, tx_dbm=20.0)
+        self._fill_lists()
+        self.ap_list.setCurrentRow(len(self.site.aps) - 1)
+        self._refresh(save=True)
 
     def _space_box(self) -> QGroupBox:
         box = QGroupBox("Space")
@@ -1673,22 +2415,93 @@ class SiteWindow(QWidget):
         self.a_x = _spin(0, ws.MAX_SIDE, 0.25, " m", 2)
         self.a_y = _spin(0, ws.MAX_SIDE, 0.25, " m", 2)
         self.a_z = _spin(0, ws.MAX_HEIGHT, 0.1, " m", 2)
-        self.a_pwr = _spin(0, 36, 1, " dBm", 0)
-        self.a_pwr.setToolTip("EIRP: transmit power plus antenna gain. Israel allows 20 dBm at 2.4 GHz, 23 dBm on\n"
-                              "5 GHz channels 36-48 (27 dBm on 100-140 with DFS) and 23 dBm at 6 GHz (indoors).")
-        self.a_band = _combo(list(ws.BAND_TITLES.items()))
         self.a_on = QCheckBox("Transmitting")
+        self.a_neigh = QCheckBox("Neighbours' network")
+        self.a_neigh.setToolTip("Not your network: it takes airtime and adds interference on its channels,\n"
+                                "your devices never connect to it.")
         f.addRow("From the left", self.a_x)
         f.addRow("From the front", self.a_y)
         f.addRow("Mounting height", self.a_z)
-        f.addRow("Power", self.a_pwr)
-        f.addRow("Band", self.a_band)
+        grid = QGridLayout()
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setHorizontalSpacing(6)
+        for col, head in enumerate(("Radio", "Channel", "Width", "EIRP")):
+            lb = QLabel(head)
+            lb.setProperty("role", "caption")
+            grid.addWidget(lb, 0, col)
+        self.radio_rows: dict[str, tuple] = {}
+        for row, b in enumerate(ws.BANDS, 1):
+            chk = QCheckBox(ws.BAND_TITLES[b])
+            ch, wd = QComboBox(), QComboBox()
+            for c in (ch, wd):
+                c.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+                c.setMinimumContentsLength(4)
+            pw = _spin(0, 36, 1, " dBm", 0)
+            pw.setToolTip(ws.LEGAL_NOTE[b])
+            ch.setToolTip("Auto: the planner's channels in turn (1, 6, 11 at 2.4 GHz; one 80 MHz block after the "
+                          "other at 5 and 6 GHz).\nDFS: the access point listens for radar and may change channel.")
+            wd.setToolTip("Wider channels are faster but there are fewer of them: more access points end up sharing")
+            for c_, w_ in enumerate((chk, ch, wd, pw)):
+                grid.addWidget(w_, row, c_)
+            chk.toggled.connect(lambda _on, b=b: self._radio_edited(b))
+            ch.currentIndexChanged.connect(lambda _i, b=b: self._radio_edited(b, channel_changed=True))
+            wd.currentIndexChanged.connect(lambda _i, b=b: self._radio_edited(b))
+            pw.valueChanged.connect(lambda _v, b=b: self._radio_edited(b))
+            self.radio_rows[b] = (chk, ch, wd, pw)
+        f.addRow(grid)
         f.addRow("", self.a_on)
-        for w in (self.a_x, self.a_y, self.a_z, self.a_pwr):
+        f.addRow("", self.a_neigh)
+        for w in (self.a_x, self.a_y, self.a_z):
             w.valueChanged.connect(self._ap_edited)
-        self.a_band.currentIndexChanged.connect(self._ap_edited)
         self.a_on.toggled.connect(self._ap_edited)
+        self.a_neigh.toggled.connect(self._ap_edited)
         return box
+
+    def _fill_radio_row(self, a: ws.AccessPoint, idx: int, b: str) -> None:
+        """One row of the radio table from the access point (call with _loading set)."""
+        chk, ch, wd, pw = self.radio_rows[b]
+        r = next((r for r in a.radios(every=True) if r.band == b), None)
+        on = r is not None and (r.enabled or r.band == a.band)
+        em = next((e for e in self.view.ap_emitters(idx) if e.band == b), None)
+        chk.setChecked(on)
+        auto_ch = em.channel if em is not None else wc.default_channel(b, wc.DEFAULT_WIDTH[b], 0)
+        ch.clear()
+        ch.addItem(f"Auto ({auto_ch})", 0)
+        for c in wc.CHANNELS[b]:
+            ch.addItem(f"{c} DFS" if wc.is_dfs(b, c) else str(c), c)
+        _set_combo(ch, r.channel if r is not None and wc.is_channel(b, r.channel) else 0)
+        real = em.channel if em is not None else auto_ch
+        wd.clear()
+        auto_w = em.width if em is not None else wc.fit_width(b, real, wc.DEFAULT_WIDTH[b])
+        wd.addItem(f"Auto ({auto_w})", 0)
+        for w in wc.widths(b, real):
+            wd.addItem(f"{w} MHz", w)
+        _set_combo(wd, r.width if r is not None and r.width in wc.widths(b, real) else 0)
+        pw.setValue(r.tx_dbm if r is not None else min(a.tx_dbm, ws.LEGAL_EIRP_DBM[b]))
+        for w_ in (ch, wd, pw):
+            w_.setEnabled(on)
+
+    def _radio_edited(self, b: str, channel_changed: bool = False) -> None:
+        row = self.ap_list.currentRow()
+        if self._loading or not 0 <= row < len(self.site.aps):
+            return
+        a = self.site.aps[row]
+        chk, ch, wd, pw = self.radio_rows[b]
+        width = wd.currentData() or 0
+        if channel_changed and ch.currentData():
+            width = wc.fit_width(b, ch.currentData(), width) if width else 0
+        if not a.set_radio(b, chk.isChecked(), tx_dbm=pw.value(), channel=ch.currentData() or 0, width=width):
+            self._loading = True
+            chk.setChecked(True)                       # the last radio stays on: switch the access point off instead
+            self._loading = False
+            return
+        self._refresh(save=True)
+        self._loading = True
+        try:
+            for band in ws.BANDS:
+                self._fill_radio_row(a, row, band)
+        finally:
+            self._loading = False
 
     # ---------------------------------------------------------------- site -> panel
     def reload(self) -> None:
@@ -1730,7 +2543,9 @@ class SiteWindow(QWidget):
 
     @staticmethod
     def ap_text(a: ws.AccessPoint) -> str:
-        return (f"{a.name} · {ws.BAND_TITLES[a.band]} · {a.tx_dbm:g} dBm"
+        radios = " + ".join(f"{ws.BAND_TITLES[r.band]}" + (f" ch {r.channel}" if r.channel else "")
+                            for r in a.radios())
+        return (f"{a.name} · {'neighbours · ' if a.neighbour else ''}{radios} · {a.tx_dbm:g} dBm"
                 + ("" if a.enabled else " · off") + (" · from the lab" if a.from_lab else ""))
 
     def _fill_lists(self) -> None:
@@ -1772,6 +2587,9 @@ class SiteWindow(QWidget):
         problems = self.site.problems()
         self.problems_lbl.setText("\n".join(problems))
         self.problems_lbl.setVisible(bool(problems))
+        self.c_plan.setText(self.channel_plan_text())
+        self._sync_map_controls()
+        self.update_spectrum()
         if save:
             self._save_timer.start()
 
@@ -2093,6 +2911,8 @@ class SiteWindow(QWidget):
         self.ap_form.setEnabled(ok)
         self.ap_del.setEnabled(ok)
         self.view.select_ap(row if ok else -1)
+        if hasattr(self, "spectrum"):
+            self._spec_timer.start()
         if not ok:
             return
         a = self.site.aps[row]
@@ -2104,9 +2924,10 @@ class SiteWindow(QWidget):
             self.a_x.setValue(a.x)
             self.a_y.setValue(a.y)
             self.a_z.setValue(a.z)
-            self.a_pwr.setValue(a.tx_dbm)
-            _set_combo(self.a_band, a.band)
             self.a_on.setChecked(a.enabled)
+            self.a_neigh.setChecked(a.neighbour)
+            for band in ws.BANDS:
+                self._fill_radio_row(a, row, band)
         finally:
             self._loading = False
 
@@ -2119,7 +2940,7 @@ class SiteWindow(QWidget):
             return
         a = self.site.aps[row]
         a.x, a.y, a.z = self.a_x.value(), self.a_y.value(), self.a_z.value()
-        a.tx_dbm, a.band, a.enabled = self.a_pwr.value(), self.a_band.currentData(), self.a_on.isChecked()
+        a.enabled, a.neighbour = self.a_on.isChecked(), self.a_neigh.isChecked()
         self._refresh(save=True)
 
     def _view_edited(self) -> None:
@@ -2134,7 +2955,8 @@ class SiteWindow(QWidget):
         self._save_timer.start()
 
     def _add_ap(self) -> None:
-        self.site.add_ap()
+        ap = self.site.add_ap()
+        ap.set_radio("2.4", True, tx_dbm=20.0)         # a dual-band access point, as sold today
         self._fill_lists()
         self.ap_list.setCurrentRow(len(self.site.aps) - 1)
         self._refresh(save=True)

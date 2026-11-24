@@ -32,8 +32,14 @@ While the lab runs, LabDesk polls the devices and draws what is actually configu
   Hover any spot for the reading, what the signal crosses on the way, the signal-to-noise, the expected speed and
   how well the access point hears a phone back. Animated: each access point flashes as its waves leave, data packets
   stream to the phone (thinning out through walls, fewer coming back when the phone's weaker signal limits the
-  link), and a phone can walk a path you draw, leaving a trail coloured by its signal and showing where it roams. With a graphics card (OpenGL 3.3) the card works out the signal on
-  about four million points; without one the heat map is computed and drawn in software. Rooms save as files to
+  link), and a phone can walk a route you draw freehand (over furniture too), leaving a trail coloured by its signal and showing where it roams; the phone's-eye view walks the route at eye height with the phone in your hand showing the access point, band, channel, signal, SINR and speed. With a graphics card (OpenGL 3.3) the card works out the signal on
+  about four million points; without one the heat map is computed and drawn in software. **Bands and channels:**
+  every access point can have a 2.4, a 5 and a 6 GHz radio, each with its channel, width (20-160 MHz) and power,
+  checked against Israeli rules (channels 1-13, 36-64 and 100-140 with DFS, 6 GHz 1-93; EIRP per channel). Add
+  the neighbours' networks; then switch the floor map to **SINR** (signal against noise plus every other radio in
+  the channel), **radios sharing the channel** (how many others a device waits for, 802.11 CCA at −82 / −62 dBm)
+  or **interference on one channel**. A Wi-Fi analyser shows every radio over the channels as heard at the
+  pointer (click a channel to map it), conflicts are listed, and **Auto channels** plans them. Rooms save as files to
   share. It is a planning estimate (±5 dB indoors, ±9 dB in metal halls), not a site survey; the losses come
   from a cited table (ITU-R P.2040 / P.1238, NIST and NYU measurements). `labdesk --site` opens it alone, without CML.
 - **Always-on Internet cloud:** an optional host network namespace that answers `8.8.8.8` / `1.1.1.1` from inside the lab.

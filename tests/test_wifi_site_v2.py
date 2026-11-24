@@ -478,3 +478,79 @@ def test_view_walks_the_phone_and_saves_the_path():
     assert v.walk_path == [] and not win.k_walk.isEnabled()
     win.close()
     again.close()
+
+
+def test_route_helpers_simplify_heading_and_the_phone_band():
+    from labdesk_app import wifi_anim as wa
+    wobbly = [(x * 0.1, 2.0 + (0.01 if x % 2 else -0.01)) for x in range(51)] + [(5.0, 2.0 + y * 0.1) for y in range(1, 31)]
+    thin = wa.simplify(wobbly)
+    assert thin[0] == wobbly[0] and thin[-1] == wobbly[-1] and len(thin) <= 4          # two straight runs and a corner
+    assert wa.simplify([(1, 1), (1, 1)]) == [(1.0, 1.0)]
+    path = [(0.0, 0.0), (4.0, 0.0), (4.0, 4.0)]
+    assert wa.heading(path, 1.0) == pytest.approx((1.0, 0.0))
+    assert wa.heading(path, 99.0) == pytest.approx((0.0, 1.0))                        # the end looks along the last stretch
+    assert wa.heading([(1, 1)], 0.0) is None
+    s = flat()
+    s.aps[0].set_radio("2.4", True, 20.0, 0, 0)
+    near = wa.phone_reading(s, (3.0, 6.5, 1.0))
+    assert near.serving.band == "5"                      # band steering: 5 GHz is faster next to the router
+    assert wa.phone_reading(s, (3.0, 6.5, 1.0), band="2.4").serving.band == "2.4"
+    far = ws.Site(400, 6, 3, aps=[ws.AccessPoint("AP", 1, 3, 2)], clutter="dense")
+    assert wa.phone_reading(far, (390, 3, 1)).serving is None                          # too weak to stay connected
+    names = [e.name for e, _d in wa.heard(s, (3.0, 6.5, 1.0))]
+    assert names.count("Router") == 2                                                  # both bands are listed
+
+
+def test_route_drawn_freehand_over_furniture_and_the_phones_eye_view():
+    from PySide6.QtCore import QEvent, QPointF, Qt
+    from PySide6.QtGui import QMouseEvent
+    from PySide6.QtWidgets import QApplication
+    QApplication.instance() or QApplication([])
+    from labdesk_app.ui.site3d import SiteWindow
+
+    def ev(kind, pt, btn, btns):
+        return QMouseEvent(kind, QPointF(pt), QPointF(pt), btn, btns, Qt.NoModifier)
+
+    win = SiteWindow(flat(), None, "Test", gl=False)
+    win.resize(1400, 900)
+    v = win.view
+    v.resize(1000, 800)
+    fr = v._frame()
+    sofa = v.site.obstacles[1]
+    top = fr.proj((sofa.x + sofa.w / 2, sofa.y + sofa.d / 2, sofa.h))
+    hit = v.pick(top)                                    # on the sofa: its top, not the floor behind it
+    assert hit == pytest.approx((sofa.x + sofa.w / 2, sofa.y + sofa.d / 2, sofa.h), abs=1e-6)
+    floor = fr.on_plane(top.x(), top.y(), 0.0)
+    assert math.dist(floor[:2], hit[:2]) > 0.2
+    win.k_draw.setChecked(True)
+    pts = [fr.proj((1.0 + 0.1 * k, 3.2, 0.0)) for k in range(30)] + [top]
+    v.mousePressEvent(ev(QEvent.MouseButtonPress, pts[0], Qt.LeftButton, Qt.LeftButton))
+    for sp in pts[1:]:
+        v.mouseMoveEvent(ev(QEvent.MouseMove, sp, Qt.NoButton, Qt.LeftButton))
+    v.mouseReleaseEvent(ev(QEvent.MouseButtonRelease, pts[-1], Qt.LeftButton, Qt.NoButton))
+    assert not v.walk_drawing and v.walking                 # letting go of a drawn line finishes it
+    assert v.walk_path[-1] == pytest.approx(hit[:2], abs=1e-6) and len(v.walk_path) <= 4   # thinned
+    # a single click while drawing adds a point and keeps drawing
+    win.k_draw.setChecked(True)
+    v.mousePressEvent(ev(QEvent.MouseButtonPress, pts[0], Qt.LeftButton, Qt.LeftButton))
+    v.mouseReleaseEvent(ev(QEvent.MouseButtonRelease, pts[0], Qt.LeftButton, Qt.NoButton))
+    assert v.walk_drawing and len(v.walk_path) == 1
+    v.mousePressEvent(ev(QEvent.MouseButtonPress, pts[10], Qt.LeftButton, Qt.LeftButton))
+    v.mouseReleaseEvent(ev(QEvent.MouseButtonRelease, pts[10], Qt.LeftButton, Qt.NoButton))
+    v.mouseDoubleClickEvent(ev(QEvent.MouseButtonDblClick, pts[10], Qt.LeftButton, Qt.LeftButton))
+    assert not v.walk_drawing and len(v.walk_path) == 2
+    v.set_walk_path([(1.0, 4.0), (8.0, 4.0)])
+    orbit = (v.cam.yaw, v.cam.pitch, v.cam.dist, v.cam.target, v.cam.fov)
+    win.k_pov.setChecked(True)
+    assert v.pov and v.walking                             # the walker's eyes, walking
+    v.advance_walk(1.0)
+    e = v._frame().eye
+    assert e[2] == pytest.approx(1.6) and e[:2] == pytest.approx(v.phone()[:2])
+    assert v._frame().f[0] > 0.9                           # looking along the route (+x)
+    assert v.phone_screen_rect() is not None
+    img = v.grab()
+    assert not img.isNull()
+    assert "ch 36" in win.k_status.text()
+    win.k_draw.setChecked(True)                            # drawing again goes back to the orbit camera
+    assert not v.pov and (v.cam.yaw, v.cam.pitch, v.cam.dist, v.cam.target, v.cam.fov) == orbit
+    win.close()

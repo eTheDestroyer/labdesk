@@ -304,7 +304,7 @@ def test_window_edits_the_site_and_saves(app, tmp_path):
     win._add_ap()
     assert len(win.site.partitions) == 3 and [a.name for a in win.site.aps][-1] == "AP3"
     win.ap_list.setCurrentRow(0)
-    win.a_pwr.setValue(10.0)
+    win.radio_rows["5"][3].setValue(10.0)
     win.a_on.setChecked(False)
     assert win.site.aps[0].tx_dbm == 10.0 and not win.site.aps[0].enabled and "off" in win.ap_list.item(0).text()
     assert sum(win.view.shares) == pytest.approx(100.0)
@@ -314,7 +314,8 @@ def test_window_edits_the_site_and_saves(app, tmp_path):
     saved = lab["site"]
     assert saved["width"] == 40.0 and len(saved["aps"]) == 3 and saved == win.site.to_dict()
     assert lab["site_ui"] == {"heat": True, "glow": 0.25, "ramp": "safe", "drift": True, "air": "waves",
-                              "packets": True, "walk": [], "walk_speed": 1.4}
+                              "packets": True, "walk": [], "walk_speed": 1.4, "band": None, "map": "signal",
+                              "map_channel": None}
     # reopening reads it back; an access point that left the lab is dropped, the hand-made one stays
     again = open_site_window(config.State(tmp_path / "state.json"), "lab-1", "Demo", ["AP1"], gl=False)
     assert [a.name for a in again.site.aps] == ["AP1", "AP3"] and again.site.width == 40.0
